@@ -1,19 +1,21 @@
 import FWCore.ParameterSet.Config as cms
+import FWCore.Utilities.FileUtils as FileUtils
+import sys
 
 process = cms.Process("Demo")
 
 process.load("FWCore.MessageService.MessageLogger_cfi")
+process.MessageLogger.cerr.FwkReport.reportEvery = 10000
 
-#process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(100) )
 process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1) )
 
+outfile = sys.argv[3]
+
+filelist = open(sys.argv[2]).readlines()
+
 process.source = cms.Source("PoolSource",
-    # replace 'myfile.root' with the source file you want to use
-    fileNames = cms.untracked.vstring(
-#        'file:/pnfs/desy.de/cms/tier2/store/mc/RunIISpring15MiniAODv2/QCD_Pt-300toInf_EMEnriched_TuneCUETP8M1_13TeV_pythia8/MINIAODSIM/74X_mcRun2_asymptotic_v2-v1/50000/0CD21733-437A-E511-97BF-44A8423C4026.root'
-	'dcap://dcache-cms-dcap.desy.de:22125//pnfs/desy.de/cms/tier2/store/mc/RunIISpring15MiniAODv2/DYBBJetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/MINIAODSIM/74X_mcRun2_asymptotic_v2-v1/10000/006E8D1C-7D6F-E511-B8DA-02163E012ED1.root'
-	)
-)
+	fileNames = cms.untracked.vstring( filelist )
+    )
 
 process.demo = cms.EDAnalyzer('VBFSUSYanalyzer',
 		vertices = cms.InputTag("offlineSlimmedPrimaryVertices"),
@@ -27,7 +29,7 @@ process.demo = cms.EDAnalyzer('VBFSUSYanalyzer',
 )
 
 process.TFileService = cms.Service("TFileService", 
-					fileName = cms.string('histodemo.root')
+					fileName = cms.string(outfile)
 				)
 
 process.p = cms.Path(process.demo)
