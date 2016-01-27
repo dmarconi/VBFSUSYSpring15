@@ -171,7 +171,7 @@ struct MyHistoCollection {
 	void init(const std::string & inputlabel) {
 
 		label = inputlabel;
-		TFileDirectory subDir = fs->mkdir( "mySubDirectory" );
+		TFileDirectory subDir = fs->mkdir( inputlabel );
 		//f->mkdir(inputlabel.c_str());
 		//f->cd(inputlabel.c_str());
 
@@ -539,7 +539,8 @@ class VBFSUSYanalyzer : public edm::EDAnalyzer {
 		MyEventCollection baselineObjectSelectionCollection;
 
 		// ---------histograms-----------------------------
-
+		edm::Service<TFileService> fs;	
+		TH1F* count;
 		MyHistoCollection myHistoColl_baselineSelection;
 
 		// ----------member data ---------------------------
@@ -584,7 +585,11 @@ VBFSUSYanalyzer::VBFSUSYanalyzer(const edm::ParameterSet& iConfig):
 	baselineObjectSelectionCollection.init("baselineObjectSelection");
 
 
-	//histogram initialization
+	//histogram initialization	
+	count = fs->make<TH1F>("counts", "", 1,0,1);
+	count->SetBit(TH1::kCanRebin);
+	count->SetStats(0);
+	count->Fill("NoCuts",0);
 	myHistoColl_baselineSelection.init("baselineObjectSelection");
 
 
@@ -777,6 +782,9 @@ VBFSUSYanalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
 	//MET selection
 	baselineObjectSelectionCollection.met.push_back(&met);
 
+	
+	//Filling count plot
+	count->Fill("NoCuts",1.);
 
 	//Filling Histograms for baseline selection
 	fillHistoCollection ( myHistoColl_baselineSelection, baselineObjectSelectionCollection,1.);
