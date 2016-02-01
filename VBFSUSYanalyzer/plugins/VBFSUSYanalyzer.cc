@@ -178,6 +178,8 @@ struct MyHistoCollection {
 		h_count = subDir.make<TH1F>("counts", "", 1,0,1);
 		h_count->SetBit(TH1::kCanRebin);
 		h_count->SetStats(0);
+		h_count->Fill("NoCuts",0);
+
 		h_njet = subDir.make<TH1F>("h_njet", "h_njet", 21, -0.5, 20.5);
 		h_njet->GetXaxis()->SetTitle("number of jets not matched to #tau");
 		h_jetpt = subDir.make<TH1F>("h_jetpt", "h_jetpt", 50, 0., 500.);
@@ -414,6 +416,7 @@ void fillHistoCollection (MyHistoCollection &inputHistoCollection, MyEventCollec
 	
 	using namespace std;
 
+
 	bool verbose=false;  
 	//JETS	  
 
@@ -537,11 +540,19 @@ class VBFSUSYanalyzer : public edm::EDAnalyzer {
 		// ---------event collections-----------------------------
 
 		MyEventCollection baselineObjectSelectionCollection;
+		MyEventCollection TauLooseIsoObjectSelectionCollection;
+		MyEventCollection TauMediumIsoObjectSelectionCollection;
+		MyEventCollection Tau1TightIsoObjectSelectionCollection;
+		MyEventCollection TauTightIsoObjectSelectionCollection;
 
 		// ---------histograms-----------------------------
 		edm::Service<TFileService> fs;	
 		TH1F* count;
 		MyHistoCollection myHistoColl_baselineSelection;
+		MyHistoCollection myHistoColl_TauLooseIsoObjectSelection;
+		MyHistoCollection myHistoColl_TauMediumIsoObjectSelection;
+		MyHistoCollection myHistoColl_Tau1TightIsoObjectSelection;
+		MyHistoCollection myHistoColl_TauTightIsoObjectSelection;
 
 		// ----------member data ---------------------------
 
@@ -583,6 +594,10 @@ VBFSUSYanalyzer::VBFSUSYanalyzer(const edm::ParameterSet& iConfig):
 	//Event collection init
 
 	baselineObjectSelectionCollection.init("baselineObjectSelection");
+	TauLooseIsoObjectSelectionCollection.init("TauLooseIsoObjectSelection");
+	TauMediumIsoObjectSelectionCollection.init("TauMediumIsoObjectSelection");
+	TauTightIsoObjectSelectionCollection.init("Tau1TightIsoObjectSelection");
+	TauTightIsoObjectSelectionCollection.init("TauTightIsoObjectSelection");
 
 
 	//histogram initialization	
@@ -591,6 +606,14 @@ VBFSUSYanalyzer::VBFSUSYanalyzer(const edm::ParameterSet& iConfig):
 	count->SetStats(0);
 	count->Fill("NoCuts",0);
 	myHistoColl_baselineSelection.init("baselineObjectSelection");
+	myHistoColl_TauLooseIsoObjectSelection.init("TauLooseIsoObjectSelection");
+	myHistoColl_TauLooseIsoObjectSelection.h_count->Fill("AtLeast2taus",0.);	
+	myHistoColl_TauMediumIsoObjectSelection.init("TauMediumIsoObjectSelection");
+	myHistoColl_TauMediumIsoObjectSelection.h_count->Fill("AtLeast2taus",0.);	
+	myHistoColl_Tau1TightIsoObjectSelection.init("Tau1TightIsoObjectSelection");
+	myHistoColl_Tau1TightIsoObjectSelection.h_count->Fill("AtLeast2taus",0.);	
+	myHistoColl_TauTightIsoObjectSelection.init("TauTightIsoObjectSelection");
+	myHistoColl_TauTightIsoObjectSelection.h_count->Fill("AtLeast2taus",0.);	
 
 
 }
@@ -692,6 +715,7 @@ VBFSUSYanalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
 	std::vector<const pat::Tau*> tights;
 	std::vector<const pat::Tau*> mediums;
 	std::vector<const pat::Tau*> looses;
+	std::vector<const pat::Tau*> nones;
 
 	//smart tau selection
 	//cout << "DEBUG: Tau vector size: " << tau.size() << endl;
@@ -720,13 +744,14 @@ VBFSUSYanalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
 		if(!(tau.tauID("byTightCombinedIsolationDeltaBetaCorr3Hits")  <= 0.5)) tights.push_back(&tau);
 		else if(!(tau.tauID("byMediumCombinedIsolationDeltaBetaCorr3Hits")  <= 0.5)) mediums.push_back(&tau);
 		else if(!(tau.tauID("byLooseCombinedIsolationDeltaBetaCorr3Hits")  <= 0.5)) looses.push_back(&tau);
+		else nones.push_back(&tau);
 
 	}
 
-	//if(tights.size()==2) for(unsigned int t =0;t<tights.size();++t) {int i=tights[t]; TauTightIsoObjectSelectionCollection.tau.push_back(&tau[i]);}
-	//else if(tights.size()==1 && (mediums.size()+looses.size()+nones.size())==1) {tights.insert(tights.end(),mediums.begin(), mediums.end()); tights.insert(tights.end(),looses.begin(), looses.end()); tights.insert(tights.end(),nones.begin(), nones.end()); for(unsigned int t =0;t<tights.size();++t) {int i=tights[t]; Tau1TightIsoObjectSelectionCollection.tau.push_back(&tau[i]);}}
-	//else if(mediums.size()>=1 && (mediums.size()+looses.size()+nones.size())==2) {mediums.insert(mediums.end(), looses.begin(), looses.end()); mediums.insert(mediums.end(), nones.begin(), nones.end()); for(unsigned int t =0;t<mediums.size();++t) {int i=mediums[t]; TauMediumIsoObjectSelectionCollection.tau.push_back(&tau[i]);}}
-	//else if(looses.size()>=1 && (looses.size()+nones.size())==2) {looses.insert(looses.end(), nones.begin(), nones.end()); for(unsigned int t =0;t<looses.size();++t) {int i=looses[t]; TauLooseIsoObjectSelectionCollection.tau.push_back(&tau[i]);}}
+	if(tights.size()==2) for(unsigned int t =0;t<tights.size();++t) {TauTightIsoObjectSelectionCollection.tau.push_back(tights[t]);}
+	else if(tights.size()==1 && (mediums.size()+looses.size()+nones.size())==1) {tights.insert(tights.end(),mediums.begin(), mediums.end()); tights.insert(tights.end(),looses.begin(), looses.end()); tights.insert(tights.end(),nones.begin(), nones.end()); for(unsigned int t =0;t<tights.size();++t) {Tau1TightIsoObjectSelectionCollection.tau.push_back(tights[t]);}}
+	else if(mediums.size()>=1 && (mediums.size()+looses.size()+nones.size())==2) {mediums.insert(mediums.end(), looses.begin(), looses.end()); mediums.insert(mediums.end(), nones.begin(), nones.end()); for(unsigned int t =0;t<mediums.size();++t) {TauMediumIsoObjectSelectionCollection.tau.push_back(mediums[t]);}}
+	else if(looses.size()>=1 && (looses.size()+nones.size())==2) {looses.insert(looses.end(), nones.begin(), nones.end()); for(unsigned int t =0;t<looses.size();++t) {TauLooseIsoObjectSelectionCollection.tau.push_back(looses[t]);}}
 	//else if(nones.size()==2) for(unsigned int t =0;t<nones.size();++t) {int i=nones[t]; TauNoIsoObjectSelectionCollection.tau.push_back(&tau[i]);}
 
 
@@ -734,18 +759,14 @@ VBFSUSYanalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
 	// ? id ?
 	//cout << "jet.size(): " << jet.size() << endl;
 	for(const pat::Jet &jet : *jets){
-		//cout << "CIao inizio!!!" << endl;
-		//cout << "jet[j].pt" << jet[j].pt << endl;
 		if(!(      jet.pt() >= 30.                                                	)) continue;  // Original value 20
-		//cout << "Cut 1!!!" << endl;
 		if(!(      fabs(jet.eta()) <= 5.0                                          )) continue;
-		//cout << "Cut 2!!!" << endl;
 
 		double baseDistance = TauJetMinDistance(baselineObjectSelectionCollection, jet);
-		//double mainDistance = TauJetMinDistance(TauTightIsoObjectSelectionCollection, jet[j].eta, jet[j].phi);
-		//double T1Distance = TauJetMinDistance(Tau1TightIsoObjectSelectionCollection, jet[j].eta, jet[j].phi);
-		//double mediumDistance = TauJetMinDistance(TauMediumIsoObjectSelectionCollection, jet[j].eta, jet[j].phi);
-		//double looseDistance = TauJetMinDistance(TauLooseIsoObjectSelectionCollection, jet[j].eta, jet[j].phi);
+		double mainDistance = TauJetMinDistance(TauTightIsoObjectSelectionCollection, jet);
+		double T1Distance = TauJetMinDistance(Tau1TightIsoObjectSelectionCollection, jet);
+		double mediumDistance = TauJetMinDistance(TauMediumIsoObjectSelectionCollection, jet);
+		double looseDistance = TauJetMinDistance(TauLooseIsoObjectSelectionCollection, jet);
 		//double NoDistance = TauJetMinDistance(TauNoIsoObjectSelectionCollection, jet[j].eta, jet[j].phi);
 
 		bool jetid=true;
@@ -761,37 +782,74 @@ VBFSUSYanalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
 		//Filling Jet collection
 		if(      /*jet[j].pt >= 50.  &&*/ jetid		){
 			if(	baseDistance >= 0.3	) baselineObjectSelectionCollection.jet.push_back(&jet);	
-			//	  if(	mainDistance >= 0.3	) TauTightIsoObjectSelectionCollection.jet.push_back(&jet[j]);
-			//	  if(	T1Distance >= 0.3	) Tau1TightIsoObjectSelectionCollection.jet.push_back(&jet[j]);
-			//	  if(	mediumDistance >= 0.3	) TauMediumIsoObjectSelectionCollection.jet.push_back(&jet[j]);
-			//	  if(	looseDistance >= 0.3	) TauLooseIsoObjectSelectionCollection.jet.push_back(&jet[j]);
+				  if(	mainDistance >= 0.3	) TauTightIsoObjectSelectionCollection.jet.push_back(&jet);
+				  if(	T1Distance >= 0.3	) Tau1TightIsoObjectSelectionCollection.jet.push_back(&jet);
+				  if(	mediumDistance >= 0.3	) TauMediumIsoObjectSelectionCollection.jet.push_back(&jet);
+				  if(	looseDistance >= 0.3	) TauLooseIsoObjectSelectionCollection.jet.push_back(&jet);
 			//	  if(	NoDistance  >= 0.3	) TauNoIsoObjectSelectionCollection.jet.push_back(&jet[j]);
 		}
 		
 		//Filling bJet collection
 		if(fabs(jet.eta()) <= 2.4 && jet.bDiscriminator("combinedSecondaryVertexBJetTags") /*jet[j].bDiscriminator_combinedSecondaryVertexBJetTags*/ > 0.244    ){
 			if(	baseDistance >= 0.3	) baselineObjectSelectionCollection.bjet.push_back(&jet);	
-			//			  if(	mainDistance >= 0.3	) TauTightIsoObjectSelectionCollection.bjet.push_back(&jet[j]);
-			//			  if(	T1Distance >= 0.3	) Tau1TightIsoObjectSelectionCollection.bjet.push_back(&jet[j]);
-			//			  if(	mediumDistance >= 0.3	) TauMediumIsoObjectSelectionCollection.bjet.push_back(&jet[j]);
-			//			  if(	looseDistance >= 0.3	) TauLooseIsoObjectSelectionCollection.bjet.push_back(&jet[j]);
+						  if(	mainDistance >= 0.3	) TauTightIsoObjectSelectionCollection.bjet.push_back(&jet);
+						  if(	T1Distance >= 0.3	) Tau1TightIsoObjectSelectionCollection.bjet.push_back(&jet);
+						  if(	mediumDistance >= 0.3	) TauMediumIsoObjectSelectionCollection.bjet.push_back(&jet);
+						  if(	looseDistance >= 0.3	) TauLooseIsoObjectSelectionCollection.bjet.push_back(&jet);
 			//			  if(	NoDistance  >= 0.3	) TauNoIsoObjectSelectionCollection.bjet.push_back(&jet[j]);
 		}
 	}	
 
 	//MET selection
 	baselineObjectSelectionCollection.met.push_back(&met);
+	TauLooseIsoObjectSelectionCollection.met.push_back(&met);
+	TauMediumIsoObjectSelectionCollection.met.push_back(&met);
+	Tau1TightIsoObjectSelectionCollection.met.push_back(&met);
+	TauTightIsoObjectSelectionCollection.met.push_back(&met);
 
 	
 	//Filling count plot
 	count->Fill("NoCuts",1.);
 
+	//------------------------------------------//
+	//------- EVENT SELECTION START ------------//
+	//------------------------------------------//
+	
+	myHistoColl_baselineSelection.h_count->Fill("NoCuts",1.);	
+	myHistoColl_TauLooseIsoObjectSelection.h_count->Fill("NoCuts",1.);
+	myHistoColl_TauMediumIsoObjectSelection.h_count->Fill("NoCuts",1.);
+	myHistoColl_Tau1TightIsoObjectSelection.h_count->Fill("NoCuts",1.);
+	myHistoColl_TauTightIsoObjectSelection.h_count->Fill("NoCuts",1.);
+	
 	//Filling Histograms for baseline selection
 	fillHistoCollection ( myHistoColl_baselineSelection, baselineObjectSelectionCollection,1.);
+
+	
+	  //Tau requirements and plot fillings
+	if(!((int)(TauLooseIsoObjectSelectionCollection.tau.size() >= 2))){			//check if there is at least min taus in the event
+			myHistoColl_TauLooseIsoObjectSelection.h_count->Fill("AtLeast2taus",1.);	
+			fillHistoCollection ( myHistoColl_TauLooseIsoObjectSelection, TauLooseIsoObjectSelectionCollection,1.);
+	    }
+	if(!((int)(TauMediumIsoObjectSelectionCollection.tau.size() >= 2))){			//check if there is at least min taus in the event
+			myHistoColl_TauMediumIsoObjectSelection.h_count->Fill("AtLeast2taus",1.);	
+			fillHistoCollection ( myHistoColl_TauMediumIsoObjectSelection, TauMediumIsoObjectSelectionCollection,1.);
+	    }
+	if(!((int)(Tau1TightIsoObjectSelectionCollection.tau.size() >= 2))){			//check if there is at least min taus in the event
+			myHistoColl_Tau1TightIsoObjectSelection.h_count->Fill("AtLeast2taus",1.);	
+			fillHistoCollection ( myHistoColl_Tau1TightIsoObjectSelection, Tau1TightIsoObjectSelectionCollection,1.);
+	    }
+	if(!((int)(TauTightIsoObjectSelectionCollection.tau.size() >= 2))){			//check if there is at least min taus in the event
+			myHistoColl_TauTightIsoObjectSelection.h_count->Fill("AtLeast2taus",1.);	
+			fillHistoCollection ( myHistoColl_TauTightIsoObjectSelection, TauTightIsoObjectSelectionCollection,1.);
+	    }
 
 
 	//clearing event collections
 	baselineObjectSelectionCollection.clear();
+	TauLooseIsoObjectSelectionCollection.clear();
+	TauMediumIsoObjectSelectionCollection.clear();
+	Tau1TightIsoObjectSelectionCollection.clear();
+	TauTightIsoObjectSelectionCollection.clear();
 
 }
 
