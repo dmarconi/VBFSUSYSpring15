@@ -405,6 +405,9 @@ TauProperties Inv2tMassIndex(MyEventCollection collection)
 	return Inv2tMass;
 }
 
+
+
+
 // Fill histograms
 
 
@@ -413,7 +416,7 @@ void fillHistoCollection (MyHistoCollection &inputHistoCollection, MyEventCollec
 	// ---------------------
 	// -- fill histograms --
 	// ---------------------	  
-	
+
 	using namespace std;
 
 
@@ -515,6 +518,53 @@ void fillHistoCollection (MyHistoCollection &inputHistoCollection, MyEventCollec
 
 } 
 
+void makeSelection (MyHistoCollection &inputHistoCollection, MyEventCollection inputEventCollection, double weight) {
+
+	//check if there is at least min taus in the event	
+	inputHistoCollection.h_count->Fill("NoCuts",weight);
+	if((int)(inputEventCollection.tau.size() >= 2)){
+		inputHistoCollection.h_count->Fill("AtLeast2taus",weight);	
+	} else return;
+	
+	//find ditau properties
+	TauProperties Inv2t = Inv2tMassIndex(inputEventCollection);
+
+	//Ditau charge
+	if ( Inv2t.charge == 1 ) {
+		inputHistoCollection.h_count->Fill("DiTauSign",weight);	
+	} else return;
+	
+	//Btag veto
+	if((int)(inputEventCollection.bjet.size() == 0)){
+		inputHistoCollection.h_count->Fill("BtagVeto", weight);	
+	} else return;
+
+	//MET cut
+	if( inputEventCollection.met[0]->pt() > 30. ){			
+		inputHistoCollection.h_count->Fill("METcut",weight);	
+	} else return;
+
+	MassAndIndex Inv2j = Inv2jMassIndex(inputEventCollection);
+
+	if ( fabs(Inv2j.dEta) > 3.9 ) {
+		inputHistoCollection.h_count->Fill("DiJetDeta",weight);	
+		
+	} else return;
+
+
+	if (Inv2j.signEta < 0.) {
+		inputHistoCollection.h_count->Fill("DiJetSignEta",weight);	
+	} else return;
+
+	if (Inv2j.Mass > 250.) {
+		inputHistoCollection.h_count->Fill("DiJetInvMass",weight);	
+		fillHistoCollection ( inputHistoCollection, inputEventCollection,weight);
+	} else return;
+
+	return;
+
+}
+
 // class declaration
 //
 
@@ -606,14 +656,42 @@ VBFSUSYanalyzer::VBFSUSYanalyzer(const edm::ParameterSet& iConfig):
 	count->SetStats(0);
 	count->Fill("NoCuts",0);
 	myHistoColl_baselineSelection.init("baselineObjectSelection");
+	
 	myHistoColl_TauLooseIsoObjectSelection.init("TauLooseIsoObjectSelection");
 	myHistoColl_TauLooseIsoObjectSelection.h_count->Fill("AtLeast2taus",0.);	
+	myHistoColl_TauLooseIsoObjectSelection.h_count->Fill("DiTauSign",0.);	
+	myHistoColl_TauLooseIsoObjectSelection.h_count->Fill("BtagVeto",0.);	
+	myHistoColl_TauLooseIsoObjectSelection.h_count->Fill("METcut",0.);	
+	myHistoColl_TauLooseIsoObjectSelection.h_count->Fill("DiJetDeta",0.);	
+	myHistoColl_TauLooseIsoObjectSelection.h_count->Fill("DiJetSignEta",0.);	
+	myHistoColl_TauLooseIsoObjectSelection.h_count->Fill("DiJetInvMass",0.);	
+	
 	myHistoColl_TauMediumIsoObjectSelection.init("TauMediumIsoObjectSelection");
 	myHistoColl_TauMediumIsoObjectSelection.h_count->Fill("AtLeast2taus",0.);	
+	myHistoColl_TauMediumIsoObjectSelection.h_count->Fill("DiTauSign",0.);	
+	myHistoColl_TauMediumIsoObjectSelection.h_count->Fill("BtagVeto",0.);	
+	myHistoColl_TauMediumIsoObjectSelection.h_count->Fill("METcut",0.);	
+	myHistoColl_TauMediumIsoObjectSelection.h_count->Fill("DiJetDeta",0.);	
+	myHistoColl_TauMediumIsoObjectSelection.h_count->Fill("DiJetSignEta",0.);	
+	myHistoColl_TauMediumIsoObjectSelection.h_count->Fill("DiJetInvMass",0.);	
+	
 	myHistoColl_Tau1TightIsoObjectSelection.init("Tau1TightIsoObjectSelection");
 	myHistoColl_Tau1TightIsoObjectSelection.h_count->Fill("AtLeast2taus",0.);	
+	myHistoColl_Tau1TightIsoObjectSelection.h_count->Fill("DiTauSign",0.);	
+	myHistoColl_Tau1TightIsoObjectSelection.h_count->Fill("BtagVeto",0.);	
+	myHistoColl_Tau1TightIsoObjectSelection.h_count->Fill("METcut",0.);	
+	myHistoColl_Tau1TightIsoObjectSelection.h_count->Fill("DiJetDeta",0.);	
+	myHistoColl_Tau1TightIsoObjectSelection.h_count->Fill("DiJetSignEta",0.);	
+	myHistoColl_Tau1TightIsoObjectSelection.h_count->Fill("DiJetInvMass",0.);	
+	
 	myHistoColl_TauTightIsoObjectSelection.init("TauTightIsoObjectSelection");
 	myHistoColl_TauTightIsoObjectSelection.h_count->Fill("AtLeast2taus",0.);	
+	myHistoColl_TauTightIsoObjectSelection.h_count->Fill("DiTauSign",0.);	
+	myHistoColl_TauTightIsoObjectSelection.h_count->Fill("BtagVeto",0.);	
+	myHistoColl_TauTightIsoObjectSelection.h_count->Fill("METcut",0.);	
+	myHistoColl_TauTightIsoObjectSelection.h_count->Fill("DiJetDeta",0.);	
+	myHistoColl_TauTightIsoObjectSelection.h_count->Fill("DiJetSignEta",0.);	
+	myHistoColl_TauTightIsoObjectSelection.h_count->Fill("DiJetInvMass",0.);	
 
 
 }
@@ -754,7 +832,6 @@ VBFSUSYanalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
 	else if(looses.size()>=1 && (looses.size()+nones.size())==2) {looses.insert(looses.end(), nones.begin(), nones.end()); for(unsigned int t =0;t<looses.size();++t) {TauLooseIsoObjectSelectionCollection.tau.push_back(looses[t]);}}
 	//else if(nones.size()==2) for(unsigned int t =0;t<nones.size();++t) {int i=nones[t]; TauNoIsoObjectSelectionCollection.tau.push_back(&tau[i]);}
 
-
 	// jet && bjet selection
 	// ? id ?
 	//cout << "jet.size(): " << jet.size() << endl;
@@ -815,33 +892,15 @@ VBFSUSYanalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
 	//------- EVENT SELECTION START ------------//
 	//------------------------------------------//
 	
-	myHistoColl_baselineSelection.h_count->Fill("NoCuts",1.);	
-	myHistoColl_TauLooseIsoObjectSelection.h_count->Fill("NoCuts",1.);
-	myHistoColl_TauMediumIsoObjectSelection.h_count->Fill("NoCuts",1.);
-	myHistoColl_Tau1TightIsoObjectSelection.h_count->Fill("NoCuts",1.);
-	myHistoColl_TauTightIsoObjectSelection.h_count->Fill("NoCuts",1.);
-	
 	//Filling Histograms for baseline selection
+	myHistoColl_baselineSelection.h_count->Fill("NoCuts",1.);	
 	fillHistoCollection ( myHistoColl_baselineSelection, baselineObjectSelectionCollection,1.);
 
-	
-	  //Tau requirements and plot fillings
-	if(!((int)(TauLooseIsoObjectSelectionCollection.tau.size() >= 2))){			//check if there is at least min taus in the event
-			myHistoColl_TauLooseIsoObjectSelection.h_count->Fill("AtLeast2taus",1.);	
-			fillHistoCollection ( myHistoColl_TauLooseIsoObjectSelection, TauLooseIsoObjectSelectionCollection,1.);
-	    }
-	if(!((int)(TauMediumIsoObjectSelectionCollection.tau.size() >= 2))){			//check if there is at least min taus in the event
-			myHistoColl_TauMediumIsoObjectSelection.h_count->Fill("AtLeast2taus",1.);	
-			fillHistoCollection ( myHistoColl_TauMediumIsoObjectSelection, TauMediumIsoObjectSelectionCollection,1.);
-	    }
-	if(!((int)(Tau1TightIsoObjectSelectionCollection.tau.size() >= 2))){			//check if there is at least min taus in the event
-			myHistoColl_Tau1TightIsoObjectSelection.h_count->Fill("AtLeast2taus",1.);	
-			fillHistoCollection ( myHistoColl_Tau1TightIsoObjectSelection, Tau1TightIsoObjectSelectionCollection,1.);
-	    }
-	if(!((int)(TauTightIsoObjectSelectionCollection.tau.size() >= 2))){			//check if there is at least min taus in the event
-			myHistoColl_TauTightIsoObjectSelection.h_count->Fill("AtLeast2taus",1.);	
-			fillHistoCollection ( myHistoColl_TauTightIsoObjectSelection, TauTightIsoObjectSelectionCollection,1.);
-	    }
+
+	makeSelection (myHistoColl_TauLooseIsoObjectSelection, TauLooseIsoObjectSelectionCollection,1.);
+	makeSelection (myHistoColl_TauMediumIsoObjectSelection, TauMediumIsoObjectSelectionCollection,1.);
+	makeSelection (myHistoColl_Tau1TightIsoObjectSelection, Tau1TightIsoObjectSelectionCollection,1.);
+	makeSelection (myHistoColl_TauTightIsoObjectSelection, TauTightIsoObjectSelectionCollection,1.);
 
 
 	//clearing event collections
