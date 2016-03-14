@@ -179,6 +179,13 @@ struct MyHistoCollection {
 		h_count->SetBit(TH1::kCanRebin);
 		h_count->SetStats(0);
 		h_count->Fill("NoCuts",0);
+		h_count->Fill("AtLeast2taus",0.);	
+		h_count->Fill("DiTauSign",0.);	
+		h_count->Fill("BtagVeto",0.);	
+		h_count->Fill("METcut",0.);	
+		h_count->Fill("DiJetDeta",0.);	
+		h_count->Fill("DiJetSignEta",0.);	
+		h_count->Fill("DiJetInvMass",0.);	
 
 		h_njet = subDir.make<TH1F>("h_njet", "h_njet", 21, -0.5, 20.5);
 		h_njet->GetXaxis()->SetTitle("number of jets not matched to #tau");
@@ -411,7 +418,7 @@ TauProperties Inv2tMassIndex(MyEventCollection collection)
 // Fill histograms
 
 
-void fillHistoCollection (MyHistoCollection &inputHistoCollection, MyEventCollection inputEventCollection, double weight) {
+void fillHistoCollection (MyHistoCollection &inputHistoCollection, MyEventCollection inputEventCollection, double weight, bool verbose=false) {
 
 	// ---------------------
 	// -- fill histograms --
@@ -420,7 +427,7 @@ void fillHistoCollection (MyHistoCollection &inputHistoCollection, MyEventCollec
 	using namespace std;
 
 
-	bool verbose=false;  
+	//bool verbose=false;	
 	//JETS	  
 
 	//find index of leading jets
@@ -447,20 +454,27 @@ void fillHistoCollection (MyHistoCollection &inputHistoCollection, MyEventCollec
 	if (jetIndex.first < 99999)  {
 		inputHistoCollection.h_jet1pt->Fill(inputEventCollection.jet[jetIndex.first]->pt(),weight);
 		inputHistoCollection.h_jet1eta->Fill(inputEventCollection.jet[jetIndex.first]->eta(),weight);
+		if(verbose)std::cout<<"Pass selection -> Fill jet1pt="<<inputEventCollection.jet[jetIndex.first]->pt()<<", weight="<<weight<<std::endl;
+		if(verbose)std::cout<<"Pass selection -> Fill jet1eta="<<inputEventCollection.jet[jetIndex.first]->eta()<<", weight="<<weight<<std::endl;
 	}
 	if (jetIndex.second < 99999) {
 		inputHistoCollection.h_jet2pt->Fill(inputEventCollection.jet[jetIndex.second]->pt(),weight);
 		inputHistoCollection.h_jet2eta->Fill(inputEventCollection.jet[jetIndex.second]->eta(),weight);
+		if(verbose)std::cout<<"Pass selection -> Fill jet2pt="<<inputEventCollection.jet[jetIndex.second]->pt()<<", weight="<<weight<<std::endl;
+		if(verbose)std::cout<<"Pass selection -> Fill jet2eta="<<inputEventCollection.jet[jetIndex.second]->eta()<<", weight="<<weight<<std::endl;
 	}
 
 	//fill 2-jet-event inv. mass and eta-difference
 	if ( Inv2j.Mass >= 0 ) {
 		inputHistoCollection.h_dijetinvariantmass ->Fill(Inv2j.Mass,weight);
 		inputHistoCollection.h_dijetdeltaeta ->Fill(Inv2j.dEta,weight);
+		if(verbose)std::cout<<"Pass selection -> Fill dijetinvariantmass="<< Inv2j.Mass <<", weight="<<weight<<std::endl;
+		if(verbose)std::cout<<"Pass selection -> Fill dijetdeltaeta="<< Inv2j.dEta <<", weight="<<weight<<std::endl;
 	}
 
 	//fill ht distribution
 	inputHistoCollection.h_ht -> Fill(ht_jets,weight);
+	if(verbose)std::cout<<"Pass selection -> Fill ht_jets="<< ht_jets <<", weight="<<weight<<std::endl;
 
 	//fill jet tau distance distribution
 	//if(jetIndex.first<99999 && jetIndex.second<99999){
@@ -487,11 +501,15 @@ void fillHistoCollection (MyHistoCollection &inputHistoCollection, MyEventCollec
 	if ( (Inv2t.first < 99999) && (Inv2t.second < 99999) ) {
 		//determine leading two tau invariant mass
 		inputHistoCollection.h_ditauinvariantmass ->Fill(Inv2t.Mass,weight);
+		if(verbose)std::cout<<"Pass selection -> Fill ditauinvariantmass="<< Inv2t.Mass <<", weight="<<weight<<std::endl;
 
 		//fill tau charge and  cosdeltaphi and deltaeta and 2Dpt-plot
 		inputHistoCollection.h_ditaucharge ->Fill(Inv2t.charge,weight);
+		if(verbose)std::cout<<"Pass selection -> Fill ditaucharge="<< Inv2t.charge <<", weight="<<weight<<std::endl;
 		inputHistoCollection.h_ditaucosdeltaphi ->Fill(Inv2t.cosDphi,weight);	
+		if(verbose)std::cout<<"Pass selection -> Fill ditaucosdeltaphi="<< Inv2t.cosDphi <<", weight="<<weight<<std::endl;
 		inputHistoCollection.h_ditaudeltaeta->Fill(Inv2t.dEta,weight);
+		if(verbose)std::cout<<"Pass selection -> Fill ditaudeltaeta="<< Inv2t.dEta <<", weight="<<weight<<std::endl;
 		inputHistoCollection.h2_tau1pt_vs_tau2pt->Fill(inputEventCollection.tau[Inv2t.first]->pt(),inputEventCollection.tau[Inv2t.second]->pt(),weight);   
 	}
 
@@ -499,17 +517,23 @@ void fillHistoCollection (MyHistoCollection &inputHistoCollection, MyEventCollec
 	if (Inv2t.first < 99999) {
 		inputHistoCollection.h_tau1pt->Fill(inputEventCollection.tau[Inv2t.first]->pt(),weight);
 		inputHistoCollection.h_tau1eta->Fill(inputEventCollection.tau[Inv2t.first]->eta(),weight);
+		if(verbose)std::cout<<"Pass selection -> Fill tau1pt="<< inputEventCollection.tau[Inv2t.first]->pt() <<", weight="<<weight<<std::endl;
+		if(verbose)std::cout<<"Pass selection -> Fill tau1eta="<< inputEventCollection.tau[Inv2t.first]->eta() <<", weight="<<weight<<std::endl;
 	}
 	if (Inv2t.second < 99999) {
 		inputHistoCollection.h_tau2pt->Fill(inputEventCollection.tau[Inv2t.second]->pt(),weight);
 		inputHistoCollection.h_tau2eta->Fill(inputEventCollection.tau[Inv2t.second]->eta(),weight);
+		if(verbose)std::cout<<"Pass selection -> Fill tau2pt="<< inputEventCollection.tau[Inv2t.second]->pt() <<", weight="<<weight<<std::endl;
+		if(verbose)std::cout<<"Pass selection -> Fill tau2eta="<< inputEventCollection.tau[Inv2t.second]->eta() <<", weight="<<weight<<std::endl;
 	}
 
 	//fill ht with taus included
 	inputHistoCollection.h_ht_withtau -> Fill(ht_jetsPtau,weight);
+	if(verbose)std::cout<<"Pass selection -> Fill ht_withtau="<< ht_jetsPtau <<", weight="<<weight<<std::endl;
 
 	// MET
 	inputHistoCollection.h_met -> Fill(inputEventCollection.met[0]->pt(),weight);
+	if(verbose)std::cout<<"Pass selection -> Fill met="<< inputEventCollection.met[0]->pt() <<", weight="<<weight<<std::endl;
 
 	//fill DiJetInvMass_vs_DiJetDEta
 	inputHistoCollection.h2_DiJetInvMass_vs_DiJetDEta -> Fill(Inv2j.dEta, Inv2j.Mass,weight);
@@ -518,7 +542,7 @@ void fillHistoCollection (MyHistoCollection &inputHistoCollection, MyEventCollec
 
 } 
 
-void makeSelection (MyHistoCollection &inputHistoCollection, MyEventCollection inputEventCollection, double weight) {
+void makeSelection (MyHistoCollection &inputHistoCollection, MyHistoCollection &inputHistoCollectionVBFInverted, MyEventCollection inputEventCollection, MyEventCollection inputEventCollectionVBFInverted, double weight, bool verbose=false) {
 
 	//check if there is at least min taus in the event	
 	inputHistoCollection.h_count->Fill("NoCuts",weight);
@@ -541,25 +565,37 @@ void makeSelection (MyHistoCollection &inputHistoCollection, MyEventCollection i
 
 	//MET cut
 	if( inputEventCollection.met[0]->pt() > 30. ){			
+	//if( true ){			
 		inputHistoCollection.h_count->Fill("METcut",weight);	
 	} else return;
 
 	MassAndIndex Inv2j = Inv2jMassIndex(inputEventCollection);
 
-	if ( fabs(Inv2j.dEta) > 3.9 ) {
+	//if ( fabs(Inv2j.dEta) > 3.9 ) {
+	if ( fabs(Inv2j.dEta) > 2.9 ) {
 		inputHistoCollection.h_count->Fill("DiJetDeta",weight);	
 		
-	} else return;
+	} else {
+		fillHistoCollection ( inputHistoCollectionVBFInverted, inputEventCollectionVBFInverted,weight);
+		return;
+	}
 
 
 	if (Inv2j.signEta < 0.) {
 		inputHistoCollection.h_count->Fill("DiJetSignEta",weight);	
-	} else return;
+	} else {
+		fillHistoCollection ( inputHistoCollectionVBFInverted, inputEventCollectionVBFInverted,weight);
+		return;
+	}
 
 	if (Inv2j.Mass > 250.) {
+	//if( true ){			
 		inputHistoCollection.h_count->Fill("DiJetInvMass",weight);	
 		fillHistoCollection ( inputHistoCollection, inputEventCollection,weight);
-	} else return;
+	} else {
+		fillHistoCollection ( inputHistoCollectionVBFInverted, inputEventCollectionVBFInverted,weight);
+		return;
+	}
 
 	return;
 
@@ -591,18 +627,34 @@ class VBFSUSYanalyzer : public edm::EDAnalyzer {
 
 		MyEventCollection baselineObjectSelectionCollection;
 		MyEventCollection TauLooseIsoObjectSelectionCollection;
+		MyEventCollection TauLooseIsoVBFInvertedObjectSelectionCollection;
 		MyEventCollection TauMediumIsoObjectSelectionCollection;
+		MyEventCollection TauMediumIsoVBFInvertedObjectSelectionCollection;
 		MyEventCollection Tau1TightIsoObjectSelectionCollection;
+		MyEventCollection Tau1TightIsoVBFInvertedObjectSelectionCollection;
 		MyEventCollection TauTightIsoObjectSelectionCollection;
+		MyEventCollection TauTightIsoVBFInvertedObjectSelectionCollection;
+		MyEventCollection TauAnyIsoObjectSelectionCollection;
+		MyEventCollection TauAnyIsoVBFInvertedObjectSelectionCollection;
+		MyEventCollection TauAnyIsoPlusNonesObjectSelectionCollection;
+		MyEventCollection TauAnyIsoPlusNonesVBFInvertedObjectSelectionCollection;
 
 		// ---------histograms-----------------------------
 		edm::Service<TFileService> fs;	
 		TH1F* count;
 		MyHistoCollection myHistoColl_baselineSelection;
+		MyHistoCollection myHistoColl_TauAnyIsoObjectSelection;
+		MyHistoCollection myHistoColl_TauAnyIsoVBFInvertedObjectSelection;
+		MyHistoCollection myHistoColl_TauAnyIsoPlusNonesObjectSelection;
+		MyHistoCollection myHistoColl_TauAnyIsoPlusNonesVBFInvertedObjectSelection;
 		MyHistoCollection myHistoColl_TauLooseIsoObjectSelection;
+		MyHistoCollection myHistoColl_TauLooseIsoVBFInvertedObjectSelection;
 		MyHistoCollection myHistoColl_TauMediumIsoObjectSelection;
+		MyHistoCollection myHistoColl_TauMediumIsoVBFInvertedObjectSelection;
 		MyHistoCollection myHistoColl_Tau1TightIsoObjectSelection;
+		MyHistoCollection myHistoColl_Tau1TightIsoVBFInvertedObjectSelection;
 		MyHistoCollection myHistoColl_TauTightIsoObjectSelection;
+		MyHistoCollection myHistoColl_TauTightIsoVBFInvertedObjectSelection;
 
 		// ----------member data ---------------------------
 
@@ -644,10 +696,16 @@ VBFSUSYanalyzer::VBFSUSYanalyzer(const edm::ParameterSet& iConfig):
 	//Event collection init
 
 	baselineObjectSelectionCollection.init("baselineObjectSelection");
+	TauAnyIsoObjectSelectionCollection.init("TauAnyIsoObjectSelection");
+	TauAnyIsoVBFInvertedObjectSelectionCollection.init("TauAnyIsoVBFInvertedObjectSelection");
+	TauAnyIsoObjectSelectionCollection.init("TauAnyIsoPlusNonesObjectSelection");
+	TauAnyIsoVBFInvertedObjectSelectionCollection.init("TauAnyIsoPlusNonesVBFInvertedObjectSelection");
 	TauLooseIsoObjectSelectionCollection.init("TauLooseIsoObjectSelection");
+	TauLooseIsoVBFInvertedObjectSelectionCollection.init("TauLooseIsoVBFInvertedObjectSelection");
 	TauMediumIsoObjectSelectionCollection.init("TauMediumIsoObjectSelection");
+	TauMediumIsoVBFInvertedObjectSelectionCollection.init("TauMediumIsoVBFInvertedObjectSelection");
 	TauTightIsoObjectSelectionCollection.init("Tau1TightIsoObjectSelection");
-	TauTightIsoObjectSelectionCollection.init("TauTightIsoObjectSelection");
+	TauTightIsoVBFInvertedObjectSelectionCollection.init("Tau1TightIsoVBFInvertedObjectSelection");
 
 
 	//histogram initialization	
@@ -656,43 +714,18 @@ VBFSUSYanalyzer::VBFSUSYanalyzer(const edm::ParameterSet& iConfig):
 	count->SetStats(0);
 	count->Fill("NoCuts",0);
 	myHistoColl_baselineSelection.init("baselineObjectSelection");
-	
+	myHistoColl_TauAnyIsoObjectSelection.init("TauAnyIsoObjectSelection");
+	myHistoColl_TauAnyIsoVBFInvertedObjectSelection.init("TauAnyIsoVBFInvertedObjectSelection");
+	myHistoColl_TauAnyIsoPlusNonesObjectSelection.init("TauAnyIsoPlusNonesObjectSelection");
+	myHistoColl_TauAnyIsoPlusNonesVBFInvertedObjectSelection.init("TauAnyIsoPlusNonesVBFInvertedObjectSelection");
 	myHistoColl_TauLooseIsoObjectSelection.init("TauLooseIsoObjectSelection");
-	myHistoColl_TauLooseIsoObjectSelection.h_count->Fill("AtLeast2taus",0.);	
-	myHistoColl_TauLooseIsoObjectSelection.h_count->Fill("DiTauSign",0.);	
-	myHistoColl_TauLooseIsoObjectSelection.h_count->Fill("BtagVeto",0.);	
-	myHistoColl_TauLooseIsoObjectSelection.h_count->Fill("METcut",0.);	
-	myHistoColl_TauLooseIsoObjectSelection.h_count->Fill("DiJetDeta",0.);	
-	myHistoColl_TauLooseIsoObjectSelection.h_count->Fill("DiJetSignEta",0.);	
-	myHistoColl_TauLooseIsoObjectSelection.h_count->Fill("DiJetInvMass",0.);	
-	
+	myHistoColl_TauLooseIsoVBFInvertedObjectSelection.init("TauLooseIsoVBFInvertedObjectSelection");
 	myHistoColl_TauMediumIsoObjectSelection.init("TauMediumIsoObjectSelection");
-	myHistoColl_TauMediumIsoObjectSelection.h_count->Fill("AtLeast2taus",0.);	
-	myHistoColl_TauMediumIsoObjectSelection.h_count->Fill("DiTauSign",0.);	
-	myHistoColl_TauMediumIsoObjectSelection.h_count->Fill("BtagVeto",0.);	
-	myHistoColl_TauMediumIsoObjectSelection.h_count->Fill("METcut",0.);	
-	myHistoColl_TauMediumIsoObjectSelection.h_count->Fill("DiJetDeta",0.);	
-	myHistoColl_TauMediumIsoObjectSelection.h_count->Fill("DiJetSignEta",0.);	
-	myHistoColl_TauMediumIsoObjectSelection.h_count->Fill("DiJetInvMass",0.);	
-	
+	myHistoColl_TauMediumIsoVBFInvertedObjectSelection.init("TauMediumIsoVBFInvertedObjectSelection");
 	myHistoColl_Tau1TightIsoObjectSelection.init("Tau1TightIsoObjectSelection");
-	myHistoColl_Tau1TightIsoObjectSelection.h_count->Fill("AtLeast2taus",0.);	
-	myHistoColl_Tau1TightIsoObjectSelection.h_count->Fill("DiTauSign",0.);	
-	myHistoColl_Tau1TightIsoObjectSelection.h_count->Fill("BtagVeto",0.);	
-	myHistoColl_Tau1TightIsoObjectSelection.h_count->Fill("METcut",0.);	
-	myHistoColl_Tau1TightIsoObjectSelection.h_count->Fill("DiJetDeta",0.);	
-	myHistoColl_Tau1TightIsoObjectSelection.h_count->Fill("DiJetSignEta",0.);	
-	myHistoColl_Tau1TightIsoObjectSelection.h_count->Fill("DiJetInvMass",0.);	
-	
+	myHistoColl_Tau1TightIsoVBFInvertedObjectSelection.init("Tau1TightIsoVBFInvertedObjectSelection");
 	myHistoColl_TauTightIsoObjectSelection.init("TauTightIsoObjectSelection");
-	myHistoColl_TauTightIsoObjectSelection.h_count->Fill("AtLeast2taus",0.);	
-	myHistoColl_TauTightIsoObjectSelection.h_count->Fill("DiTauSign",0.);	
-	myHistoColl_TauTightIsoObjectSelection.h_count->Fill("BtagVeto",0.);	
-	myHistoColl_TauTightIsoObjectSelection.h_count->Fill("METcut",0.);	
-	myHistoColl_TauTightIsoObjectSelection.h_count->Fill("DiJetDeta",0.);	
-	myHistoColl_TauTightIsoObjectSelection.h_count->Fill("DiJetSignEta",0.);	
-	myHistoColl_TauTightIsoObjectSelection.h_count->Fill("DiJetInvMass",0.);	
-
+	myHistoColl_TauTightIsoVBFInvertedObjectSelection.init("TauTightIsoVBFInvertedObjectSelection");
 
 }
 
@@ -793,6 +826,8 @@ VBFSUSYanalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
 	std::vector<const pat::Tau*> tights;
 	std::vector<const pat::Tau*> mediums;
 	std::vector<const pat::Tau*> looses;
+	std::vector<const pat::Tau*> anyiso;
+	std::vector<const pat::Tau*> anyisoplusnones;
 	std::vector<const pat::Tau*> nones;
 
 	//smart tau selection
@@ -819,17 +854,60 @@ VBFSUSYanalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
 
 		baselineObjectSelectionCollection.tau.push_back(&tau);
 
-		if(!(tau.tauID("byTightCombinedIsolationDeltaBetaCorr3Hits")  <= 0.5)) tights.push_back(&tau);
-		else if(!(tau.tauID("byMediumCombinedIsolationDeltaBetaCorr3Hits")  <= 0.5)) mediums.push_back(&tau);
-		else if(!(tau.tauID("byLooseCombinedIsolationDeltaBetaCorr3Hits")  <= 0.5)) looses.push_back(&tau);
-		else nones.push_back(&tau);
+		if ( tau.tauID("byTightCombinedIsolationDeltaBetaCorr3Hits")  > 0.5) {tights.push_back(&tau); anyiso.push_back(&tau); anyisoplusnones.push_back(&tau);}
+		else if( tau.tauID("byMediumCombinedIsolationDeltaBetaCorr3Hits")  > 0.5) {mediums.push_back(&tau); anyiso.push_back(&tau); anyisoplusnones.push_back(&tau);}
+		else if( tau.tauID("byLooseCombinedIsolationDeltaBetaCorr3Hits")  > 0.5) {looses.push_back(&tau); anyiso.push_back(&tau); anyisoplusnones.push_back(&tau);}
+		else {nones.push_back(&tau); anyisoplusnones.push_back(&tau);}
 
 	}
 
-	if(tights.size()==2) for(unsigned int t =0;t<tights.size();++t) {TauTightIsoObjectSelectionCollection.tau.push_back(tights[t]);}
-	else if(tights.size()==1 && (mediums.size()+looses.size()+nones.size())==1) {tights.insert(tights.end(),mediums.begin(), mediums.end()); tights.insert(tights.end(),looses.begin(), looses.end()); tights.insert(tights.end(),nones.begin(), nones.end()); for(unsigned int t =0;t<tights.size();++t) {Tau1TightIsoObjectSelectionCollection.tau.push_back(tights[t]);}}
-	else if(mediums.size()>=1 && (mediums.size()+looses.size()+nones.size())==2) {mediums.insert(mediums.end(), looses.begin(), looses.end()); mediums.insert(mediums.end(), nones.begin(), nones.end()); for(unsigned int t =0;t<mediums.size();++t) {TauMediumIsoObjectSelectionCollection.tau.push_back(mediums[t]);}}
-	else if(looses.size()>=1 && (looses.size()+nones.size())==2) {looses.insert(looses.end(), nones.begin(), nones.end()); for(unsigned int t =0;t<looses.size();++t) {TauLooseIsoObjectSelectionCollection.tau.push_back(looses[t]);}}
+	//cout << "tight size: " << tights.size() << endl;
+	//cout << "medium size: " << mediums.size() << endl;
+	//cout << "loose size: " << looses.size() << endl;
+	//cout << "anyiso size: " << anyiso.size() << endl;
+	//cout << "anyisoplusnones size: " << anyisoplusnones.size() << endl;
+
+	if(anyiso.size()>=1) for(unsigned int t =0;t<anyiso.size();++t) {
+		TauAnyIsoObjectSelectionCollection.tau.push_back(anyiso[t]);
+		TauAnyIsoVBFInvertedObjectSelectionCollection.tau.push_back(anyiso[t]);
+	}
+	
+	if( (anyiso.size()>=1) && (anyisoplusnones.size()>=1) ) for(unsigned int t =0;t<anyisoplusnones.size();++t){ 
+		TauAnyIsoPlusNonesObjectSelectionCollection.tau.push_back(anyisoplusnones[t]);
+		TauAnyIsoPlusNonesVBFInvertedObjectSelectionCollection.tau.push_back(anyisoplusnones[t]);
+	}
+
+	if(tights.size()==2) for(unsigned int t =0;t<tights.size();++t) {
+		TauTightIsoObjectSelectionCollection.tau.push_back(tights[t]);
+		TauTightIsoVBFInvertedObjectSelectionCollection.tau.push_back(tights[t]);
+	}
+
+	else if(tights.size()==1 && (mediums.size()+looses.size()+nones.size())==1) {
+		tights.insert(tights.end(),mediums.begin(), mediums.end()); 
+		tights.insert(tights.end(),looses.begin(), looses.end()); 
+		tights.insert(tights.end(),nones.begin(), nones.end()); 
+		for(unsigned int t =0;t<tights.size();++t) {
+			Tau1TightIsoObjectSelectionCollection.tau.push_back(tights[t]);
+			Tau1TightIsoVBFInvertedObjectSelectionCollection.tau.push_back(tights[t]);
+		}
+	}
+
+	else if(mediums.size()>=1 && (mediums.size()+looses.size()+nones.size())==2) {
+		mediums.insert(mediums.end(), looses.begin(), looses.end()); 
+		mediums.insert(mediums.end(), nones.begin(), nones.end()); 
+		for(unsigned int t =0;t<mediums.size();++t) {
+			TauMediumIsoObjectSelectionCollection.tau.push_back(mediums[t]);
+			TauMediumIsoVBFInvertedObjectSelectionCollection.tau.push_back(mediums[t]);
+		}
+	}
+
+	else if(looses.size()>=1 && (looses.size()+nones.size())==2) {
+		looses.insert(looses.end(), nones.begin(), nones.end()); 
+		for(unsigned int t =0;t<looses.size();++t) {
+			TauLooseIsoObjectSelectionCollection.tau.push_back(looses[t]);
+			TauLooseIsoVBFInvertedObjectSelectionCollection.tau.push_back(looses[t]);
+		}
+	}
 	//else if(nones.size()==2) for(unsigned int t =0;t<nones.size();++t) {int i=nones[t]; TauNoIsoObjectSelectionCollection.tau.push_back(&tau[i]);}
 
 	// jet && bjet selection
@@ -844,6 +922,7 @@ VBFSUSYanalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
 		double T1Distance = TauJetMinDistance(Tau1TightIsoObjectSelectionCollection, jet);
 		double mediumDistance = TauJetMinDistance(TauMediumIsoObjectSelectionCollection, jet);
 		double looseDistance = TauJetMinDistance(TauLooseIsoObjectSelectionCollection, jet);
+		double anyisoDistance = TauJetMinDistance(TauAnyIsoObjectSelectionCollection, jet);
 		//double NoDistance = TauJetMinDistance(TauNoIsoObjectSelectionCollection, jet[j].eta, jet[j].phi);
 
 		bool jetid=true;
@@ -859,30 +938,74 @@ VBFSUSYanalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
 		//Filling Jet collection
 		if(      /*jet[j].pt >= 50.  &&*/ jetid		){
 			if(	baseDistance >= 0.3	) baselineObjectSelectionCollection.jet.push_back(&jet);	
-				  if(	mainDistance >= 0.3	) TauTightIsoObjectSelectionCollection.jet.push_back(&jet);
-				  if(	T1Distance >= 0.3	) Tau1TightIsoObjectSelectionCollection.jet.push_back(&jet);
-				  if(	mediumDistance >= 0.3	) TauMediumIsoObjectSelectionCollection.jet.push_back(&jet);
-				  if(	looseDistance >= 0.3	) TauLooseIsoObjectSelectionCollection.jet.push_back(&jet);
+				  if(	mainDistance >= 0.3	) {
+					  TauTightIsoObjectSelectionCollection.jet.push_back(&jet);
+					  TauTightIsoVBFInvertedObjectSelectionCollection.jet.push_back(&jet);
+				  }
+				  if(	T1Distance >= 0.3	) {
+					  Tau1TightIsoObjectSelectionCollection.jet.push_back(&jet);
+					  Tau1TightIsoVBFInvertedObjectSelectionCollection.jet.push_back(&jet);
+				  }
+				  if(	mediumDistance >= 0.3	) {
+					  TauMediumIsoObjectSelectionCollection.jet.push_back(&jet);
+					  TauMediumIsoVBFInvertedObjectSelectionCollection.jet.push_back(&jet);
+				  }
+				  if(	looseDistance >= 0.3	) {
+					  TauLooseIsoObjectSelectionCollection.jet.push_back(&jet);
+					  TauLooseIsoVBFInvertedObjectSelectionCollection.jet.push_back(&jet);
+				  }
+				  if(	anyisoDistance >= 0.3	) {
+					  TauAnyIsoObjectSelectionCollection.jet.push_back(&jet);
+					  TauAnyIsoPlusNonesObjectSelectionCollection.jet.push_back(&jet);
+					  TauAnyIsoVBFInvertedObjectSelectionCollection.jet.push_back(&jet);
+					  TauAnyIsoPlusNonesVBFInvertedObjectSelectionCollection.jet.push_back(&jet);
+				  }
 			//	  if(	NoDistance  >= 0.3	) TauNoIsoObjectSelectionCollection.jet.push_back(&jet[j]);
 		}
 		
 		//Filling bJet collection
 		if(fabs(jet.eta()) <= 2.4 && jet.bDiscriminator("combinedSecondaryVertexBJetTags") /*jet[j].bDiscriminator_combinedSecondaryVertexBJetTags*/ > 0.244    ){
 			if(	baseDistance >= 0.3	) baselineObjectSelectionCollection.bjet.push_back(&jet);	
-						  if(	mainDistance >= 0.3	) TauTightIsoObjectSelectionCollection.bjet.push_back(&jet);
-						  if(	T1Distance >= 0.3	) Tau1TightIsoObjectSelectionCollection.bjet.push_back(&jet);
-						  if(	mediumDistance >= 0.3	) TauMediumIsoObjectSelectionCollection.bjet.push_back(&jet);
-						  if(	looseDistance >= 0.3	) TauLooseIsoObjectSelectionCollection.bjet.push_back(&jet);
+						  if(	mainDistance >= 0.3	) {
+							  TauTightIsoObjectSelectionCollection.bjet.push_back(&jet);
+							  TauTightIsoVBFInvertedObjectSelectionCollection.bjet.push_back(&jet);
+						  }
+						  if(	T1Distance >= 0.3	) {
+							  Tau1TightIsoObjectSelectionCollection.bjet.push_back(&jet);
+							  Tau1TightIsoVBFInvertedObjectSelectionCollection.bjet.push_back(&jet);
+						  }
+						  if(	mediumDistance >= 0.3	) {
+							  TauMediumIsoObjectSelectionCollection.bjet.push_back(&jet);
+							  TauMediumIsoVBFInvertedObjectSelectionCollection.bjet.push_back(&jet);
+						  }
+						  if(	looseDistance >= 0.3	) {
+							  TauLooseIsoObjectSelectionCollection.bjet.push_back(&jet);
+							  TauLooseIsoVBFInvertedObjectSelectionCollection.bjet.push_back(&jet);
+						  }
+						  if(	anyisoDistance >= 0.3	) {
+							  TauAnyIsoObjectSelectionCollection.bjet.push_back(&jet);
+							  TauAnyIsoPlusNonesObjectSelectionCollection.bjet.push_back(&jet);
+							  TauAnyIsoVBFInvertedObjectSelectionCollection.bjet.push_back(&jet);
+							  TauAnyIsoPlusNonesVBFInvertedObjectSelectionCollection.bjet.push_back(&jet);
+						  }
 			//			  if(	NoDistance  >= 0.3	) TauNoIsoObjectSelectionCollection.bjet.push_back(&jet[j]);
 		}
 	}	
 
 	//MET selection
 	baselineObjectSelectionCollection.met.push_back(&met);
+	TauAnyIsoObjectSelectionCollection.met.push_back(&met);
+	TauAnyIsoVBFInvertedObjectSelectionCollection.met.push_back(&met);
+	TauAnyIsoPlusNonesObjectSelectionCollection.met.push_back(&met);
+	TauAnyIsoPlusNonesVBFInvertedObjectSelectionCollection.met.push_back(&met);
 	TauLooseIsoObjectSelectionCollection.met.push_back(&met);
+	TauLooseIsoVBFInvertedObjectSelectionCollection.met.push_back(&met);
 	TauMediumIsoObjectSelectionCollection.met.push_back(&met);
+	TauMediumIsoVBFInvertedObjectSelectionCollection.met.push_back(&met);
 	Tau1TightIsoObjectSelectionCollection.met.push_back(&met);
+	Tau1TightIsoVBFInvertedObjectSelectionCollection.met.push_back(&met);
 	TauTightIsoObjectSelectionCollection.met.push_back(&met);
+	TauTightIsoVBFInvertedObjectSelectionCollection.met.push_back(&met);
 
 	
 	//Filling count plot
@@ -896,19 +1019,28 @@ VBFSUSYanalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
 	myHistoColl_baselineSelection.h_count->Fill("NoCuts",1.);	
 	fillHistoCollection ( myHistoColl_baselineSelection, baselineObjectSelectionCollection,1.);
 
-
-	makeSelection (myHistoColl_TauLooseIsoObjectSelection, TauLooseIsoObjectSelectionCollection,1.);
-	makeSelection (myHistoColl_TauMediumIsoObjectSelection, TauMediumIsoObjectSelectionCollection,1.);
-	makeSelection (myHistoColl_Tau1TightIsoObjectSelection, Tau1TightIsoObjectSelectionCollection,1.);
-	makeSelection (myHistoColl_TauTightIsoObjectSelection, TauTightIsoObjectSelectionCollection,1.);
+	makeSelection (myHistoColl_TauAnyIsoObjectSelection, myHistoColl_TauAnyIsoVBFInvertedObjectSelection, TauAnyIsoObjectSelectionCollection, TauAnyIsoVBFInvertedObjectSelectionCollection, 1.);
+	makeSelection (myHistoColl_TauAnyIsoPlusNonesObjectSelection, myHistoColl_TauAnyIsoPlusNonesVBFInvertedObjectSelection, TauAnyIsoPlusNonesObjectSelectionCollection, TauAnyIsoPlusNonesVBFInvertedObjectSelectionCollection, 1.);
+	makeSelection (myHistoColl_TauLooseIsoObjectSelection, myHistoColl_TauLooseIsoVBFInvertedObjectSelection, TauLooseIsoObjectSelectionCollection, TauLooseIsoVBFInvertedObjectSelectionCollection, 1.);
+	makeSelection (myHistoColl_TauMediumIsoObjectSelection, myHistoColl_TauMediumIsoVBFInvertedObjectSelection, TauMediumIsoObjectSelectionCollection, TauMediumIsoVBFInvertedObjectSelectionCollection, 1.);
+	makeSelection (myHistoColl_Tau1TightIsoObjectSelection, myHistoColl_Tau1TightIsoVBFInvertedObjectSelection, Tau1TightIsoObjectSelectionCollection, Tau1TightIsoVBFInvertedObjectSelectionCollection, 1.);
+	makeSelection (myHistoColl_TauTightIsoObjectSelection, myHistoColl_TauTightIsoVBFInvertedObjectSelection, TauTightIsoObjectSelectionCollection, TauTightIsoVBFInvertedObjectSelectionCollection, 1.);
 
 
 	//clearing event collections
 	baselineObjectSelectionCollection.clear();
+	TauAnyIsoObjectSelectionCollection.clear();
+	TauAnyIsoVBFInvertedObjectSelectionCollection.clear();
+	TauAnyIsoPlusNonesObjectSelectionCollection.clear();
+	TauAnyIsoPlusNonesVBFInvertedObjectSelectionCollection.clear();
 	TauLooseIsoObjectSelectionCollection.clear();
+	TauLooseIsoVBFInvertedObjectSelectionCollection.clear();
 	TauMediumIsoObjectSelectionCollection.clear();
+	TauMediumIsoVBFInvertedObjectSelectionCollection.clear();
 	Tau1TightIsoObjectSelectionCollection.clear();
+	Tau1TightIsoVBFInvertedObjectSelectionCollection.clear();
 	TauTightIsoObjectSelectionCollection.clear();
+	TauTightIsoVBFInvertedObjectSelectionCollection.clear();
 
 }
 
