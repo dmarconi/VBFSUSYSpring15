@@ -172,6 +172,7 @@ struct MyHistoCollection {
 
 		label = inputlabel;
 		TFileDirectory subDir = fs->mkdir( inputlabel );
+		TH1::SetDefaultSumw2();
 		//f->mkdir(inputlabel.c_str());
 		//f->cd(inputlabel.c_str());
 
@@ -750,6 +751,7 @@ VBFSUSYanalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
 	using namespace edm;
 	using namespace std;
 
+	bool verbose = false;
 
 	edm::Handle<reco::VertexCollection> vertices;
 	iEvent.getByToken(vtxToken_, vertices);
@@ -854,27 +856,41 @@ VBFSUSYanalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
 
 		baselineObjectSelectionCollection.tau.push_back(&tau);
 
-		if ( tau.tauID("byTightCombinedIsolationDeltaBetaCorr3Hits")  > 0.5) {tights.push_back(&tau); anyiso.push_back(&tau); anyisoplusnones.push_back(&tau);}
-		else if( tau.tauID("byMediumCombinedIsolationDeltaBetaCorr3Hits")  > 0.5) {mediums.push_back(&tau); anyiso.push_back(&tau); anyisoplusnones.push_back(&tau);}
-		else if( tau.tauID("byLooseCombinedIsolationDeltaBetaCorr3Hits")  > 0.5) {looses.push_back(&tau); anyiso.push_back(&tau); anyisoplusnones.push_back(&tau);}
-		else {nones.push_back(&tau); anyisoplusnones.push_back(&tau);}
+		if ( tau.tauID("byTightCombinedIsolationDeltaBetaCorr3Hits")  > 0.5) tights.push_back(&tau);
+		else if( tau.tauID("byMediumCombinedIsolationDeltaBetaCorr3Hits")  > 0.5) mediums.push_back(&tau);
+		else if( tau.tauID("byLooseCombinedIsolationDeltaBetaCorr3Hits")  > 0.5) looses.push_back(&tau); 
+		else nones.push_back(&tau);
 
 	}
 
-	//cout << "tight size: " << tights.size() << endl;
-	//cout << "medium size: " << mediums.size() << endl;
-	//cout << "loose size: " << looses.size() << endl;
-	//cout << "anyiso size: " << anyiso.size() << endl;
-	//cout << "anyisoplusnones size: " << anyisoplusnones.size() << endl;
+	//
 
-	if(anyiso.size()>=1) for(unsigned int t =0;t<anyiso.size();++t) {
-		TauAnyIsoObjectSelectionCollection.tau.push_back(anyiso[t]);
-		TauAnyIsoVBFInvertedObjectSelectionCollection.tau.push_back(anyiso[t]);
+	anyiso.insert(anyiso.end(), tights.begin(),tights.end());	
+	anyiso.insert(anyiso.end(), mediums.begin(), mediums.end());	
+	anyiso.insert(anyiso.end(), looses.begin(), looses.end());	
+
+	if(anyiso.size()>=1) {
+		anyisoplusnones.insert(anyisoplusnones.end(), anyiso.begin(), anyiso.end());
+		anyisoplusnones.insert(anyisoplusnones.end(), nones.begin(), nones.end());
+		for(unsigned int t =0;t<anyiso.size();++t) {
+			TauAnyIsoObjectSelectionCollection.tau.push_back(anyiso[t]);
+			TauAnyIsoVBFInvertedObjectSelectionCollection.tau.push_back(anyiso[t]);
+		}
+		for(unsigned int t =0;t<anyisoplusnones.size();++t){ 
+			TauAnyIsoPlusNonesObjectSelectionCollection.tau.push_back(anyisoplusnones[t]);
+			TauAnyIsoPlusNonesVBFInvertedObjectSelectionCollection.tau.push_back(anyisoplusnones[t]);
+		}
 	}
-	
-	if( (anyiso.size()>=1) && (anyisoplusnones.size()>=1) ) for(unsigned int t =0;t<anyisoplusnones.size();++t){ 
-		TauAnyIsoPlusNonesObjectSelectionCollection.tau.push_back(anyisoplusnones[t]);
-		TauAnyIsoPlusNonesVBFInvertedObjectSelectionCollection.tau.push_back(anyisoplusnones[t]);
+
+
+	if( (anyiso.size()>=1) && (nones.size()>=1) && ( (mediums.size()+looses.size()+tights.size()) >=2 )){
+		if (verbose) cout << "------------------"<< endl;
+		if (verbose) cout << "tight size: " << tights.size() << endl;
+		if (verbose) cout << "medium size: " << mediums.size() << endl;
+		if (verbose) cout << "loose size: " << looses.size() << endl;
+		if (verbose) cout << "anyiso size: " << anyiso.size() << endl;
+		if (verbose) cout << "nones size: " << nones.size() << endl;
+		if (verbose) cout << "anyisoplusnones size: " << anyisoplusnones.size() << endl;
 	}
 
 	if(tights.size()==2) for(unsigned int t =0;t<tights.size();++t) {
@@ -908,6 +924,7 @@ VBFSUSYanalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
 			TauLooseIsoVBFInvertedObjectSelectionCollection.tau.push_back(looses[t]);
 		}
 	}
+
 	//else if(nones.size()==2) for(unsigned int t =0;t<nones.size();++t) {int i=nones[t]; TauNoIsoObjectSelectionCollection.tau.push_back(&tau[i]);}
 
 	// jet && bjet selection
