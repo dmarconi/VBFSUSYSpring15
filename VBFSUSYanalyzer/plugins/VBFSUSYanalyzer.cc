@@ -627,16 +627,26 @@ class VBFSUSYanalyzer : public edm::EDAnalyzer {
 		// ---------event collections-----------------------------
 
 		MyEventCollection baselineObjectSelectionCollection;
-		MyEventCollection TauLooseIsoObjectSelectionCollection;
-		MyEventCollection TauLooseIsoVBFInvertedObjectSelectionCollection;
-		MyEventCollection TauMediumIsoObjectSelectionCollection;
-		MyEventCollection TauMediumIsoVBFInvertedObjectSelectionCollection;
+		
+		MyEventCollection Tau2TightIsoObjectSelectionCollection;
+		MyEventCollection Tau2TightIsoVBFInvertedObjectSelectionCollection;
+		
 		MyEventCollection Tau1TightIsoObjectSelectionCollection;
 		MyEventCollection Tau1TightIsoVBFInvertedObjectSelectionCollection;
-		MyEventCollection TauTightIsoObjectSelectionCollection;
-		MyEventCollection TauTightIsoVBFInvertedObjectSelectionCollection;
+		
+		MyEventCollection Tau2MediumIsoObjectSelectionCollection;
+		MyEventCollection Tau2MediumIsoVBFInvertedObjectSelectionCollection;
+		MyEventCollection TauAntiTightIsoObjectSelectionCollection;
+		MyEventCollection TauAntiTightIsoVBFInvertedObjectSelectionCollection;
+		
+		MyEventCollection Tau2LooseIsoObjectSelectionCollection;
+		MyEventCollection Tau2LooseIsoVBFInvertedObjectSelectionCollection;
+		MyEventCollection TauAntiMediumIsoObjectSelectionCollection;
+		MyEventCollection TauAntiMediumIsoVBFInvertedObjectSelectionCollection;
+		
 		MyEventCollection TauAnyIsoObjectSelectionCollection;
 		MyEventCollection TauAnyIsoVBFInvertedObjectSelectionCollection;
+		
 		MyEventCollection TauAnyIsoPlusNonesObjectSelectionCollection;
 		MyEventCollection TauAnyIsoPlusNonesVBFInvertedObjectSelectionCollection;
 
@@ -644,19 +654,29 @@ class VBFSUSYanalyzer : public edm::EDAnalyzer {
 		edm::Service<TFileService> fs;	
 		TH1F* count;
 		MyHistoCollection myHistoColl_baselineSelection;
-		MyHistoCollection myHistoColl_TauAnyIsoObjectSelection;
-		MyHistoCollection myHistoColl_TauAnyIsoVBFInvertedObjectSelection;
-		MyHistoCollection myHistoColl_TauAnyIsoPlusNonesObjectSelection;
-		MyHistoCollection myHistoColl_TauAnyIsoPlusNonesVBFInvertedObjectSelection;
-		MyHistoCollection myHistoColl_TauLooseIsoObjectSelection;
-		MyHistoCollection myHistoColl_TauLooseIsoVBFInvertedObjectSelection;
-		MyHistoCollection myHistoColl_TauMediumIsoObjectSelection;
-		MyHistoCollection myHistoColl_TauMediumIsoVBFInvertedObjectSelection;
+		
+		MyHistoCollection myHistoColl_Tau2TightIsoObjectSelection;
+		MyHistoCollection myHistoColl_Tau2TightIsoVBFInvertedObjectSelection;
+		
 		MyHistoCollection myHistoColl_Tau1TightIsoObjectSelection;
 		MyHistoCollection myHistoColl_Tau1TightIsoVBFInvertedObjectSelection;
-		MyHistoCollection myHistoColl_TauTightIsoObjectSelection;
-		MyHistoCollection myHistoColl_TauTightIsoVBFInvertedObjectSelection;
 
+		MyHistoCollection myHistoColl_Tau2MediumIsoObjectSelection;
+		MyHistoCollection myHistoColl_Tau2MediumIsoVBFInvertedObjectSelection;
+		MyHistoCollection myHistoColl_TauAntiTightIsoObjectSelection;
+		MyHistoCollection myHistoColl_TauAntiTightIsoVBFInvertedObjectSelection;
+		
+		MyHistoCollection myHistoColl_Tau2LooseIsoObjectSelection;
+		MyHistoCollection myHistoColl_Tau2LooseIsoVBFInvertedObjectSelection;
+		MyHistoCollection myHistoColl_TauAntiMediumIsoObjectSelection;
+		MyHistoCollection myHistoColl_TauAntiMediumIsoVBFInvertedObjectSelection;
+		
+		MyHistoCollection myHistoColl_TauAnyIsoObjectSelection;
+		MyHistoCollection myHistoColl_TauAnyIsoVBFInvertedObjectSelection;
+		
+		MyHistoCollection myHistoColl_TauAnyIsoPlusNonesObjectSelection;
+		MyHistoCollection myHistoColl_TauAnyIsoPlusNonesVBFInvertedObjectSelection;
+		
 		// ----------member data ---------------------------
 
 		edm::EDGetTokenT<reco::VertexCollection> vtxToken_;
@@ -701,12 +721,18 @@ VBFSUSYanalyzer::VBFSUSYanalyzer(const edm::ParameterSet& iConfig):
 	TauAnyIsoVBFInvertedObjectSelectionCollection.init("TauAnyIsoVBFInvertedObjectSelection");
 	TauAnyIsoObjectSelectionCollection.init("TauAnyIsoPlusNonesObjectSelection");
 	TauAnyIsoVBFInvertedObjectSelectionCollection.init("TauAnyIsoPlusNonesVBFInvertedObjectSelection");
-	TauLooseIsoObjectSelectionCollection.init("TauLooseIsoObjectSelection");
-	TauLooseIsoVBFInvertedObjectSelectionCollection.init("TauLooseIsoVBFInvertedObjectSelection");
-	TauMediumIsoObjectSelectionCollection.init("TauMediumIsoObjectSelection");
-	TauMediumIsoVBFInvertedObjectSelectionCollection.init("TauMediumIsoVBFInvertedObjectSelection");
-	TauTightIsoObjectSelectionCollection.init("Tau1TightIsoObjectSelection");
-	TauTightIsoVBFInvertedObjectSelectionCollection.init("Tau1TightIsoVBFInvertedObjectSelection");
+	Tau2LooseIsoObjectSelectionCollection.init("Tau2LooseIsoObjectSelection");
+	Tau2LooseIsoVBFInvertedObjectSelectionCollection.init("Tau2LooseIsoVBFInvertedObjectSelection");
+	TauAntiMediumIsoObjectSelectionCollection.init("TauAntiMediumIsoObjectSelection");
+	TauAntiMediumIsoVBFInvertedObjectSelectionCollection.init("TauAntiMediumIsoVBFInvertedObjectSelection");
+	TauAntiTightIsoObjectSelectionCollection.init("TauAntiTightIsoObjectSelection");
+	TauAntiTightIsoVBFInvertedObjectSelectionCollection.init("TauAntiTightIsoVBFInvertedObjectSelection");
+	Tau2MediumIsoObjectSelectionCollection.init("Tau2MediumIsoObjectSelection");
+	Tau2MediumIsoVBFInvertedObjectSelectionCollection.init("Tau2MediumIsoVBFInvertedObjectSelection");
+	Tau2TightIsoObjectSelectionCollection.init("Tau2TightIsoObjectSelection");
+	Tau2TightIsoVBFInvertedObjectSelectionCollection.init("Tau2TightIsoVBFInvertedObjectSelection");
+	Tau1TightIsoObjectSelectionCollection.init("Tau1TightIsoObjectSelection");
+	Tau1TightIsoVBFInvertedObjectSelectionCollection.init("Tau1TightIsoVBFInvertedObjectSelection");
 
 
 	//histogram initialization	
@@ -719,14 +745,18 @@ VBFSUSYanalyzer::VBFSUSYanalyzer(const edm::ParameterSet& iConfig):
 	myHistoColl_TauAnyIsoVBFInvertedObjectSelection.init("TauAnyIsoVBFInvertedObjectSelection");
 	myHistoColl_TauAnyIsoPlusNonesObjectSelection.init("TauAnyIsoPlusNonesObjectSelection");
 	myHistoColl_TauAnyIsoPlusNonesVBFInvertedObjectSelection.init("TauAnyIsoPlusNonesVBFInvertedObjectSelection");
-	myHistoColl_TauLooseIsoObjectSelection.init("TauLooseIsoObjectSelection");
-	myHistoColl_TauLooseIsoVBFInvertedObjectSelection.init("TauLooseIsoVBFInvertedObjectSelection");
-	myHistoColl_TauMediumIsoObjectSelection.init("TauMediumIsoObjectSelection");
-	myHistoColl_TauMediumIsoVBFInvertedObjectSelection.init("TauMediumIsoVBFInvertedObjectSelection");
+	myHistoColl_TauAntiMediumIsoObjectSelection.init("TauAntiMediumIsoObjectSelection");
+	myHistoColl_TauAntiMediumIsoVBFInvertedObjectSelection.init("TauAntiMediumIsoVBFInvertedObjectSelection");
+	myHistoColl_Tau2LooseIsoObjectSelection.init("Tau2LooseIsoObjectSelection");
+	myHistoColl_Tau2LooseIsoVBFInvertedObjectSelection.init("Tau2LooseIsoVBFInvertedObjectSelection");
+	myHistoColl_TauAntiTightIsoObjectSelection.init("TauAntiTightIsoObjectSelection");
+	myHistoColl_TauAntiTightIsoVBFInvertedObjectSelection.init("TauAntiTightIsoVBFInvertedObjectSelection");
+	myHistoColl_Tau2MediumIsoObjectSelection.init("Tau2MediumIsoObjectSelection");
+	myHistoColl_Tau2MediumIsoVBFInvertedObjectSelection.init("Tau2MediumIsoVBFInvertedObjectSelection");
 	myHistoColl_Tau1TightIsoObjectSelection.init("Tau1TightIsoObjectSelection");
 	myHistoColl_Tau1TightIsoVBFInvertedObjectSelection.init("Tau1TightIsoVBFInvertedObjectSelection");
-	myHistoColl_TauTightIsoObjectSelection.init("TauTightIsoObjectSelection");
-	myHistoColl_TauTightIsoVBFInvertedObjectSelection.init("TauTightIsoVBFInvertedObjectSelection");
+	myHistoColl_Tau2TightIsoObjectSelection.init("Taui2TightIsoObjectSelection");
+	myHistoColl_Tau2TightIsoVBFInvertedObjectSelection.init("Tau2TightIsoVBFInvertedObjectSelection");
 
 }
 
@@ -894,8 +924,18 @@ VBFSUSYanalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
 	}
 
 	if(tights.size()==2) for(unsigned int t =0;t<tights.size();++t) {
-		TauTightIsoObjectSelectionCollection.tau.push_back(tights[t]);
-		TauTightIsoVBFInvertedObjectSelectionCollection.tau.push_back(tights[t]);
+		Tau2TightIsoObjectSelectionCollection.tau.push_back(tights[t]);
+		Tau2TightIsoVBFInvertedObjectSelectionCollection.tau.push_back(tights[t]);
+	}
+
+	if(mediums.size()==2) for(unsigned int t =0;t<mediums.size();++t) {
+		Tau2MediumIsoObjectSelectionCollection.tau.push_back(mediums[t]);
+		Tau2MediumIsoVBFInvertedObjectSelectionCollection.tau.push_back(mediums[t]);
+	}
+
+	if(looses.size()==2) for(unsigned int t =0;t<looses.size();++t) {
+		Tau2LooseIsoObjectSelectionCollection.tau.push_back(looses[t]);
+		Tau2LooseIsoVBFInvertedObjectSelectionCollection.tau.push_back(looses[t]);
 	}
 
 	else if(tights.size()==1 && (mediums.size()+looses.size()+nones.size())==1) {
@@ -912,16 +952,16 @@ VBFSUSYanalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
 		mediums.insert(mediums.end(), looses.begin(), looses.end()); 
 		mediums.insert(mediums.end(), nones.begin(), nones.end()); 
 		for(unsigned int t =0;t<mediums.size();++t) {
-			TauMediumIsoObjectSelectionCollection.tau.push_back(mediums[t]);
-			TauMediumIsoVBFInvertedObjectSelectionCollection.tau.push_back(mediums[t]);
+			TauAntiTightIsoObjectSelectionCollection.tau.push_back(mediums[t]);
+			TauAntiTightIsoVBFInvertedObjectSelectionCollection.tau.push_back(mediums[t]);
 		}
 	}
 
 	else if(looses.size()>=1 && (looses.size()+nones.size())==2) {
 		looses.insert(looses.end(), nones.begin(), nones.end()); 
 		for(unsigned int t =0;t<looses.size();++t) {
-			TauLooseIsoObjectSelectionCollection.tau.push_back(looses[t]);
-			TauLooseIsoVBFInvertedObjectSelectionCollection.tau.push_back(looses[t]);
+			TauAntiMediumIsoObjectSelectionCollection.tau.push_back(looses[t]);
+			TauAntiMediumIsoVBFInvertedObjectSelectionCollection.tau.push_back(looses[t]);
 		}
 	}
 
@@ -935,10 +975,10 @@ VBFSUSYanalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
 		if(!(      fabs(jet.eta()) <= 5.0                                          )) continue;
 
 		double baseDistance = TauJetMinDistance(baselineObjectSelectionCollection, jet);
-		double mainDistance = TauJetMinDistance(TauTightIsoObjectSelectionCollection, jet);
+		double mainDistance = TauJetMinDistance(Tau2TightIsoObjectSelectionCollection, jet);
 		double T1Distance = TauJetMinDistance(Tau1TightIsoObjectSelectionCollection, jet);
-		double mediumDistance = TauJetMinDistance(TauMediumIsoObjectSelectionCollection, jet);
-		double looseDistance = TauJetMinDistance(TauLooseIsoObjectSelectionCollection, jet);
+		double mediumDistance = TauJetMinDistance(TauAntiTightIsoObjectSelectionCollection, jet);
+		double looseDistance = TauJetMinDistance(TauAntiMediumIsoObjectSelectionCollection, jet);
 		double anyisoDistance = TauJetMinDistance(TauAnyIsoObjectSelectionCollection, jet);
 		//double NoDistance = TauJetMinDistance(TauNoIsoObjectSelectionCollection, jet[j].eta, jet[j].phi);
 
@@ -956,20 +996,24 @@ VBFSUSYanalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
 		if(      /*jet[j].pt >= 50.  &&*/ jetid		){
 			if(	baseDistance >= 0.3	) baselineObjectSelectionCollection.jet.push_back(&jet);	
 				  if(	mainDistance >= 0.3	) {
-					  TauTightIsoObjectSelectionCollection.jet.push_back(&jet);
-					  TauTightIsoVBFInvertedObjectSelectionCollection.jet.push_back(&jet);
+					  Tau2TightIsoObjectSelectionCollection.jet.push_back(&jet);
+					  Tau2TightIsoVBFInvertedObjectSelectionCollection.jet.push_back(&jet);
 				  }
 				  if(	T1Distance >= 0.3	) {
 					  Tau1TightIsoObjectSelectionCollection.jet.push_back(&jet);
 					  Tau1TightIsoVBFInvertedObjectSelectionCollection.jet.push_back(&jet);
 				  }
 				  if(	mediumDistance >= 0.3	) {
-					  TauMediumIsoObjectSelectionCollection.jet.push_back(&jet);
-					  TauMediumIsoVBFInvertedObjectSelectionCollection.jet.push_back(&jet);
+					  Tau2MediumIsoObjectSelectionCollection.jet.push_back(&jet);
+					  Tau2MediumIsoVBFInvertedObjectSelectionCollection.jet.push_back(&jet);
+					  TauAntiTightIsoObjectSelectionCollection.jet.push_back(&jet);
+					  TauAntiTightIsoVBFInvertedObjectSelectionCollection.jet.push_back(&jet);
 				  }
 				  if(	looseDistance >= 0.3	) {
-					  TauLooseIsoObjectSelectionCollection.jet.push_back(&jet);
-					  TauLooseIsoVBFInvertedObjectSelectionCollection.jet.push_back(&jet);
+					  Tau2LooseIsoObjectSelectionCollection.jet.push_back(&jet);
+					  Tau2LooseIsoVBFInvertedObjectSelectionCollection.jet.push_back(&jet);
+					  TauAntiMediumIsoObjectSelectionCollection.jet.push_back(&jet);
+					  TauAntiMediumIsoVBFInvertedObjectSelectionCollection.jet.push_back(&jet);
 				  }
 				  if(	anyisoDistance >= 0.3	) {
 					  TauAnyIsoObjectSelectionCollection.jet.push_back(&jet);
@@ -984,20 +1028,24 @@ VBFSUSYanalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
 		if(fabs(jet.eta()) <= 2.4 && jet.bDiscriminator("combinedSecondaryVertexBJetTags") /*jet[j].bDiscriminator_combinedSecondaryVertexBJetTags*/ > 0.244    ){
 			if(	baseDistance >= 0.3	) baselineObjectSelectionCollection.bjet.push_back(&jet);	
 						  if(	mainDistance >= 0.3	) {
-							  TauTightIsoObjectSelectionCollection.bjet.push_back(&jet);
-							  TauTightIsoVBFInvertedObjectSelectionCollection.bjet.push_back(&jet);
+							  Tau2TightIsoObjectSelectionCollection.bjet.push_back(&jet);
+							  Tau2TightIsoVBFInvertedObjectSelectionCollection.bjet.push_back(&jet);
 						  }
 						  if(	T1Distance >= 0.3	) {
 							  Tau1TightIsoObjectSelectionCollection.bjet.push_back(&jet);
 							  Tau1TightIsoVBFInvertedObjectSelectionCollection.bjet.push_back(&jet);
 						  }
 						  if(	mediumDistance >= 0.3	) {
-							  TauMediumIsoObjectSelectionCollection.bjet.push_back(&jet);
-							  TauMediumIsoVBFInvertedObjectSelectionCollection.bjet.push_back(&jet);
+							  Tau2MediumIsoObjectSelectionCollection.bjet.push_back(&jet);
+							  Tau2MediumIsoVBFInvertedObjectSelectionCollection.bjet.push_back(&jet);
+							  TauAntiTightIsoObjectSelectionCollection.bjet.push_back(&jet);
+							  TauAntiTightIsoVBFInvertedObjectSelectionCollection.bjet.push_back(&jet);
 						  }
 						  if(	looseDistance >= 0.3	) {
-							  TauLooseIsoObjectSelectionCollection.bjet.push_back(&jet);
-							  TauLooseIsoVBFInvertedObjectSelectionCollection.bjet.push_back(&jet);
+							  Tau2LooseIsoObjectSelectionCollection.bjet.push_back(&jet);
+							  Tau2LooseIsoVBFInvertedObjectSelectionCollection.bjet.push_back(&jet);
+							  TauAntiMediumIsoObjectSelectionCollection.bjet.push_back(&jet);
+							  TauAntiMediumIsoVBFInvertedObjectSelectionCollection.bjet.push_back(&jet);
 						  }
 						  if(	anyisoDistance >= 0.3	) {
 							  TauAnyIsoObjectSelectionCollection.bjet.push_back(&jet);
@@ -1015,14 +1063,18 @@ VBFSUSYanalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
 	TauAnyIsoVBFInvertedObjectSelectionCollection.met.push_back(&met);
 	TauAnyIsoPlusNonesObjectSelectionCollection.met.push_back(&met);
 	TauAnyIsoPlusNonesVBFInvertedObjectSelectionCollection.met.push_back(&met);
-	TauLooseIsoObjectSelectionCollection.met.push_back(&met);
-	TauLooseIsoVBFInvertedObjectSelectionCollection.met.push_back(&met);
-	TauMediumIsoObjectSelectionCollection.met.push_back(&met);
-	TauMediumIsoVBFInvertedObjectSelectionCollection.met.push_back(&met);
+	TauAntiMediumIsoObjectSelectionCollection.met.push_back(&met);
+	TauAntiMediumIsoVBFInvertedObjectSelectionCollection.met.push_back(&met);
+	Tau2LooseIsoObjectSelectionCollection.met.push_back(&met);
+	Tau2LooseIsoVBFInvertedObjectSelectionCollection.met.push_back(&met);
+	TauAntiTightIsoObjectSelectionCollection.met.push_back(&met);
+	TauAntiTightIsoVBFInvertedObjectSelectionCollection.met.push_back(&met);
+	Tau2MediumIsoObjectSelectionCollection.met.push_back(&met);
+	Tau2MediumIsoVBFInvertedObjectSelectionCollection.met.push_back(&met);
 	Tau1TightIsoObjectSelectionCollection.met.push_back(&met);
 	Tau1TightIsoVBFInvertedObjectSelectionCollection.met.push_back(&met);
-	TauTightIsoObjectSelectionCollection.met.push_back(&met);
-	TauTightIsoVBFInvertedObjectSelectionCollection.met.push_back(&met);
+	Tau2TightIsoObjectSelectionCollection.met.push_back(&met);
+	Tau2TightIsoVBFInvertedObjectSelectionCollection.met.push_back(&met);
 
 	
 	//Filling count plot
@@ -1038,10 +1090,12 @@ VBFSUSYanalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
 
 	makeSelection (myHistoColl_TauAnyIsoObjectSelection, myHistoColl_TauAnyIsoVBFInvertedObjectSelection, TauAnyIsoObjectSelectionCollection, TauAnyIsoVBFInvertedObjectSelectionCollection, 1.);
 	makeSelection (myHistoColl_TauAnyIsoPlusNonesObjectSelection, myHistoColl_TauAnyIsoPlusNonesVBFInvertedObjectSelection, TauAnyIsoPlusNonesObjectSelectionCollection, TauAnyIsoPlusNonesVBFInvertedObjectSelectionCollection, 1.);
-	makeSelection (myHistoColl_TauLooseIsoObjectSelection, myHistoColl_TauLooseIsoVBFInvertedObjectSelection, TauLooseIsoObjectSelectionCollection, TauLooseIsoVBFInvertedObjectSelectionCollection, 1.);
-	makeSelection (myHistoColl_TauMediumIsoObjectSelection, myHistoColl_TauMediumIsoVBFInvertedObjectSelection, TauMediumIsoObjectSelectionCollection, TauMediumIsoVBFInvertedObjectSelectionCollection, 1.);
+	makeSelection (myHistoColl_TauAntiMediumIsoObjectSelection, myHistoColl_TauAntiMediumIsoVBFInvertedObjectSelection, TauAntiMediumIsoObjectSelectionCollection, TauAntiMediumIsoVBFInvertedObjectSelectionCollection, 1.);
+	makeSelection (myHistoColl_Tau2LooseIsoObjectSelection, myHistoColl_Tau2LooseIsoVBFInvertedObjectSelection, Tau2LooseIsoObjectSelectionCollection, Tau2LooseIsoVBFInvertedObjectSelectionCollection, 1.);
+	makeSelection (myHistoColl_TauAntiTightIsoObjectSelection, myHistoColl_TauAntiTightIsoVBFInvertedObjectSelection, TauAntiTightIsoObjectSelectionCollection, TauAntiTightIsoVBFInvertedObjectSelectionCollection, 1.);
+	makeSelection (myHistoColl_Tau2MediumIsoObjectSelection, myHistoColl_Tau2MediumIsoVBFInvertedObjectSelection, Tau2MediumIsoObjectSelectionCollection, Tau2MediumIsoVBFInvertedObjectSelectionCollection, 1.);
 	makeSelection (myHistoColl_Tau1TightIsoObjectSelection, myHistoColl_Tau1TightIsoVBFInvertedObjectSelection, Tau1TightIsoObjectSelectionCollection, Tau1TightIsoVBFInvertedObjectSelectionCollection, 1.);
-	makeSelection (myHistoColl_TauTightIsoObjectSelection, myHistoColl_TauTightIsoVBFInvertedObjectSelection, TauTightIsoObjectSelectionCollection, TauTightIsoVBFInvertedObjectSelectionCollection, 1.);
+	makeSelection (myHistoColl_Tau2TightIsoObjectSelection, myHistoColl_Tau2TightIsoVBFInvertedObjectSelection, Tau2TightIsoObjectSelectionCollection, Tau2TightIsoVBFInvertedObjectSelectionCollection, 1.);
 
 
 	//clearing event collections
@@ -1050,14 +1104,18 @@ VBFSUSYanalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
 	TauAnyIsoVBFInvertedObjectSelectionCollection.clear();
 	TauAnyIsoPlusNonesObjectSelectionCollection.clear();
 	TauAnyIsoPlusNonesVBFInvertedObjectSelectionCollection.clear();
-	TauLooseIsoObjectSelectionCollection.clear();
-	TauLooseIsoVBFInvertedObjectSelectionCollection.clear();
-	TauMediumIsoObjectSelectionCollection.clear();
-	TauMediumIsoVBFInvertedObjectSelectionCollection.clear();
+	TauAntiMediumIsoObjectSelectionCollection.clear();
+	TauAntiMediumIsoVBFInvertedObjectSelectionCollection.clear();
+	TauAntiTightIsoObjectSelectionCollection.clear();
+	TauAntiTightIsoVBFInvertedObjectSelectionCollection.clear();
 	Tau1TightIsoObjectSelectionCollection.clear();
 	Tau1TightIsoVBFInvertedObjectSelectionCollection.clear();
-	TauTightIsoObjectSelectionCollection.clear();
-	TauTightIsoVBFInvertedObjectSelectionCollection.clear();
+	Tau2TightIsoObjectSelectionCollection.clear();
+	Tau2TightIsoVBFInvertedObjectSelectionCollection.clear();
+	Tau2MediumIsoObjectSelectionCollection.clear();
+	Tau2MediumIsoVBFInvertedObjectSelectionCollection.clear();
+	Tau2LooseIsoObjectSelectionCollection.clear();
+	Tau2LooseIsoVBFInvertedObjectSelectionCollection.clear();
 
 }
 
