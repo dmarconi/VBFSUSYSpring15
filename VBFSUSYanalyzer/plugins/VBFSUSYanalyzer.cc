@@ -248,359 +248,6 @@ struct MyHistoCollection {
 };
 
 
-//useful functions
-//-----------------
-//leading jet finder
-//_________________
-
-std::pair<unsigned int,unsigned int> LeadingJets(MyEventCollection collection)
-{
-	unsigned int     	j1=99999;
-	unsigned int     	j2=99999;
-	double 		pt1=-1.;
-	double 		pt2=-1.;
-
-	for(unsigned int j=0; j<collection.jet.size();j++)
-	{
-		if(pt1 < collection.jet[j]->pt()){
-
-			if(pt2 < pt1){ pt2=pt1; j2=j1; }
-
-			j1=j;
-			pt1=collection.jet[j]->pt();
-
-		}
-
-		if((pt2 < collection.jet[j]->pt()) && (pt1 > collection.jet[j]->pt())){ j2=j; pt2=collection.jet[j]->pt(); }
-	}
-
-	return std::make_pair(j1,j2);
-}
-
-//-----------------
-//leading tau finder
-//_________________
-
-std::pair<unsigned int,unsigned int> LeadingTaus(MyEventCollection collection)
-{
-	unsigned int     	t1=99999;
-	unsigned int     	t2=99999;
-	double 		pt1=-1.;
-	double 		pt2=-1.;
-
-	for(unsigned int t=0; t<collection.tau.size();t++)
-	{
-		if(pt1 < collection.tau[t]->pt()){
-
-			if(pt2 < pt1){ pt2=pt1; t2=t1; }
-
-			t1=t;
-			pt1=collection.tau[t]->pt();
-
-		}
-
-		if((pt2 < collection.tau[t]->pt()) && (pt1 > collection.tau[t]->pt())){ t2=t; pt2=collection.tau[t]->pt(); }
-	}
-
-	return std::make_pair(t1,t2);
-}
-
-double TauJetMinDistance(MyEventCollection collection, const pat::Jet &jet)
-{
-	double minDeltaRtauJet = 99999.;
-	for(unsigned int t =0;t<collection.tau.size();++t){
-		TLorentzVector v_tau;
-		TLorentzVector v_jet;
-		v_tau.SetPtEtaPhiM(collection.tau[t]->pt(),collection.tau[t]->eta(),collection.tau[t]->phi(),collection.tau[t]->mass());
-		v_jet.SetPtEtaPhiM(jet.pt(),jet.eta(),jet.phi(),jet.mass());
-		double temp_mindeltaRtaujet = v_tau.DeltaR(v_jet); 
-		if (temp_mindeltaRtaujet < minDeltaRtauJet) minDeltaRtauJet = temp_mindeltaRtaujet;
-	} 
-	return minDeltaRtauJet;
-}
-
-//--------------------------
-//2-jet max inv. mass finder and properties of dijet system
-//__________________________
-
-MassAndIndex Inv2jMassIndex(MyEventCollection collection)
-{	
-	struct MassAndIndex Inv2jMass("Inv2jMass");
-	TLorentzVector jet1_4v;
-	TLorentzVector jet2_4v; 
-
-	double Mass=0.;
-	double dEtaCheck=0.;
-	unsigned int first=99999;
-	unsigned int second=99999;
-
-	bool pass=false; 	//passing all selection cuts for the dijet system
-	bool failOne=false;	//failing dijet eta cut
-	bool failTwo=false;	//failing dijet eta sign cut
-
-	for(unsigned int j1=1; j1<collection.jet.size(); j1++)
-	{
-		for(unsigned int j2=0; j2<j1; j2++)
-		{
-			jet1_4v.SetPtEtaPhiE(collection.jet[j1]->pt(), collection.jet[j1]->eta(), collection.jet[j1]->phi(), collection.jet[j1]->energy());
-			jet2_4v.SetPtEtaPhiE(collection.jet[j2]->pt(), collection.jet[j2]->eta(), collection.jet[j2]->phi(), collection.jet[j2]->energy());
-
-			int sign=collection.jet[j1]->eta() * collection.jet[j2]->eta();
-			double dEta=fabs(collection.jet[j1]->eta() - collection.jet[j2]->eta());
-
-			TLorentzVector dijet_4v = jet1_4v + jet2_4v;
-
-			//select the pair of dijets with highest invariant mass passing all cuts
-			if(dEta>=4.2 && sign<0 && dijet_4v.M()>=250+Mass) {Mass = dijet_4v.M(); first = j1; second = j2; pass=true;}
-			else if(!pass){
-				if(dEta>dEtaCheck && sign<0 && dijet_4v.M()>250) {Mass = dijet_4v.M(); first = j1; second = j2; dEtaCheck=dEta; failOne=true;} //search for pair failing only the dijet delta eta cut
-				else if(!failOne)
-				{
-					if(dEta>dEtaCheck && dijet_4v.M()>250) {Mass = dijet_4v.M(); first = j1; second = j2; dEtaCheck=dEta; failTwo=true;} //search for a pair failing dijet delta eta and eta sign cuts
-					else if(!failTwo && dijet_4v.M()>Mass && dEta>dEtaCheck) {Mass = dijet_4v.M(); first = j1; second = j2; dEtaCheck=dEta;}  //failing all cuts
-				}
-			}
-		}
-	}
-	if(first < 99999 && second < 99999)
-	{
-		double dR=jet1_4v.DeltaR(jet2_4v);
-		int sign=(collection.jet[first]->eta() * collection.jet[second]->eta())/fabs(collection.jet[first]->eta() * collection.jet[second]->eta());
-		double dEta=fabs(collection.jet[first]->eta() - collection.jet[second]->eta());
-		Inv2jMass.Mass=Mass;
-		Inv2jMass.first=first;
-		Inv2jMass.second=second;
-		Inv2jMass.dR=dR;
-		Inv2jMass.signEta=sign;
-		Inv2jMass.dEta=dEta;
-		//std::cout<<"chose jets "<<first<<" and "<<second<<std::endl;
-	}    
-	return Inv2jMass;
-}
-
-//--------------------------
-//2-tau system properties
-//__________________________  
-
-TauProperties Inv2tMassIndex(MyEventCollection collection)
-{
-	struct TauProperties Inv2tMass("Inv2tMass");
-	TLorentzVector tau1_4v;
-	TLorentzVector tau2_4v; 
-
-	std::pair<unsigned int,unsigned int> tauIndex=LeadingTaus(collection);
-	Inv2tMass.first = tauIndex.first;
-	Inv2tMass.second = tauIndex.second;
-
-	if(tauIndex.first < 99999 && tauIndex.second < 99999)
-	{
-		tau1_4v.SetPtEtaPhiM(collection.tau[tauIndex.first]->pt(), collection.tau[tauIndex.first]->eta(), collection.tau[tauIndex.first]->phi(), collection.tau[tauIndex.first]->mass());
-		tau2_4v.SetPtEtaPhiM(collection.tau[tauIndex.second]->pt(), collection.tau[tauIndex.second]->eta(), collection.tau[tauIndex.second]->phi(), collection.tau[tauIndex.second]->mass());
-
-		TLorentzVector ditau_4v = tau1_4v + tau2_4v;
-
-		double dR=tau1_4v.DeltaR(tau2_4v);
-		int charge = collection.tau[tauIndex.first]->charge() * collection.tau[tauIndex.second]->charge();
-		double cosdeltaphiDiTau = cos(tau1_4v.DeltaPhi(tau2_4v));
-		double dEta=fabs(collection.tau[tauIndex.first]->eta() - collection.tau[tauIndex.second]->eta());
-
-		Inv2tMass.Mass = ditau_4v.M();
-		Inv2tMass.dR = dR;
-		Inv2tMass.charge = charge;
-		Inv2tMass.cosDphi = cosdeltaphiDiTau;
-		Inv2tMass.dEta=dEta;
-	}
-	return Inv2tMass;
-}
-
-
-
-
-// Fill histograms
-
-
-void fillHistoCollection (MyHistoCollection &inputHistoCollection, MyEventCollection inputEventCollection, double weight, bool verbose=false) {
-
-	// ---------------------
-	// -- fill histograms --
-	// ---------------------	  
-
-	using namespace std;
-
-
-	//bool verbose=false;	
-	//JETS	  
-
-	//find index of leading jets
-	std::pair<unsigned int,unsigned int> jetIndex=LeadingJets(inputEventCollection);  
-
-	//find max value for 2-jet-mass
-	MassAndIndex Inv2j = Inv2jMassIndex(inputEventCollection);
-
-	//define ht
-	double ht_jets=0.;
-
-	//JET SEL
-	for (unsigned int j = 0;j<inputEventCollection.jet.size();++j){
-		inputHistoCollection.h_jetpt->Fill(inputEventCollection.jet[j]->pt(),weight); //fill jet-pt-histogram
-		inputHistoCollection.h_jeteta->Fill(inputEventCollection.jet[j]->eta(),weight); //fill jet-eta-histogram
-		ht_jets+=inputEventCollection.jet[j]->pt(); //add up scalar pt to ht
-	}
-
-	//fill jet count
-	inputHistoCollection.h_njet->Fill( (int)inputEventCollection.jet.size(),weight );
-	if(verbose)std::cout<<"Pass selection -> Fill njet="<<inputEventCollection.jet.size()<<", weight="<<weight<<std::endl;
-
-	//fill jet pt indizes
-	if (jetIndex.first < 99999)  {
-		inputHistoCollection.h_jet1pt->Fill(inputEventCollection.jet[jetIndex.first]->pt(),weight);
-		inputHistoCollection.h_jet1eta->Fill(inputEventCollection.jet[jetIndex.first]->eta(),weight);
-		if(verbose)std::cout<<"Pass selection -> Fill jet1pt="<<inputEventCollection.jet[jetIndex.first]->pt()<<", weight="<<weight<<std::endl;
-		if(verbose)std::cout<<"Pass selection -> Fill jet1eta="<<inputEventCollection.jet[jetIndex.first]->eta()<<", weight="<<weight<<std::endl;
-	}
-	if (jetIndex.second < 99999) {
-		inputHistoCollection.h_jet2pt->Fill(inputEventCollection.jet[jetIndex.second]->pt(),weight);
-		inputHistoCollection.h_jet2eta->Fill(inputEventCollection.jet[jetIndex.second]->eta(),weight);
-		if(verbose)std::cout<<"Pass selection -> Fill jet2pt="<<inputEventCollection.jet[jetIndex.second]->pt()<<", weight="<<weight<<std::endl;
-		if(verbose)std::cout<<"Pass selection -> Fill jet2eta="<<inputEventCollection.jet[jetIndex.second]->eta()<<", weight="<<weight<<std::endl;
-	}
-
-	//fill 2-jet-event inv. mass and eta-difference
-	if ( Inv2j.Mass >= 0 ) {
-		inputHistoCollection.h_dijetinvariantmass ->Fill(Inv2j.Mass,weight);
-		inputHistoCollection.h_dijetdeltaeta ->Fill(Inv2j.dEta,weight);
-		if(verbose)std::cout<<"Pass selection -> Fill dijetinvariantmass="<< Inv2j.Mass <<", weight="<<weight<<std::endl;
-		if(verbose)std::cout<<"Pass selection -> Fill dijetdeltaeta="<< Inv2j.dEta <<", weight="<<weight<<std::endl;
-	}
-
-	//fill ht distribution
-	inputHistoCollection.h_ht -> Fill(ht_jets,weight);
-	if(verbose)std::cout<<"Pass selection -> Fill ht_jets="<< ht_jets <<", weight="<<weight<<std::endl;
-
-	//fill jet tau distance distribution
-	//if(jetIndex.first<99999 && jetIndex.second<99999){
-	//	inputHistoCollection.h_jetTauDistanceFirst->Fill(TauJetMinDistance(inputEventCollection,inputEventCollection.jet[jetIndex.first]->eta, inputEventCollection.jet[jetIndex.first]->phi));
-	//	inputHistoCollection.h_jetTauDistanceSecond->Fill(TauJetMinDistance(inputEventCollection,inputEventCollection.jet[jetIndex.second]->eta, inputEventCollection.jet[jetIndex.second]->phi));	 
-	//}
-	//____________________________________________________________________________________________
-
-	//TAUS
-
-	//find tau properties
-	TauProperties Inv2t = Inv2tMassIndex(inputEventCollection);
-	TLorentzVector tau1_4v;
-	TLorentzVector tau2_4v;
-
-	//set ht of taus to default
-	double ht_jetsPtau=ht_jets;
-
-	for(unsigned int t =0;t<inputEventCollection.tau.size();++t){
-		//add up scalar sum of tau pt to ht
-		ht_jetsPtau+=inputEventCollection.tau[t]->pt();
-	}
-
-	if ( (Inv2t.first < 99999) && (Inv2t.second < 99999) ) {
-		//determine leading two tau invariant mass
-		inputHistoCollection.h_ditauinvariantmass ->Fill(Inv2t.Mass,weight);
-		if(verbose)std::cout<<"Pass selection -> Fill ditauinvariantmass="<< Inv2t.Mass <<", weight="<<weight<<std::endl;
-
-		//fill tau charge and  cosdeltaphi and deltaeta and 2Dpt-plot
-		inputHistoCollection.h_ditaucharge ->Fill(Inv2t.charge,weight);
-		if(verbose)std::cout<<"Pass selection -> Fill ditaucharge="<< Inv2t.charge <<", weight="<<weight<<std::endl;
-		inputHistoCollection.h_ditaucosdeltaphi ->Fill(Inv2t.cosDphi,weight);	
-		if(verbose)std::cout<<"Pass selection -> Fill ditaucosdeltaphi="<< Inv2t.cosDphi <<", weight="<<weight<<std::endl;
-		inputHistoCollection.h_ditaudeltaeta->Fill(Inv2t.dEta,weight);
-		if(verbose)std::cout<<"Pass selection -> Fill ditaudeltaeta="<< Inv2t.dEta <<", weight="<<weight<<std::endl;
-		inputHistoCollection.h2_tau1pt_vs_tau2pt->Fill(inputEventCollection.tau[Inv2t.first]->pt(),inputEventCollection.tau[Inv2t.second]->pt(),weight);   
-	}
-
-	//fill tau pt and eta
-	if (Inv2t.first < 99999) {
-		inputHistoCollection.h_tau1pt->Fill(inputEventCollection.tau[Inv2t.first]->pt(),weight);
-		inputHistoCollection.h_tau1eta->Fill(inputEventCollection.tau[Inv2t.first]->eta(),weight);
-		if(verbose)std::cout<<"Pass selection -> Fill tau1pt="<< inputEventCollection.tau[Inv2t.first]->pt() <<", weight="<<weight<<std::endl;
-		if(verbose)std::cout<<"Pass selection -> Fill tau1eta="<< inputEventCollection.tau[Inv2t.first]->eta() <<", weight="<<weight<<std::endl;
-	}
-	if (Inv2t.second < 99999) {
-		inputHistoCollection.h_tau2pt->Fill(inputEventCollection.tau[Inv2t.second]->pt(),weight);
-		inputHistoCollection.h_tau2eta->Fill(inputEventCollection.tau[Inv2t.second]->eta(),weight);
-		if(verbose)std::cout<<"Pass selection -> Fill tau2pt="<< inputEventCollection.tau[Inv2t.second]->pt() <<", weight="<<weight<<std::endl;
-		if(verbose)std::cout<<"Pass selection -> Fill tau2eta="<< inputEventCollection.tau[Inv2t.second]->eta() <<", weight="<<weight<<std::endl;
-	}
-
-	//fill ht with taus included
-	inputHistoCollection.h_ht_withtau -> Fill(ht_jetsPtau,weight);
-	if(verbose)std::cout<<"Pass selection -> Fill ht_withtau="<< ht_jetsPtau <<", weight="<<weight<<std::endl;
-
-	// MET
-	inputHistoCollection.h_met -> Fill(inputEventCollection.met[0]->pt(),weight);
-	if(verbose)std::cout<<"Pass selection -> Fill met="<< inputEventCollection.met[0]->pt() <<", weight="<<weight<<std::endl;
-
-	//fill DiJetInvMass_vs_DiJetDEta
-	inputHistoCollection.h2_DiJetInvMass_vs_DiJetDEta -> Fill(Inv2j.dEta, Inv2j.Mass,weight);
-
-	//________________________________________
-
-} 
-
-void makeSelection (MyHistoCollection &inputHistoCollection, MyHistoCollection &inputHistoCollectionVBFInverted, MyEventCollection inputEventCollection, MyEventCollection inputEventCollectionVBFInverted, double weight, bool verbose=false) {
-
-	//check if there is at least min taus in the event	
-	inputHistoCollection.h_count->Fill("NoCuts",weight);
-	if((int)(inputEventCollection.tau.size() >= 2)){
-		inputHistoCollection.h_count->Fill("AtLeast2taus",weight);	
-	} else return;
-	
-	//find ditau properties
-	TauProperties Inv2t = Inv2tMassIndex(inputEventCollection);
-
-	//Ditau charge
-	if ( Inv2t.charge == 1 ) {
-		inputHistoCollection.h_count->Fill("DiTauSign",weight);	
-	} else return;
-	
-	//Btag veto
-	if((int)(inputEventCollection.bjet.size() == 0)){
-		inputHistoCollection.h_count->Fill("BtagVeto", weight);	
-	} else return;
-
-	//MET cut
-	if( inputEventCollection.met[0]->pt() > 30. ){			
-	//if( true ){			
-		inputHistoCollection.h_count->Fill("METcut",weight);	
-	} else return;
-
-	MassAndIndex Inv2j = Inv2jMassIndex(inputEventCollection);
-
-	//if ( fabs(Inv2j.dEta) > 3.9 ) {
-	if ( fabs(Inv2j.dEta) > 2.9 ) {
-		inputHistoCollection.h_count->Fill("DiJetDeta",weight);	
-		
-	} else {
-		fillHistoCollection ( inputHistoCollectionVBFInverted, inputEventCollectionVBFInverted,weight);
-		return;
-	}
-
-
-	if (Inv2j.signEta < 0.) {
-		inputHistoCollection.h_count->Fill("DiJetSignEta",weight);	
-	} else {
-		fillHistoCollection ( inputHistoCollectionVBFInverted, inputEventCollectionVBFInverted,weight);
-		return;
-	}
-
-	if (Inv2j.Mass > 250.) {
-	//if( true ){			
-		inputHistoCollection.h_count->Fill("DiJetInvMass",weight);	
-		fillHistoCollection ( inputHistoCollection, inputEventCollection,weight);
-	} else {
-		fillHistoCollection ( inputHistoCollectionVBFInverted, inputEventCollectionVBFInverted,weight);
-		return;
-	}
-
-	return;
-
-}
 
 // class declaration
 //
@@ -617,6 +264,13 @@ class VBFSUSYanalyzer : public edm::EDAnalyzer {
 		virtual void beginJob() override;
 		virtual void analyze(const edm::Event&, const edm::EventSetup&) override;
 		virtual void endJob() override;
+		std::pair<unsigned int,unsigned int> LeadingJets(MyEventCollection);
+		std::pair<unsigned int,unsigned int> LeadingTaus(MyEventCollection);
+		double TauJetMinDistance(MyEventCollection , const pat::Jet &);
+		MassAndIndex Inv2jMassIndex(MyEventCollection);
+		TauProperties Inv2tMassIndex(MyEventCollection);
+		void fillHistoCollection (MyHistoCollection &, MyEventCollection, double weight, bool verbose=false);
+		void makeSelection (MyHistoCollection &, MyHistoCollection &, MyEventCollection, MyEventCollection, double , bool verbose=false);
 
 		//virtual void beginRun(edm::Run const&, edm::EventSetup const&) override;
 		//virtual void endRun(edm::Run const&, edm::EventSetup const&) override;
@@ -1179,6 +833,359 @@ VBFSUSYanalyzer::endJob()
 {
 }
 
+//useful functions
+//-----------------
+//leading jet finder
+//_________________
+
+std::pair<unsigned int,unsigned int> VBFSUSYanalyzer::LeadingJets(MyEventCollection collection)
+{
+	unsigned int     	j1=99999;
+	unsigned int     	j2=99999;
+	double 		pt1=-1.;
+	double 		pt2=-1.;
+
+	for(unsigned int j=0; j<collection.jet.size();j++)
+	{
+		if(pt1 < collection.jet[j]->pt()){
+
+			if(pt2 < pt1){ pt2=pt1; j2=j1; }
+
+			j1=j;
+			pt1=collection.jet[j]->pt();
+
+		}
+
+		if((pt2 < collection.jet[j]->pt()) && (pt1 > collection.jet[j]->pt())){ j2=j; pt2=collection.jet[j]->pt(); }
+	}
+
+	return std::make_pair(j1,j2);
+}
+
+//-----------------
+//leading tau finder
+//_________________
+
+std::pair<unsigned int,unsigned int> VBFSUSYanalyzer::LeadingTaus(MyEventCollection collection)
+{
+	unsigned int     	t1=99999;
+	unsigned int     	t2=99999;
+	double 		pt1=-1.;
+	double 		pt2=-1.;
+
+	for(unsigned int t=0; t<collection.tau.size();t++)
+	{
+		if(pt1 < collection.tau[t]->pt()){
+
+			if(pt2 < pt1){ pt2=pt1; t2=t1; }
+
+			t1=t;
+			pt1=collection.tau[t]->pt();
+
+		}
+
+		if((pt2 < collection.tau[t]->pt()) && (pt1 > collection.tau[t]->pt())){ t2=t; pt2=collection.tau[t]->pt(); }
+	}
+
+	return std::make_pair(t1,t2);
+}
+
+double VBFSUSYanalyzer::TauJetMinDistance(MyEventCollection collection, const pat::Jet &jet)
+{
+	double minDeltaRtauJet = 99999.;
+	for(unsigned int t =0;t<collection.tau.size();++t){
+		TLorentzVector v_tau;
+		TLorentzVector v_jet;
+		v_tau.SetPtEtaPhiM(collection.tau[t]->pt(),collection.tau[t]->eta(),collection.tau[t]->phi(),collection.tau[t]->mass());
+		v_jet.SetPtEtaPhiM(jet.pt(),jet.eta(),jet.phi(),jet.mass());
+		double temp_mindeltaRtaujet = v_tau.DeltaR(v_jet); 
+		if (temp_mindeltaRtaujet < minDeltaRtauJet) minDeltaRtauJet = temp_mindeltaRtaujet;
+	} 
+	return minDeltaRtauJet;
+}
+
+//--------------------------
+//2-jet max inv. mass finder and properties of dijet system
+//__________________________
+
+MassAndIndex VBFSUSYanalyzer::Inv2jMassIndex(MyEventCollection collection)
+{	
+	struct MassAndIndex Inv2jMass("Inv2jMass");
+	TLorentzVector jet1_4v;
+	TLorentzVector jet2_4v; 
+
+	double Mass=0.;
+	double dEtaCheck=0.;
+	unsigned int first=99999;
+	unsigned int second=99999;
+
+	bool pass=false; 	//passing all selection cuts for the dijet system
+	bool failOne=false;	//failing dijet eta cut
+	bool failTwo=false;	//failing dijet eta sign cut
+
+	for(unsigned int j1=1; j1<collection.jet.size(); j1++)
+	{
+		for(unsigned int j2=0; j2<j1; j2++)
+		{
+			jet1_4v.SetPtEtaPhiE(collection.jet[j1]->pt(), collection.jet[j1]->eta(), collection.jet[j1]->phi(), collection.jet[j1]->energy());
+			jet2_4v.SetPtEtaPhiE(collection.jet[j2]->pt(), collection.jet[j2]->eta(), collection.jet[j2]->phi(), collection.jet[j2]->energy());
+
+			int sign=collection.jet[j1]->eta() * collection.jet[j2]->eta();
+			double dEta=fabs(collection.jet[j1]->eta() - collection.jet[j2]->eta());
+
+			TLorentzVector dijet_4v = jet1_4v + jet2_4v;
+
+			//select the pair of dijets with highest invariant mass passing all cuts
+			if(dEta>=4.2 && sign<0 && dijet_4v.M()>=250+Mass) {Mass = dijet_4v.M(); first = j1; second = j2; pass=true;}
+			else if(!pass){
+				if(dEta>dEtaCheck && sign<0 && dijet_4v.M()>250) {Mass = dijet_4v.M(); first = j1; second = j2; dEtaCheck=dEta; failOne=true;} //search for pair failing only the dijet delta eta cut
+				else if(!failOne)
+				{
+					if(dEta>dEtaCheck && dijet_4v.M()>250) {Mass = dijet_4v.M(); first = j1; second = j2; dEtaCheck=dEta; failTwo=true;} //search for a pair failing dijet delta eta and eta sign cuts
+					else if(!failTwo && dijet_4v.M()>Mass && dEta>dEtaCheck) {Mass = dijet_4v.M(); first = j1; second = j2; dEtaCheck=dEta;}  //failing all cuts
+				}
+			}
+		}
+	}
+	if(first < 99999 && second < 99999)
+	{
+		double dR=jet1_4v.DeltaR(jet2_4v);
+		int sign=(collection.jet[first]->eta() * collection.jet[second]->eta())/fabs(collection.jet[first]->eta() * collection.jet[second]->eta());
+		double dEta=fabs(collection.jet[first]->eta() - collection.jet[second]->eta());
+		Inv2jMass.Mass=Mass;
+		Inv2jMass.first=first;
+		Inv2jMass.second=second;
+		Inv2jMass.dR=dR;
+		Inv2jMass.signEta=sign;
+		Inv2jMass.dEta=dEta;
+		//std::cout<<"chose jets "<<first<<" and "<<second<<std::endl;
+	}    
+	return Inv2jMass;
+}
+
+//--------------------------
+//2-tau system properties
+//__________________________  
+
+TauProperties VBFSUSYanalyzer::Inv2tMassIndex(MyEventCollection collection)
+{
+	struct TauProperties Inv2tMass("Inv2tMass");
+	TLorentzVector tau1_4v;
+	TLorentzVector tau2_4v; 
+
+	std::pair<unsigned int,unsigned int> tauIndex=LeadingTaus(collection);
+	Inv2tMass.first = tauIndex.first;
+	Inv2tMass.second = tauIndex.second;
+
+	if(tauIndex.first < 99999 && tauIndex.second < 99999)
+	{
+		tau1_4v.SetPtEtaPhiM(collection.tau[tauIndex.first]->pt(), collection.tau[tauIndex.first]->eta(), collection.tau[tauIndex.first]->phi(), collection.tau[tauIndex.first]->mass());
+		tau2_4v.SetPtEtaPhiM(collection.tau[tauIndex.second]->pt(), collection.tau[tauIndex.second]->eta(), collection.tau[tauIndex.second]->phi(), collection.tau[tauIndex.second]->mass());
+
+		TLorentzVector ditau_4v = tau1_4v + tau2_4v;
+
+		double dR=tau1_4v.DeltaR(tau2_4v);
+		int charge = collection.tau[tauIndex.first]->charge() * collection.tau[tauIndex.second]->charge();
+		double cosdeltaphiDiTau = cos(tau1_4v.DeltaPhi(tau2_4v));
+		double dEta=fabs(collection.tau[tauIndex.first]->eta() - collection.tau[tauIndex.second]->eta());
+
+		Inv2tMass.Mass = ditau_4v.M();
+		Inv2tMass.dR = dR;
+		Inv2tMass.charge = charge;
+		Inv2tMass.cosDphi = cosdeltaphiDiTau;
+		Inv2tMass.dEta=dEta;
+	}
+	return Inv2tMass;
+}
+
+
+
+
+// Fill histograms
+
+
+void VBFSUSYanalyzer::fillHistoCollection (MyHistoCollection &inputHistoCollection, MyEventCollection inputEventCollection, double weight, bool verbose) {
+
+	// ---------------------
+	// -- fill histograms --
+	// ---------------------	  
+
+	using namespace std;
+
+
+	//bool verbose=false;	
+	//JETS	  
+
+	//find index of leading jets
+	std::pair<unsigned int,unsigned int> jetIndex=LeadingJets(inputEventCollection);  
+
+	//find max value for 2-jet-mass
+	MassAndIndex Inv2j = Inv2jMassIndex(inputEventCollection);
+
+	//define ht
+	double ht_jets=0.;
+
+	//JET SEL
+	for (unsigned int j = 0;j<inputEventCollection.jet.size();++j){
+		inputHistoCollection.h_jetpt->Fill(inputEventCollection.jet[j]->pt(),weight); //fill jet-pt-histogram
+		inputHistoCollection.h_jeteta->Fill(inputEventCollection.jet[j]->eta(),weight); //fill jet-eta-histogram
+		ht_jets+=inputEventCollection.jet[j]->pt(); //add up scalar pt to ht
+	}
+
+	//fill jet count
+	inputHistoCollection.h_njet->Fill( (int)inputEventCollection.jet.size(),weight );
+	if(verbose)std::cout<<"Pass selection -> Fill njet="<<inputEventCollection.jet.size()<<", weight="<<weight<<std::endl;
+
+	//fill jet pt indizes
+	if (jetIndex.first < 99999)  {
+		inputHistoCollection.h_jet1pt->Fill(inputEventCollection.jet[jetIndex.first]->pt(),weight);
+		inputHistoCollection.h_jet1eta->Fill(inputEventCollection.jet[jetIndex.first]->eta(),weight);
+		if(verbose)std::cout<<"Pass selection -> Fill jet1pt="<<inputEventCollection.jet[jetIndex.first]->pt()<<", weight="<<weight<<std::endl;
+		if(verbose)std::cout<<"Pass selection -> Fill jet1eta="<<inputEventCollection.jet[jetIndex.first]->eta()<<", weight="<<weight<<std::endl;
+	}
+	if (jetIndex.second < 99999) {
+		inputHistoCollection.h_jet2pt->Fill(inputEventCollection.jet[jetIndex.second]->pt(),weight);
+		inputHistoCollection.h_jet2eta->Fill(inputEventCollection.jet[jetIndex.second]->eta(),weight);
+		if(verbose)std::cout<<"Pass selection -> Fill jet2pt="<<inputEventCollection.jet[jetIndex.second]->pt()<<", weight="<<weight<<std::endl;
+		if(verbose)std::cout<<"Pass selection -> Fill jet2eta="<<inputEventCollection.jet[jetIndex.second]->eta()<<", weight="<<weight<<std::endl;
+	}
+
+	//fill 2-jet-event inv. mass and eta-difference
+	if ( Inv2j.Mass >= 0 ) {
+		inputHistoCollection.h_dijetinvariantmass ->Fill(Inv2j.Mass,weight);
+		inputHistoCollection.h_dijetdeltaeta ->Fill(Inv2j.dEta,weight);
+		if(verbose)std::cout<<"Pass selection -> Fill dijetinvariantmass="<< Inv2j.Mass <<", weight="<<weight<<std::endl;
+		if(verbose)std::cout<<"Pass selection -> Fill dijetdeltaeta="<< Inv2j.dEta <<", weight="<<weight<<std::endl;
+	}
+
+	//fill ht distribution
+	inputHistoCollection.h_ht -> Fill(ht_jets,weight);
+	if(verbose)std::cout<<"Pass selection -> Fill ht_jets="<< ht_jets <<", weight="<<weight<<std::endl;
+
+	//fill jet tau distance distribution
+	//if(jetIndex.first<99999 && jetIndex.second<99999){
+	//	inputHistoCollection.h_jetTauDistanceFirst->Fill(TauJetMinDistance(inputEventCollection,inputEventCollection.jet[jetIndex.first]->eta, inputEventCollection.jet[jetIndex.first]->phi));
+	//	inputHistoCollection.h_jetTauDistanceSecond->Fill(TauJetMinDistance(inputEventCollection,inputEventCollection.jet[jetIndex.second]->eta, inputEventCollection.jet[jetIndex.second]->phi));	 
+	//}
+	//____________________________________________________________________________________________
+
+	//TAUS
+
+	//find tau properties
+	TauProperties Inv2t = Inv2tMassIndex(inputEventCollection);
+	TLorentzVector tau1_4v;
+	TLorentzVector tau2_4v;
+
+	//set ht of taus to default
+	double ht_jetsPtau=ht_jets;
+
+	for(unsigned int t =0;t<inputEventCollection.tau.size();++t){
+		//add up scalar sum of tau pt to ht
+		ht_jetsPtau+=inputEventCollection.tau[t]->pt();
+	}
+
+	if ( (Inv2t.first < 99999) && (Inv2t.second < 99999) ) {
+		//determine leading two tau invariant mass
+		inputHistoCollection.h_ditauinvariantmass ->Fill(Inv2t.Mass,weight);
+		if(verbose)std::cout<<"Pass selection -> Fill ditauinvariantmass="<< Inv2t.Mass <<", weight="<<weight<<std::endl;
+
+		//fill tau charge and  cosdeltaphi and deltaeta and 2Dpt-plot
+		inputHistoCollection.h_ditaucharge ->Fill(Inv2t.charge,weight);
+		if(verbose)std::cout<<"Pass selection -> Fill ditaucharge="<< Inv2t.charge <<", weight="<<weight<<std::endl;
+		inputHistoCollection.h_ditaucosdeltaphi ->Fill(Inv2t.cosDphi,weight);	
+		if(verbose)std::cout<<"Pass selection -> Fill ditaucosdeltaphi="<< Inv2t.cosDphi <<", weight="<<weight<<std::endl;
+		inputHistoCollection.h_ditaudeltaeta->Fill(Inv2t.dEta,weight);
+		if(verbose)std::cout<<"Pass selection -> Fill ditaudeltaeta="<< Inv2t.dEta <<", weight="<<weight<<std::endl;
+		inputHistoCollection.h2_tau1pt_vs_tau2pt->Fill(inputEventCollection.tau[Inv2t.first]->pt(),inputEventCollection.tau[Inv2t.second]->pt(),weight);   
+	}
+
+	//fill tau pt and eta
+	if (Inv2t.first < 99999) {
+		inputHistoCollection.h_tau1pt->Fill(inputEventCollection.tau[Inv2t.first]->pt(),weight);
+		inputHistoCollection.h_tau1eta->Fill(inputEventCollection.tau[Inv2t.first]->eta(),weight);
+		if(verbose)std::cout<<"Pass selection -> Fill tau1pt="<< inputEventCollection.tau[Inv2t.first]->pt() <<", weight="<<weight<<std::endl;
+		if(verbose)std::cout<<"Pass selection -> Fill tau1eta="<< inputEventCollection.tau[Inv2t.first]->eta() <<", weight="<<weight<<std::endl;
+	}
+	if (Inv2t.second < 99999) {
+		inputHistoCollection.h_tau2pt->Fill(inputEventCollection.tau[Inv2t.second]->pt(),weight);
+		inputHistoCollection.h_tau2eta->Fill(inputEventCollection.tau[Inv2t.second]->eta(),weight);
+		if(verbose)std::cout<<"Pass selection -> Fill tau2pt="<< inputEventCollection.tau[Inv2t.second]->pt() <<", weight="<<weight<<std::endl;
+		if(verbose)std::cout<<"Pass selection -> Fill tau2eta="<< inputEventCollection.tau[Inv2t.second]->eta() <<", weight="<<weight<<std::endl;
+	}
+
+	//fill ht with taus included
+	inputHistoCollection.h_ht_withtau -> Fill(ht_jetsPtau,weight);
+	if(verbose)std::cout<<"Pass selection -> Fill ht_withtau="<< ht_jetsPtau <<", weight="<<weight<<std::endl;
+
+	// MET
+	inputHistoCollection.h_met -> Fill(inputEventCollection.met[0]->pt(),weight);
+	if(verbose)std::cout<<"Pass selection -> Fill met="<< inputEventCollection.met[0]->pt() <<", weight="<<weight<<std::endl;
+
+	//fill DiJetInvMass_vs_DiJetDEta
+	inputHistoCollection.h2_DiJetInvMass_vs_DiJetDEta -> Fill(Inv2j.dEta, Inv2j.Mass,weight);
+
+	//________________________________________
+
+} 
+
+void VBFSUSYanalyzer::makeSelection (MyHistoCollection &inputHistoCollection, MyHistoCollection &inputHistoCollectionVBFInverted, MyEventCollection inputEventCollection, MyEventCollection inputEventCollectionVBFInverted, double weight, bool verbose) {
+
+	//check if there is at least min taus in the event	
+	inputHistoCollection.h_count->Fill("NoCuts",weight);
+	if((int)(inputEventCollection.tau.size() >= 2)){
+		inputHistoCollection.h_count->Fill("AtLeast2taus",weight);	
+	} else return;
+	
+	//find ditau properties
+	TauProperties Inv2t = Inv2tMassIndex(inputEventCollection);
+
+	//Ditau charge
+	if ( Inv2t.charge == 1 ) {
+		inputHistoCollection.h_count->Fill("DiTauSign",weight);	
+	} else return;
+	
+	//Btag veto
+	if((int)(inputEventCollection.bjet.size() == 0)){
+		inputHistoCollection.h_count->Fill("BtagVeto", weight);	
+	} else return;
+
+	//MET cut
+	if( inputEventCollection.met[0]->pt() > 30. ){			
+	//if( true ){			
+		inputHistoCollection.h_count->Fill("METcut",weight);	
+	} else return;
+
+	MassAndIndex Inv2j = Inv2jMassIndex(inputEventCollection);
+
+	//if ( fabs(Inv2j.dEta) > 3.9 ) {
+	if ( fabs(Inv2j.dEta) > 2.9 ) {
+		inputHistoCollection.h_count->Fill("DiJetDeta",weight);	
+		
+	} else {
+		fillHistoCollection ( inputHistoCollectionVBFInverted, inputEventCollectionVBFInverted,weight);
+		return;
+	}
+
+
+	if (Inv2j.signEta < 0.) {
+		inputHistoCollection.h_count->Fill("DiJetSignEta",weight);	
+	} else {
+		fillHistoCollection ( inputHistoCollectionVBFInverted, inputEventCollectionVBFInverted,weight);
+		return;
+	}
+
+	if (Inv2j.Mass > 250.) {
+	//if( true ){			
+		inputHistoCollection.h_count->Fill("DiJetInvMass",weight);	
+		fillHistoCollection ( inputHistoCollection, inputEventCollection,weight);
+	} else {
+		fillHistoCollection ( inputHistoCollectionVBFInverted, inputEventCollectionVBFInverted,weight);
+		return;
+	}
+
+	return;
+
+}
 // ------------ method called when starting to processes a run  ------------
 /*
    void 
