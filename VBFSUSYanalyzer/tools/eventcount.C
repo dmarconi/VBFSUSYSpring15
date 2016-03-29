@@ -39,106 +39,104 @@ void eventcount(string plotname) {
 	TH1F* h1_TauAnyIsoPlusNones;
 	TH1F* h1_TauAnyIsoPlusNonesVBFInverted;
 	TH1F* h1_TauAntiMediumIso;
-	TH1F* h1_Tau2LooseIso;
+	TH1F* h1_Tau2LooseIsoExclusive;
+	TH1F* h1_Tau2LooseIsoInclusive;
 	TH1F* h1_TauAntiMediumIsoVBFInverted;
-	TH1F* h1_Tau2LooseIsoVBFInverted;
+	TH1F* h1_Tau2LooseIsoExclusiveVBFInverted;
+	TH1F* h1_Tau2LooseIsoInclusiveVBFInverted;
 	TH1F* h1_TauAntiTightIso;
-	TH1F* h1_Tau2MediumIso;
+	TH1F* h1_Tau2MediumIsoExclusive;
+	TH1F* h1_Tau2MediumIsoInclusive;
 	TH1F* h1_TauAntiTightIsoVBFInverted;
-	TH1F* h1_Tau2MediumIsoVBFInverted;
+	TH1F* h1_Tau2MediumIsoExclusiveVBFInverted;
+	TH1F* h1_Tau2MediumIsoInclusiveVBFInverted;
 	TH1F* h1_Tau1TightIso;
 	TH1F* h1_Tau1TightIsoVBFInverted;
 	TH1F* h1_Tau2TightIso;
 	TH1F* h1_Tau2TightIsoVBFInverted;
 
-	cout << "FLAG1" << endl;
 	h1_TauAnyIso = ((TH1F*)(inputfile->Get(("demo/TauAnyIsoObjectSelection/" + plotname).c_str())));
 	h1_TauAnyIsoVBFInverted = ((TH1F*)(inputfile->Get(("demo/TauAnyIsoVBFInvertedObjectSelection/" + plotname).c_str())));
-	cout << "FLAG2" << endl;
 	h1_TauAnyIsoPlusNones = ((TH1F*)(inputfile->Get(("demo/TauAnyIsoPlusNonesObjectSelection/" + plotname).c_str())));
 	h1_TauAnyIsoPlusNonesVBFInverted = ((TH1F*)(inputfile->Get(("demo/TauAnyIsoPlusNonesVBFInvertedObjectSelection/" + plotname).c_str())));
-	cout << "FLAG3" << endl;
-	h1_Tau2LooseIso = ((TH1F*)(inputfile->Get(("demo/Tau2LooseIsoObjectSelection/" + plotname).c_str())));
+	h1_Tau2LooseIsoExclusive = ((TH1F*)(inputfile->Get(("demo/Tau2LooseIsoExclusiveObjectSelection/" + plotname).c_str())));
+	h1_Tau2LooseIsoInclusive = ((TH1F*)(inputfile->Get(("demo/Tau2LooseIsoInclusiveObjectSelection/" + plotname).c_str())));
 	h1_TauAntiMediumIso = ((TH1F*)(inputfile->Get(("demo/TauAntiMediumIsoObjectSelection/" + plotname).c_str())));
-	cout << "FLAG4" << endl;
 	h1_TauAntiMediumIsoVBFInverted = ((TH1F*)(inputfile->Get(("demo/TauAntiMediumIsoVBFInvertedObjectSelection/" + plotname).c_str())));
-	h1_Tau2LooseIsoVBFInverted = ((TH1F*)(inputfile->Get(("demo/Tau2LooseIsoVBFInvertedObjectSelection/" + plotname).c_str())));
+	h1_Tau2LooseIsoExclusiveVBFInverted = ((TH1F*)(inputfile->Get(("demo/Tau2LooseIsoExclusiveVBFInvertedObjectSelection/" + plotname).c_str())));
+	h1_Tau2LooseIsoInclusiveVBFInverted = ((TH1F*)(inputfile->Get(("demo/Tau2LooseIsoInclusiveVBFInvertedObjectSelection/" + plotname).c_str())));
 	h1_TauAntiTightIso = ((TH1F*)(inputfile->Get(("demo/TauAntiTightIsoObjectSelection/" + plotname).c_str())));
-	cout << "FLAG5" << endl;
-	h1_Tau2MediumIso = ((TH1F*)(inputfile->Get(("demo/Tau2MediumIsoObjectSelection/" + plotname).c_str())));
+	h1_Tau2MediumIsoExclusive = ((TH1F*)(inputfile->Get(("demo/Tau2MediumIsoExclusiveObjectSelection/" + plotname).c_str())));
+	h1_Tau2MediumIsoInclusive = ((TH1F*)(inputfile->Get(("demo/Tau2MediumIsoInclusiveObjectSelection/" + plotname).c_str())));
 	h1_TauAntiTightIsoVBFInverted = ((TH1F*)(inputfile->Get(("demo/TauAntiTightIsoVBFInvertedObjectSelection/" + plotname).c_str())));
-	cout << "FLAG6" << endl;
-	h1_Tau2MediumIsoVBFInverted = ((TH1F*)(inputfile->Get(("demo/Tau2MediumIsoVBFInvertedObjectSelection/" + plotname).c_str())));
-	cout << "FLAG7" << endl;
+	h1_Tau2MediumIsoExclusiveVBFInverted = ((TH1F*)(inputfile->Get(("demo/Tau2MediumIsoExclusiveVBFInvertedObjectSelection/" + plotname).c_str())));
+	h1_Tau2MediumIsoInclusiveVBFInverted = ((TH1F*)(inputfile->Get(("demo/Tau2MediumIsoInclusiveVBFInvertedObjectSelection/" + plotname).c_str())));
 	h1_Tau1TightIso = ((TH1F*)(inputfile->Get(("demo/Tau1TightIsoObjectSelection/" + plotname).c_str())));
 	h1_Tau1TightIsoVBFInverted = ((TH1F*)(inputfile->Get(("demo/Tau1TightIsoVBFInvertedObjectSelection/" + plotname).c_str())));
-	cout << "FLAG8" << endl;
 	h1_Tau2TightIso = ((TH1F*)(inputfile->Get(("demo/Taui2TightIsoObjectSelection/" + plotname).c_str())));
-	cout << "FLAG9" << endl;
 	h1_Tau2TightIsoVBFInverted = ((TH1F*)(inputfile->Get(("demo/Tau2TightIsoVBFInvertedObjectSelection/" + plotname).c_str())));
 
 
-	cout << "FLAG1" << endl;
 	TH1F* h1_AnyIsocounts;
 	TH1F* h1_AnyIsocountsVBFInverted;
 
 	double TauAnyIsocounts = h1_TauAnyIso->GetBinContent(3);
 	double TauAnyIsoVBFInvertedcounts = h1_TauAnyIsoVBFInverted->GetBinContent(3);
 	double TauAnyIsoPlusNonescounts = h1_TauAnyIsoPlusNones->GetBinContent(3);
-	cout << "FLAG2" << endl;
 	double TauAnyIsoPlusNonesVBFInvertedcounts = h1_TauAnyIsoPlusNonesVBFInverted->GetBinContent(3);
 	double TauAntiMediumIsocounts = h1_TauAntiMediumIso->GetBinContent(3);
-	double Tau2LooseIsocounts = h1_Tau2LooseIso->GetBinContent(3);
+	double Tau2LooseIsoExclusivecounts = h1_Tau2LooseIsoExclusive->GetBinContent(3);
+	double Tau2LooseIsoInclusivecounts = h1_Tau2LooseIsoInclusive->GetBinContent(3);
 	double TauAntiMediumIsoVBFInvertedcounts = h1_TauAntiMediumIsoVBFInverted->GetBinContent(3);
-	cout << "FLAG3" << endl;
-	double Tau2LooseIsoVBFInvertedcounts = h1_Tau2LooseIsoVBFInverted->GetBinContent(3);
+	double Tau2LooseIsoExclusiveVBFInvertedcounts = h1_Tau2LooseIsoExclusiveVBFInverted->GetBinContent(3);
+	double Tau2LooseIsoInclusiveVBFInvertedcounts = h1_Tau2LooseIsoInclusiveVBFInverted->GetBinContent(3);
 	double TauAntiTightIsocounts = h1_TauAntiTightIso->GetBinContent(3);
-	double Tau2MediumIsocounts = h1_Tau2MediumIso->GetBinContent(3);
-	cout << "FLAG4" << endl;
+	double Tau2MediumIsoExclusivecounts = h1_Tau2MediumIsoExclusive->GetBinContent(3);
+	double Tau2MediumIsoInclusivecounts = h1_Tau2MediumIsoInclusive->GetBinContent(3);
 	double TauAntiTightIsoVBFInvertedcounts = h1_TauAntiTightIsoVBFInverted->GetBinContent(3);
-	double Tau2MediumIsoVBFInvertedcounts = h1_Tau2MediumIsoVBFInverted->GetBinContent(3);
+	double Tau2MediumIsoExclusiveVBFInvertedcounts = h1_Tau2MediumIsoExclusiveVBFInverted->GetBinContent(3);
+	double Tau2MediumIsoInclusiveVBFInvertedcounts = h1_Tau2MediumIsoInclusiveVBFInverted->GetBinContent(3);
 	double Tau1TightIsocounts = h1_Tau1TightIso->GetBinContent(3);
-	cout << "FLAG5" << endl;
 	double Tau1TightIsoVBFInvertedcounts = h1_Tau1TightIsoVBFInverted->GetBinContent(3);
-	cout << "FLAG5" << endl;
 	double Tau2TightIsocounts = h1_Tau2TightIso->GetBinContent(3);
-	cout << "FLAG5" << endl;
 	double Tau2TightIsoVBFInvertedcounts = h1_Tau2TightIsoVBFInverted->GetBinContent(3);
 
-	cout << "FLAG6" << endl;
 	double TauAnyIsocounts_err = binerrors(h1_TauAnyIso, 2, 4);
 	double TauAnyIsoVBFInvertedcounts_err = binerrors(h1_TauAnyIsoVBFInverted, 2, 4);
 	double TauAnyIsoPlusNonescounts_err = binerrors(h1_TauAnyIsoPlusNones, 2, 4);
-	cout << "FLAG7" << endl;
 	double TauAnyIsoPlusNonesVBFInvertedcounts_err = binerrors(h1_TauAnyIsoPlusNonesVBFInverted, 2, 4);
 	double TauAntiMediumIsocounts_err = 	binerrors(h1_TauAntiMediumIso, 2, 4);
 	double TauAntiMediumIsoVBFInvertedcounts_err = binerrors(h1_TauAntiMediumIsoVBFInverted, 2, 4);
-	double Tau2LooseIsocounts_err = binerrors(h1_Tau2LooseIso, 2, 4);
-	cout << "FLAG8" << endl;
-	double Tau2LooseIsoVBFInvertedcounts_err = binerrors(h1_Tau2LooseIsoVBFInverted, 2, 4);
+	double Tau2LooseIsoExclusivecounts_err = binerrors(h1_Tau2LooseIsoExclusive, 2, 4);
+	double Tau2LooseIsoInclusivecounts_err = binerrors(h1_Tau2LooseIsoInclusive, 2, 4);
+	double Tau2LooseIsoExclusiveVBFInvertedcounts_err = binerrors(h1_Tau2LooseIsoExclusiveVBFInverted, 2, 4);
+	double Tau2LooseIsoInclusiveVBFInvertedcounts_err = binerrors(h1_Tau2LooseIsoInclusiveVBFInverted, 2, 4);
 	double TauAntiTightIsocounts_err =	binerrors(h1_TauAntiTightIso, 2, 4);
 	double TauAntiTightIsoVBFInvertedcounts_err = binerrors(h1_TauAntiTightIsoVBFInverted, 2, 4);
-	cout << "FLAG9" << endl;
-	double Tau2MediumIsocounts_err = binerrors(h1_Tau2MediumIso, 2, 4);
-	double Tau2MediumIsoVBFInvertedcounts_err = binerrors(h1_Tau2MediumIsoVBFInverted, 2, 4);
+	double Tau2MediumIsoExclusivecounts_err = binerrors(h1_Tau2MediumIsoExclusive, 2, 4);
+	double Tau2MediumIsoInclusivecounts_err = binerrors(h1_Tau2MediumIsoInclusive, 2, 4);
+	double Tau2MediumIsoExclusiveVBFInvertedcounts_err = binerrors(h1_Tau2MediumIsoExclusiveVBFInverted, 2, 4);
+	double Tau2MediumIsoInclusiveVBFInvertedcounts_err = binerrors(h1_Tau2MediumIsoInclusiveVBFInverted, 2, 4);
 	double Tau1TightIsocounts_err = binerrors(h1_Tau1TightIso, 2, 4);
 	double Tau1TightIsoVBFInvertedcounts_err = binerrors(h1_Tau1TightIsoVBFInverted, 2, 4);
-	cout << "FLAG0" << endl;
 	double Tau2TightIsocounts_err = binerrors(h1_Tau2TightIso, 2, 4);
 	double Tau2TightIsoVBFInvertedcounts_err = binerrors(h1_Tau2TightIsoVBFInverted, 2, 4);
 	
-	cout << "FLAG1" << endl;
 	cout << endl;
 	cout << endl;
 	cout << "-------EVENT COUNT--------" << endl;
 	cout << "Tau2TightIso: " << Tau2TightIsocounts << " +/- " << Tau2TightIsocounts_err << " ( % " << (Tau2TightIsocounts_err/Tau2TightIsocounts)*100. << " )"<< endl;
 	cout << "Tau2TightIsoVBFInverted: " << Tau2TightIsoVBFInvertedcounts << " +/- " << Tau2TightIsoVBFInvertedcounts_err << " ( % " << (Tau2TightIsoVBFInvertedcounts_err/Tau2TightIsoVBFInvertedcounts)*100. << " )"<< endl;
-	cout << "Tau2MediumIso: " << Tau2MediumIsocounts << " +/- " << Tau2MediumIsocounts_err << " ( % " << (Tau2MediumIsocounts_err/Tau2MediumIsocounts)*100. << " )"<< endl;
-	cout << "Tau2MediumIsoVBFInverted: " << Tau2MediumIsoVBFInvertedcounts << " +/- " << Tau2MediumIsoVBFInvertedcounts_err << " ( % " << (Tau2MediumIsoVBFInvertedcounts_err/Tau2MediumIsoVBFInvertedcounts)*100. << " )"<< endl;
+	cout << "Tau2MediumIsoExclusive: " << Tau2MediumIsoExclusivecounts << " +/- " << Tau2MediumIsoExclusivecounts_err << " ( % " << (Tau2MediumIsoExclusivecounts_err/Tau2MediumIsoExclusivecounts)*100. << " )"<< endl;
+	cout << "Tau2MediumIsoInclusive: " << Tau2MediumIsoInclusivecounts << " +/- " << Tau2MediumIsoInclusivecounts_err << " ( % " << (Tau2MediumIsoInclusivecounts_err/Tau2MediumIsoInclusivecounts)*100. << " )"<< endl;
+	cout << "Tau2MediumIsoExclusiveVBFInverted: " << Tau2MediumIsoExclusiveVBFInvertedcounts << " +/- " << Tau2MediumIsoExclusiveVBFInvertedcounts_err << " ( % " << (Tau2MediumIsoExclusiveVBFInvertedcounts_err/Tau2MediumIsoExclusiveVBFInvertedcounts)*100. << " )"<< endl;
+	cout << "Tau2MediumIsoInclusiveVBFInverted: " << Tau2MediumIsoInclusiveVBFInvertedcounts << " +/- " << Tau2MediumIsoInclusiveVBFInvertedcounts_err << " ( % " << (Tau2MediumIsoInclusiveVBFInvertedcounts_err/Tau2MediumIsoInclusiveVBFInvertedcounts)*100. << " )"<< endl;
 	cout << "TauAntiTightIso: " << TauAntiTightIsocounts << " +/- " << TauAntiTightIsocounts_err << " ( % " << (TauAntiTightIsocounts_err/TauAntiTightIsocounts)*100. << " )"<< endl;
 	cout << "TauAntiTightIsoVBFInverted: " << TauAntiTightIsoVBFInvertedcounts << " +/- " << TauAntiTightIsoVBFInvertedcounts_err << " ( % " << (TauAntiTightIsoVBFInvertedcounts_err/TauAntiTightIsoVBFInvertedcounts)*100. << " )"<< endl;
-	cout << "Tau2LooseIso: " << Tau2LooseIsocounts << " +/- " << Tau2LooseIsocounts_err << " ( % " << (Tau2LooseIsocounts_err/Tau2LooseIsocounts)*100. << " )"<< endl;
-	cout << "Tau2LooseIsoVBFInverted: " << Tau2LooseIsoVBFInvertedcounts << " +/- " << Tau2LooseIsoVBFInvertedcounts_err << " ( % " << (Tau2LooseIsoVBFInvertedcounts_err/Tau2LooseIsoVBFInvertedcounts)*100. << " )"<< endl;
+	cout << "Tau2LooseIsoExclusive: " << Tau2LooseIsoExclusivecounts << " +/- " << Tau2LooseIsoExclusivecounts_err << " ( % " << (Tau2LooseIsoExclusivecounts_err/Tau2LooseIsoExclusivecounts)*100. << " )"<< endl;
+	cout << "Tau2LooseIsoInclusive: " << Tau2LooseIsoInclusivecounts << " +/- " << Tau2LooseIsoInclusivecounts_err << " ( % " << (Tau2LooseIsoInclusivecounts_err/Tau2LooseIsoInclusivecounts)*100. << " )"<< endl;
+	cout << "Tau2LooseIsoExclusiveVBFInverted: " << Tau2LooseIsoExclusiveVBFInvertedcounts << " +/- " << Tau2LooseIsoExclusiveVBFInvertedcounts_err << " ( % " << (Tau2LooseIsoExclusiveVBFInvertedcounts_err/Tau2LooseIsoExclusiveVBFInvertedcounts)*100. << " )"<< endl;
+	cout << "Tau2LooseIsoInclusiveVBFInverted: " << Tau2LooseIsoInclusiveVBFInvertedcounts << " +/- " << Tau2LooseIsoInclusiveVBFInvertedcounts_err << " ( % " << (Tau2LooseIsoInclusiveVBFInvertedcounts_err/Tau2LooseIsoInclusiveVBFInvertedcounts)*100. << " )"<< endl;
 	cout << "TauAntiMediumIso: " << TauAntiMediumIsocounts << " +/- " << TauAntiMediumIsocounts_err << " ( % " << (TauAntiMediumIsocounts_err/TauAntiMediumIsocounts)*100. << " )"<< endl;
 	cout << "TauAntiMediumIsoVBFInverted: " << TauAntiMediumIsoVBFInvertedcounts << " +/- " << TauAntiMediumIsoVBFInvertedcounts_err << " ( % " << (TauAntiMediumIsoVBFInvertedcounts_err/TauAntiMediumIsoVBFInvertedcounts)*100. << " )"<< endl;
 	cout << "Tau1TightIso: " << Tau1TightIsocounts << " +/- " << Tau1TightIsocounts_err << " ( % " << (Tau1TightIsocounts_err/Tau1TightIsocounts)*100. << " )"<< endl;
@@ -151,18 +149,22 @@ void eventcount(string plotname) {
 	cout << endl;
 
 	double Tau2TightIso_eff = vbfefficiency(Tau2TightIsoVBFInvertedcounts, Tau2TightIsocounts , 0., 0.);
-	double Tau2MediumIso_eff = vbfefficiency(Tau2MediumIsoVBFInvertedcounts, Tau2MediumIsocounts , 0., 0.); 
+	double Tau2MediumIsoExclusive_eff = vbfefficiency(Tau2MediumIsoExclusiveVBFInvertedcounts, Tau2MediumIsoExclusivecounts , 0., 0.); 
+	double Tau2MediumIsoInclusive_eff = vbfefficiency(Tau2MediumIsoInclusiveVBFInvertedcounts, Tau2MediumIsoInclusivecounts , 0., 0.); 
 	double TauAntiTightIso_eff = vbfefficiency(TauAntiTightIsoVBFInvertedcounts, TauAntiTightIsocounts , 0., 0.); 
 	double TauAntiMediumIso_eff = vbfefficiency(TauAntiMediumIsoVBFInvertedcounts, TauAntiMediumIsocounts , 0., 0.);
-	double Tau2LooseIso_eff = vbfefficiency(Tau2LooseIsoVBFInvertedcounts, Tau2LooseIsocounts , 0., 0.);
+	double Tau2LooseIsoExclusive_eff = vbfefficiency(Tau2LooseIsoExclusiveVBFInvertedcounts, Tau2LooseIsoExclusivecounts , 0., 0.);
+	double Tau2LooseIsoInclusive_eff = vbfefficiency(Tau2LooseIsoInclusiveVBFInvertedcounts, Tau2LooseIsoInclusivecounts , 0., 0.);
 	double Tau1TightIso_eff = vbfefficiency(Tau1TightIsoVBFInvertedcounts, Tau1TightIsocounts , 0., 0.);
 	double TauAnyIso_eff = vbfefficiency(TauAnyIsoVBFInvertedcounts, TauAnyIsocounts , 0., 0.);
 	double TauAnyIsoPlusNones_eff = vbfefficiency(TauAnyIsoPlusNonesVBFInvertedcounts, TauAnyIsoPlusNonescounts , 0., 0.);
 
 	double Tau2TightIso_eff_err = vbfefficiency_staterr(Tau2TightIsoVBFInvertedcounts, Tau2TightIsoVBFInvertedcounts_err,Tau2TightIsocounts, Tau2TightIsocounts_err, 0., 0., 0., 0.);
-	double Tau2MediumIso_eff_err = vbfefficiency_staterr( Tau2MediumIsoVBFInvertedcounts, Tau2MediumIsoVBFInvertedcounts_err, Tau2MediumIsocounts, Tau2MediumIsocounts_err, 0., 0., 0., 0.);
+	double Tau2MediumIsoExclusive_eff_err = vbfefficiency_staterr( Tau2MediumIsoExclusiveVBFInvertedcounts, Tau2MediumIsoExclusiveVBFInvertedcounts_err, Tau2MediumIsoExclusivecounts, Tau2MediumIsoExclusivecounts_err, 0., 0., 0., 0.);
+	double Tau2MediumIsoInclusive_eff_err = vbfefficiency_staterr( Tau2MediumIsoInclusiveVBFInvertedcounts, Tau2MediumIsoInclusiveVBFInvertedcounts_err, Tau2MediumIsoInclusivecounts, Tau2MediumIsoInclusivecounts_err, 0., 0., 0., 0.);
 	double TauAntiTightIso_eff_err = vbfefficiency_staterr( TauAntiTightIsoVBFInvertedcounts, TauAntiTightIsoVBFInvertedcounts_err, TauAntiTightIsocounts, TauAntiTightIsocounts_err, 0., 0., 0., 0.);
-	double Tau2LooseIso_eff_err = vbfefficiency_staterr( Tau2LooseIsoVBFInvertedcounts, Tau2LooseIsoVBFInvertedcounts_err, Tau2LooseIsocounts, Tau2LooseIsocounts_err, 0., 0., 0., 0.);
+	double Tau2LooseIsoExclusive_eff_err = vbfefficiency_staterr( Tau2LooseIsoExclusiveVBFInvertedcounts, Tau2LooseIsoExclusiveVBFInvertedcounts_err, Tau2LooseIsoExclusivecounts, Tau2LooseIsoExclusivecounts_err, 0., 0., 0., 0.);
+	double Tau2LooseIsoInclusive_eff_err = vbfefficiency_staterr( Tau2LooseIsoInclusiveVBFInvertedcounts, Tau2LooseIsoInclusiveVBFInvertedcounts_err, Tau2LooseIsoInclusivecounts, Tau2LooseIsoInclusivecounts_err, 0., 0., 0., 0.);
 	double TauAntiMediumIso_eff_err = vbfefficiency_staterr( TauAntiMediumIsoVBFInvertedcounts, TauAntiMediumIsoVBFInvertedcounts_err, TauAntiMediumIsocounts, TauAntiMediumIsocounts_err, 0., 0., 0., 0.);
 	double Tau1TightIso_eff_err = vbfefficiency_staterr( Tau1TightIsoVBFInvertedcounts, Tau1TightIsoVBFInvertedcounts_err, Tau1TightIsocounts, Tau1TightIsocounts_err, 0., 0., 0., 0.);
 	double TauAnyIso_eff_err = vbfefficiency_staterr( TauAnyIsoVBFInvertedcounts, TauAnyIsoVBFInvertedcounts_err, TauAnyIsocounts, TauAnyIsocounts_err, 0., 0., 0., 0.);
@@ -171,10 +173,12 @@ void eventcount(string plotname) {
 
 	cout << "-------VBF EFFICIENCY--------" << endl;
 	cout << "Tau2TightIso_eff: " << Tau2TightIso_eff << " +/- " << Tau2TightIso_eff_err << " ( % " << (Tau2TightIso_eff_err/Tau2TightIso_eff)*100. << " )"<< endl;
-	cout << "Tau2MediumIso_eff: " << Tau2MediumIso_eff << " +/- " << Tau2MediumIso_eff_err << " ( % " << (Tau2MediumIso_eff_err/Tau2MediumIso_eff)*100. << " )"<< endl;
-	cout << "TauAntiTightIso_eff: " << TauAntiTightIso_eff << " +/- " << TauAntiTightIso_eff_err << " ( % " << (TauAntiTightIso_eff_err/TauAntiTightIso_eff)*100. << " )"<< endl;
-	cout << "Tau2LooseIso_eff: " << Tau2LooseIso_eff << " +/- " << Tau2LooseIso_eff_err << " ( % " << (Tau2LooseIso_eff_err/Tau2LooseIso_eff)*100. << " )"<< endl;
-	cout << "TauAntiMediumIso_eff: " << TauAntiMediumIso_eff << " +/- " << TauAntiMediumIso_eff_err << " ( % " << (TauAntiMediumIso_eff_err/TauAntiMediumIso_eff)*100. << " )"<< endl;
+	cout << "Tau2MediumIsoExclusive_eff: " << Tau2MediumIsoExclusive_eff << " +/- " << Tau2MediumIsoExclusive_eff_err << " ( % " << (Tau2MediumIsoExclusive_eff_err/Tau2MediumIsoExclusive_eff)*100. << " )"<< endl;
+	cout << "Tau2MediumIsoInclusive_eff: " << Tau2MediumIsoInclusive_eff << " +/- " << Tau2MediumIsoInclusive_eff_err << " ( % " << (Tau2MediumIsoInclusive_eff_err/Tau2MediumIsoInclusive_eff)*100. << " )"<< endl;
+	cout << "1M (+L+N)_eff: " << TauAntiTightIso_eff << " +/- " << TauAntiTightIso_eff_err << " ( % " << (TauAntiTightIso_eff_err/TauAntiTightIso_eff)*100. << " )"<< endl;
+	cout << "Tau2LooseIsoExclusive_eff: " << Tau2LooseIsoExclusive_eff << " +/- " << Tau2LooseIsoExclusive_eff_err << " ( % " << (Tau2LooseIsoExclusive_eff_err/Tau2LooseIsoExclusive_eff)*100. << " )"<< endl;
+	cout << "Tau2LooseIsoInclusive_eff: " << Tau2LooseIsoInclusive_eff << " +/- " << Tau2LooseIsoInclusive_eff_err << " ( % " << (Tau2LooseIsoInclusive_eff_err/Tau2LooseIsoInclusive_eff)*100. << " )"<< endl;
+	cout << "1L (+N)_eff: " << TauAntiMediumIso_eff << " +/- " << TauAntiMediumIso_eff_err << " ( % " << (TauAntiMediumIso_eff_err/TauAntiMediumIso_eff)*100. << " )"<< endl;
 	cout << "Tau1TightIso_eff: " << Tau1TightIso_eff << " +/- " << Tau1TightIso_eff_err << " ( % " << (Tau1TightIso_eff_err/Tau1TightIso_eff)*100. << " )"<< endl;
 	cout << "TauAnyIso_eff: " << TauAnyIso_eff << " +/- " << TauAnyIso_eff_err << " ( % " << (TauAnyIso_eff_err/TauAnyIso_eff)*100. << " )"<< endl;
 	cout << "TauAnyIsoPlusNones_eff: " << TauAnyIsoPlusNones_eff << " +/- " << TauAnyIsoPlusNones_eff_err << " ( % " << (TauAnyIsoPlusNones_eff_err/TauAnyIsoPlusNones_eff)*100. << " )"<< endl;
@@ -192,13 +196,17 @@ void eventcount(string plotname) {
 		<< Tau2TightIsoVBFInvertedcounts << "\\pm "<< "  \\% " << (Tau2TightIsoVBFInvertedcounts_err/Tau2TightIsoVBFInvertedcounts)*100. << " $ \\\\ " << endl;
 	cout << "$ 1Tight (+M+L+N) $   &$ "<< Tau1TightIsocounts << " \\pm  "<< " \\% " << (Tau1TightIsocounts_err/Tau1TightIsocounts)*100. << " $  &$  "
 		<< Tau1TightIsoVBFInvertedcounts << "\\pm "<< "  \\% " << (Tau1TightIsoVBFInvertedcounts_err/Tau1TightIsoVBFInvertedcounts)*100. << " $ \\\\ " << endl;
-	cout << "$ Only 2Medium $    &$ "<< Tau2MediumIsocounts << " \\pm  "<< " \\% " << (Tau2MediumIsocounts_err/Tau2MediumIsocounts)*100. << " $  &$  "
-		<< Tau2MediumIsoVBFInvertedcounts << "\\pm "<< " \\% " << (Tau2MediumIsoVBFInvertedcounts_err/Tau2MediumIsoVBFInvertedcounts)*100. << " $ \\\\ " << endl;
-	cout << "$ AntiTight (M+L+N) $    &$ "<< TauAntiTightIsocounts << " \\pm  "<< " \\% " << (TauAntiTightIsocounts_err/TauAntiTightIsocounts)*100. << " $  &$  "
+	cout << "$ 2 Medium exclusive $    &$ "<< Tau2MediumIsoExclusivecounts << " \\pm  "<< " \\% " << (Tau2MediumIsoExclusivecounts_err/Tau2MediumIsoExclusivecounts)*100. << " $  &$  "
+		<< Tau2MediumIsoExclusiveVBFInvertedcounts << "\\pm "<< " \\% " << (Tau2MediumIsoExclusiveVBFInvertedcounts_err/Tau2MediumIsoExclusiveVBFInvertedcounts)*100. << " $ \\\\ " << endl;
+	cout << "$ 2 Medium Inclusive $    &$ "<< Tau2MediumIsoInclusivecounts << " \\pm  "<< " \\% " << (Tau2MediumIsoInclusivecounts_err/Tau2MediumIsoInclusivecounts)*100. << " $  &$  "
+		<< Tau2MediumIsoInclusiveVBFInvertedcounts << "\\pm "<< " \\% " << (Tau2MediumIsoInclusiveVBFInvertedcounts_err/Tau2MediumIsoInclusiveVBFInvertedcounts)*100. << " $ \\\\ " << endl;
+	cout << "$ 1M (+L+N) $    &$ "<< TauAntiTightIsocounts << " \\pm  "<< " \\% " << (TauAntiTightIsocounts_err/TauAntiTightIsocounts)*100. << " $  &$  "
 		<< TauAntiTightIsoVBFInvertedcounts << "\\pm "<< " \\% " << (TauAntiTightIsoVBFInvertedcounts_err/TauAntiTightIsoVBFInvertedcounts)*100. << " $ \\\\ " << endl;
-	cout << "$ Only 2 Loose $    &$ "<< Tau2LooseIsocounts << " \\pm  "<< " \\% " << (Tau2LooseIsocounts_err/Tau2LooseIsocounts)*100. << " $  &$  "
-		<< Tau2LooseIsoVBFInvertedcounts << "\\pm "<< " \\% " << (Tau2LooseIsoVBFInvertedcounts_err/Tau2LooseIsoVBFInvertedcounts)*100. << " $ \\\\ " << endl;
-	cout << "$ AntiMedium (L+N) $    &$ "<< TauAntiMediumIsocounts << " \\pm  "<< " \\% " << (TauAntiMediumIsocounts_err/TauAntiMediumIsocounts)*100. << " $  &$  "
+	cout << "$ 2 Loose Exclusive$    &$ "<< Tau2LooseIsoExclusivecounts << " \\pm  "<< " \\% " << (Tau2LooseIsoExclusivecounts_err/Tau2LooseIsoExclusivecounts)*100. << " $  &$  "
+		<< Tau2LooseIsoExclusiveVBFInvertedcounts << "\\pm "<< " \\% " << (Tau2LooseIsoExclusiveVBFInvertedcounts_err/Tau2LooseIsoExclusiveVBFInvertedcounts)*100. << " $ \\\\ " << endl;
+	cout << "$ 2 Loose Inclusive $    &$ "<< Tau2LooseIsoInclusivecounts << " \\pm  "<< " \\% " << (Tau2LooseIsoInclusivecounts_err/Tau2LooseIsoInclusivecounts)*100. << " $  &$  "
+		<< Tau2LooseIsoInclusiveVBFInvertedcounts << "\\pm "<< " \\% " << (Tau2LooseIsoInclusiveVBFInvertedcounts_err/Tau2LooseIsoInclusiveVBFInvertedcounts)*100. << " $ \\\\ " << endl;
+	cout << "$ 1L (+N) $    &$ "<< TauAntiMediumIsocounts << " \\pm  "<< " \\% " << (TauAntiMediumIsocounts_err/TauAntiMediumIsocounts)*100. << " $  &$  "
 		<< TauAntiMediumIsoVBFInvertedcounts << "\\pm "<< " \\% " << (TauAntiMediumIsoVBFInvertedcounts_err/TauAntiMediumIsoVBFInvertedcounts)*100. << " $ \\\\ " << endl;
 	cout << "$ Any iso (+N) $    &$ "<< TauAnyIsoPlusNonescounts << " \\pm  "<< " \\% " << (TauAnyIsoPlusNonescounts_err/TauAnyIsoPlusNonescounts)*100. << " $  &$  "
 		<< TauAnyIsoPlusNonesVBFInvertedcounts << "\\pm "<< " \\% " << (TauAnyIsoPlusNonesVBFInvertedcounts_err/TauAnyIsoPlusNonesVBFInvertedcounts)*100. << " $ \\\\ " << endl;
@@ -214,17 +222,20 @@ void eventcount(string plotname) {
 	cout << "\\tabcolsep=0.05cm " << endl;
 	cout << "\\begin{tabular}{| l | c | }  " << endl;
 	cout << "\\hline\\hline " << endl;
-//	cout << " Region   & $\\epsilon_{VBF} $" << endl;
-//TODO end the latex script 
-	cout << " Variable     & Only 2 Tight region     & 1Tight region (+M+L+N)     & Medium (+L+N)       & Loose (+N)   & AnyIso (+N) \\\\ [0.5ex] \\hline " << endl;
-	cout << "$\\epsilon^{QCD}_{VBF}$    &$ "<< Tau2TightIso_eff << " \\pm  "<< " \\% " << (Tau2TightIso_eff_err/Tau2TightIso_eff)*100. << " $  &$  "
-		<< Tau1TightIso_eff << "\\pm "<< " \\% " << (Tau1TightIso_eff_err/Tau1TightIso_eff)*100. << " $  &$  "
-		<< TauAntiTightIso_eff << "\\pm "<< " \\% " << (TauAntiTightIso_eff_err/TauAntiTightIso_eff)*100. << " $  &$  "
-		<< TauAntiMediumIso_eff << "\\pm "<< " \\% " << (TauAntiMediumIso_eff_err/TauAntiMediumIso_eff)*100. << " $  &$  "
-		<< TauAnyIsoPlusNones_eff << "\\pm "<< " \\% " << (TauAnyIsoPlusNones_eff_err/TauAnyIsoPlusNones_eff)*100. << " $ \\\\ " << endl;
+	cout << " CR     &$ \\epsilon^{QCD}_{VBF}$ \\\\ [0.5ex] \\hline " << endl;
+	cout << " Only 2 Tight     &$ "<< Tau2TightIso_eff << " \\pm  "<< " \\% " << (Tau2TightIso_eff_err/Tau2TightIso_eff)*100.  <<  "$  \\\\ " << endl;
+	cout << " 1Tight (+M+L+N)     &$ "<< Tau1TightIso_eff << " \\pm  "<< " \\% " << (Tau1TightIso_eff_err/Tau1TightIso_eff)*100.  <<  "$  \\\\ " << endl;
+	cout << " 2 Medium Exclusive     &$ "<< Tau2MediumIsoExclusive_eff << " \\pm  "<< " \\% " << (Tau2MediumIsoExclusive_eff_err/Tau2MediumIsoExclusive_eff)*100.  <<  "$  \\\\ " << endl;
+	cout << " 2 Medium Inclusive    &$ "<< Tau2MediumIsoInclusive_eff << " \\pm  "<< " \\% " << (Tau2MediumIsoInclusive_eff_err/Tau2MediumIsoInclusive_eff)*100.  <<  "$  \\\\ " << endl;
+	cout << " 1M (+L+N)     &$ "<< TauAntiTightIso_eff << " \\pm  "<< " \\% " << (TauAntiTightIso_eff_err/TauAntiTightIso_eff)*100.  <<  "$  \\\\ " << endl;
+	cout << " 2 Loose Exclusive     &$ "<< Tau2LooseIsoExclusive_eff << " \\pm  "<< " \\% " << (Tau2LooseIsoExclusive_eff_err/Tau2LooseIsoExclusive_eff)*100.  <<  "$  \\\\ " << endl;
+	cout << " 2 Loose Inclusive     &$ "<< Tau2LooseIsoInclusive_eff << " \\pm  "<< " \\% " << (Tau2LooseIsoInclusive_eff_err/Tau2LooseIsoInclusive_eff)*100.  <<  "$  \\\\ " << endl;
+	cout << " 1L (+N)     &$ "<< TauAntiMediumIso_eff << " \\pm  "<< " \\% " << (TauAntiMediumIso_eff_err/TauAntiMediumIso_eff)*100.  <<  "$  \\\\ " << endl;
+	cout << " Any iso (+N)     &$ "<< TauAnyIsoPlusNones_eff << " \\pm  "<< " \\% " << (TauAnyIsoPlusNones_eff_err)*100.  <<  "$  \\\\ " << endl;
 	cout << "\\hline\\hline" << endl;
 	cout << "\\end{tabular}" << endl;
 	cout << "} " << endl;
 	cout << "\\end{table}" << endl;
+
 
 }
