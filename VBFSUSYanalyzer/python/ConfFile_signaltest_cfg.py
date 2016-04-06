@@ -12,7 +12,7 @@ process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1) )
 process.source = cms.Source("PoolSource",
     # replace 'myfile.root' with the source file you want to use
     fileNames = cms.untracked.vstring(
-'file:/nfs/dust/cms/user/dmarconi/workdir/VBFsignalSamples_Madgraph/testcmssw/CMSSW_7_4_14/src/genfragment_GEN_SIM_RECOBEFMIX_DIGI_L1_L1Reco_RECO.root'
+'file:/nfs/dust/cms/user/dmarconi/workdir/VBFsignalSamples_Madgraph/CMSSW_7_4_14/src/MakeSignalSample/miniaodv2.root'
     )
 )
 

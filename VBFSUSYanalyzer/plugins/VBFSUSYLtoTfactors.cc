@@ -105,7 +105,7 @@ struct TauProperties {
 };
 
 
-struct MyEventCollection {
+struct MyEventCollection_LtoT {
 
 	std::string label;
 	bool goodVertex;
@@ -133,7 +133,7 @@ struct MyEventCollection {
 	}
 };
 
-struct MyHistoCollection {
+struct MyHistoCollection_LtoT {
 
 	std::string label;
 	edm::Service<TFileService> fs;
@@ -179,8 +179,9 @@ struct MyHistoCollection {
 		h_count = subDir.make<TH1F>("counts", "", 1,0,1);
 		h_count->SetBit(TH1::kCanRebin);
 		h_count->SetStats(0);
-		h_count->Fill("NoCuts",0);
-		h_count->Fill("4 Jets",0.);	
+		h_count->Fill("NoCuts", 0);
+		h_count->Fill("4 Jets", 0.);	
+		h_count->Fill("2 Taus", 0.);	
 		h_count->Fill("1 Fake Loose Tau",0.);	
 		h_count->Fill("1 Fake also Tight",0.);	
 
@@ -259,13 +260,13 @@ class VBFSUSYLtoTfactors : public edm::EDAnalyzer {
 		virtual void beginJob() override;
 		virtual void analyze(const edm::Event&, const edm::EventSetup&) override;
 		virtual void endJob() override;
-		void fillHistoCollection (MyHistoCollection &, MyEventCollection, double, bool verbose=false);
-		std::pair<unsigned int,unsigned int> LeadingJets(MyEventCollection);
-		std::pair<unsigned int,unsigned int> LeadingTaus(MyEventCollection);
-		double TauJetMinDistance(MyEventCollection , const pat::Jet &);
-		TauProperties Inv2tMassIndex(MyEventCollection);
-		MassAndIndex Inv2jMassIndex(MyEventCollection);
-		void makeSelection (MyHistoCollection &, MyEventCollection, double , bool verbose=false);
+		void fillHistoCollection (MyHistoCollection_LtoT &, MyEventCollection_LtoT, double, bool verbose=false);
+		std::pair<unsigned int,unsigned int> LeadingJets(MyEventCollection_LtoT);
+		std::pair<unsigned int,unsigned int> LeadingTaus(MyEventCollection_LtoT);
+		double TauJetMinDistance(MyEventCollection_LtoT , const pat::Jet &);
+		TauProperties Inv2tMassIndex(MyEventCollection_LtoT);
+		MassAndIndex Inv2jMassIndex(MyEventCollection_LtoT);
+		void makeSelection (MyHistoCollection_LtoT &, MyEventCollection_LtoT, double , bool verbose=false);
 
 		//virtual void beginRun(edm::Run const&, edm::EventSetup const&) override;
 		//virtual void endRun(edm::Run const&, edm::EventSetup const&) override;
@@ -275,13 +276,13 @@ class VBFSUSYLtoTfactors : public edm::EDAnalyzer {
 
 		// ---------event collections-----------------------------
 
-		MyEventCollection baselineObjectSelectionCollection;
+		MyEventCollection_LtoT baselineObjectSelectionCollection;
 		
 
 		// ---------histograms-----------------------------
 		edm::Service<TFileService> fs;	
 		TH1F* count;
-		MyHistoCollection myHistoColl_baselineSelection;
+		MyHistoCollection_LtoT myHistoColl_baselineSelection;
 		
 		
 		// ----------member data ---------------------------
@@ -556,7 +557,7 @@ VBFSUSYLtoTfactors::endJob()
    */
 
 void 
-VBFSUSYLtoTfactors::fillHistoCollection (MyHistoCollection &inputHistoCollection, MyEventCollection inputEventCollection, double weight, bool verbose) {
+VBFSUSYLtoTfactors::fillHistoCollection (MyHistoCollection_LtoT &inputHistoCollection, MyEventCollection_LtoT inputEventCollection, double weight, bool verbose) {
 
 	// ---------------------
 	// -- fill histograms --
@@ -684,7 +685,7 @@ VBFSUSYLtoTfactors::fillHistoCollection (MyHistoCollection &inputHistoCollection
 //leading jet finder
 //_________________
 
-std::pair<unsigned int,unsigned int> VBFSUSYLtoTfactors::LeadingJets(MyEventCollection collection)
+std::pair<unsigned int,unsigned int> VBFSUSYLtoTfactors::LeadingJets(MyEventCollection_LtoT collection)
 {
 	unsigned int     	j1=99999;
 	unsigned int     	j2=99999;
@@ -712,7 +713,7 @@ std::pair<unsigned int,unsigned int> VBFSUSYLtoTfactors::LeadingJets(MyEventColl
 //leading tau finder
 //_________________
 
-std::pair<unsigned int,unsigned int> VBFSUSYLtoTfactors::LeadingTaus(MyEventCollection collection)
+std::pair<unsigned int,unsigned int> VBFSUSYLtoTfactors::LeadingTaus(MyEventCollection_LtoT collection)
 {
 	unsigned int     	t1=99999;
 	unsigned int     	t2=99999;
@@ -736,7 +737,7 @@ std::pair<unsigned int,unsigned int> VBFSUSYLtoTfactors::LeadingTaus(MyEventColl
 	return std::make_pair(t1,t2);
 }
 
-double TauJetMinDistance(MyEventCollection collection, const pat::Jet &jet)
+double TauJetMinDistance(MyEventCollection_LtoT collection, const pat::Jet &jet)
 {
 	double minDeltaRtauJet = 99999.;
 	for(unsigned int t =0;t<collection.tau.size();++t){
@@ -754,7 +755,7 @@ double TauJetMinDistance(MyEventCollection collection, const pat::Jet &jet)
 //2-jet max inv. mass finder and properties of dijet system
 //__________________________
 
-MassAndIndex VBFSUSYLtoTfactors::Inv2jMassIndex(MyEventCollection collection)
+MassAndIndex VBFSUSYLtoTfactors::Inv2jMassIndex(MyEventCollection_LtoT collection)
 {	
 	struct MassAndIndex Inv2jMass("Inv2jMass");
 	TLorentzVector jet1_4v;
@@ -813,7 +814,7 @@ MassAndIndex VBFSUSYLtoTfactors::Inv2jMassIndex(MyEventCollection collection)
 //2-tau system properties
 //__________________________  
 
-TauProperties VBFSUSYLtoTfactors::Inv2tMassIndex(MyEventCollection collection)
+TauProperties VBFSUSYLtoTfactors::Inv2tMassIndex(MyEventCollection_LtoT collection)
 {
 	struct TauProperties Inv2tMass("Inv2tMass");
 	TLorentzVector tau1_4v;
@@ -844,13 +845,18 @@ TauProperties VBFSUSYLtoTfactors::Inv2tMassIndex(MyEventCollection collection)
 	return Inv2tMass;
 }
 
-void VBFSUSYLtoTfactors::makeSelection (MyHistoCollection &inputHistoCollection, MyEventCollection inputEventCollection, double weight, bool verbose) {
+void VBFSUSYLtoTfactors::makeSelection (MyHistoCollection_LtoT &inputHistoCollection, MyEventCollection_LtoT inputEventCollection, double weight, bool verbose) {
 
 	inputHistoCollection.h_count->Fill("NoCuts",weight);
 	
 	//check if there are 4 jets in the event
 	if((int)(inputEventCollection.jet.size() >= 4)){
 		inputHistoCollection.h_count->Fill("4 Jets",weight);	
+	} else return;
+
+	//check if there are 4 jets in the event
+	if((int)(inputEventCollection.tau.size() >= 2)){
+		inputHistoCollection.h_count->Fill("2 Taus",weight);	
 	} else return;
 
 	bool foundLooseMatch = false;
