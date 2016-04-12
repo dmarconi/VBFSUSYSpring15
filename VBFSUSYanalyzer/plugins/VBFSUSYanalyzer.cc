@@ -166,6 +166,7 @@ struct MyHistoCollection {
 	TH1F* h_jetTauDistanceSecond;
 
 	TH2F* h2_DiJetInvMass_vs_DiJetDEta;
+	TH2F* h2_DiJetInvMass_vs_MET;
 	TH2F* h2_tau1pt_vs_tau2pt;
 
 	void init(const std::string & inputlabel) {
@@ -240,6 +241,9 @@ struct MyHistoCollection {
 		h2_DiJetInvMass_vs_DiJetDEta = new TH2F("h2_DiJetInvMass_vs_DiJetDEta","h2_DiJetInvMass_vs_DiJetDEta", 20, 0., 10., 10, 0., 2500.);
 		h2_DiJetInvMass_vs_DiJetDEta->GetXaxis()->SetTitle("#Delta#eta^{jj}");
 		h2_DiJetInvMass_vs_DiJetDEta->GetYaxis()->SetTitle("M^{(jet,jet)} [GeV]");
+		h2_DiJetInvMass_vs_MET = new TH2F("h2_DiJetInvMass_vs_MET","h2_DiJetInvMass_vs_MET", 24, 0., 240., 10, 0., 2500.);
+		h2_DiJetInvMass_vs_MET->GetXaxis()->SetTitle("#Delta#eta^{jj}");
+		h2_DiJetInvMass_vs_MET->GetYaxis()->SetTitle("E_{T}^{miss} [GeV]");
 		h2_tau1pt_vs_tau2pt = new TH2F("h2_tau1pt_vs_tau2pt","correlation of first and second p_{T}^{#tau}", 50, 0., 500., 50, 0., 500.);
 		h2_tau1pt_vs_tau2pt->GetXaxis()->SetTitle("p_{T}^{#tau 1}");
 		h2_tau1pt_vs_tau2pt->GetYaxis()->SetTitle("p_{T}^{#tau 2}");
@@ -544,6 +548,7 @@ VBFSUSYanalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
 		//cout << "DEBUG: Tau eta : " << tau[t].eta << endl;
 		//cout << "DEBUG: Tau phi : " << tau[t].phi << endl;
 		//OLDID    //if(!(       tau[t].pt >= 45.                                            				)) continue;
+		//if(!(       tau.pt() >= 40.                                            				)) continue;
 		if(!(       tau.pt() >= 20.                                            				)) continue;
 		//cout << "DEBUG: Pt cut passed for tau : " << t << endl;
 		//OLDID  //if(!(       tau[t].tauID_againstElectronMediumMVA5 > 0.5                				)) continue;
@@ -1124,6 +1129,8 @@ void VBFSUSYanalyzer::fillHistoCollection (MyHistoCollection &inputHistoCollecti
 	//fill DiJetInvMass_vs_DiJetDEta
 	inputHistoCollection.h2_DiJetInvMass_vs_DiJetDEta -> Fill(Inv2j.dEta, Inv2j.Mass,weight);
 
+	//fill DiJetInvMass_vs_MET
+	inputHistoCollection.h2_DiJetInvMass_vs_MET -> Fill(inputEventCollection.met[0]->pt(), Inv2j.Mass,weight);
 	//________________________________________
 
 } 
@@ -1150,15 +1157,16 @@ void VBFSUSYanalyzer::makeSelection (MyHistoCollection &inputHistoCollection, My
 	} else return;
 
 	//MET cut
-	if( inputEventCollection.met[0]->pt() > 30. ){			
-	//if( true ){			
+	//if( inputEventCollection.met[0]->pt() > 30. ){			
+	if( true ){			
 		inputHistoCollection.h_count->Fill("METcut",weight);	
 	} else return;
 
 	MassAndIndex Inv2j = Inv2jMassIndex(inputEventCollection);
 
 	//if ( fabs(Inv2j.dEta) > 3.9 ) {
-	if ( fabs(Inv2j.dEta) > 2.9 ) {
+	//if ( fabs(Inv2j.dEta) > 2.9 ) {
+	if ( true ) {
 		inputHistoCollection.h_count->Fill("DiJetDeta",weight);	
 		
 	} else {
@@ -1174,8 +1182,8 @@ void VBFSUSYanalyzer::makeSelection (MyHistoCollection &inputHistoCollection, My
 		return;
 	}
 
-	if (Inv2j.Mass > 250.) {
-	//if( true ){			
+	//if (Inv2j.Mass > 250.) {
+	if( true ){			
 		inputHistoCollection.h_count->Fill("DiJetInvMass",weight);	
 		fillHistoCollection ( inputHistoCollection, inputEventCollection,weight);
 	} else {
