@@ -238,13 +238,13 @@ struct MyHistoCollection {
 		h_jetTauDistanceSecond = subDir.make<TH1F>("h_jetTauDistanceSecond", "h_jetTauDistanceSecond", 25, 0., 0.5);
 		h_jetTauDistanceSecond->GetXaxis()->SetTitle("#DeltaR(jet,#tau^{2})");
 
-		h2_DiJetInvMass_vs_DiJetDEta = new TH2F("h2_DiJetInvMass_vs_DiJetDEta","h2_DiJetInvMass_vs_DiJetDEta", 20, 0., 10., 10, 0., 2500.);
+		h2_DiJetInvMass_vs_DiJetDEta =subDir.make<TH2F>("h2_DiJetInvMass_vs_DiJetDEta","h2_DiJetInvMass_vs_DiJetDEta", 20, 0., 10., 10, 0., 2500.);
 		h2_DiJetInvMass_vs_DiJetDEta->GetXaxis()->SetTitle("#Delta#eta^{jj}");
 		h2_DiJetInvMass_vs_DiJetDEta->GetYaxis()->SetTitle("M^{(jet,jet)} [GeV]");
-		h2_DiJetInvMass_vs_MET = new TH2F("h2_DiJetInvMass_vs_MET","h2_DiJetInvMass_vs_MET", 24, 0., 240., 10, 0., 2500.);
-		h2_DiJetInvMass_vs_MET->GetXaxis()->SetTitle("#Delta#eta^{jj}");
-		h2_DiJetInvMass_vs_MET->GetYaxis()->SetTitle("E_{T}^{miss} [GeV]");
-		h2_tau1pt_vs_tau2pt = new TH2F("h2_tau1pt_vs_tau2pt","correlation of first and second p_{T}^{#tau}", 50, 0., 500., 50, 0., 500.);
+		h2_DiJetInvMass_vs_MET = subDir.make<TH2F>("h2_DiJetInvMass_vs_MET","h2_DiJetInvMass_vs_MET", 24, 0., 240., 10, 0., 2500.);
+		h2_DiJetInvMass_vs_MET->GetYaxis()->SetTitle("M^{(jet,jet)} [GeV]");
+		h2_DiJetInvMass_vs_MET->GetXaxis()->SetTitle("E_{T}^{miss} [GeV]");
+		h2_tau1pt_vs_tau2pt = subDir.make<TH2F>("h2_tau1pt_vs_tau2pt","correlation of first and second p_{T}^{#tau}", 50, 0., 500., 50, 0., 500.);
 		h2_tau1pt_vs_tau2pt->GetXaxis()->SetTitle("p_{T}^{#tau 1}");
 		h2_tau1pt_vs_tau2pt->GetYaxis()->SetTitle("p_{T}^{#tau 2}");
 
@@ -550,6 +550,9 @@ VBFSUSYanalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
 		//OLDID    //if(!(       tau[t].pt >= 45.                                            				)) continue;
 		//if(!(       tau.pt() >= 40.                                            				)) continue;
 		if(!(       tau.pt() >= 20.                                            				)) continue;
+		//if(!(       tau.pt() >= 25.                                            				)) continue;
+		//if(!(       tau.pt() >= 30.                                            				)) continue;
+		//if(!(       tau.pt() >= 35.                                            				)) continue;
 		//cout << "DEBUG: Pt cut passed for tau : " << t << endl;
 		//OLDID  //if(!(       tau[t].tauID_againstElectronMediumMVA5 > 0.5                				)) continue;
 		if(!(       tau.tauID("againstElectronVLooseMVA5") > 0.5                				)) continue;
@@ -1147,7 +1150,8 @@ void VBFSUSYanalyzer::makeSelection (MyHistoCollection &inputHistoCollection, My
 	TauProperties Inv2t = Inv2tMassIndex(inputEventCollection);
 
 	//Ditau charge
-	if ( Inv2t.charge == 1 ) {
+	if ( true ) {
+	//if ( Inv2t.charge == 1 ) {
 		inputHistoCollection.h_count->Fill("DiTauSign",weight);	
 	} else return;
 	
