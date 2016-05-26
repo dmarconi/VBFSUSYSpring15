@@ -1150,8 +1150,8 @@ void VBFSUSYanalyzer::makeSelection (MyHistoCollection &inputHistoCollection, My
 	TauProperties Inv2t = Inv2tMassIndex(inputEventCollection);
 
 	//Ditau charge
-	if ( true ) {
-	//if ( Inv2t.charge == 1 ) {
+	//if ( true ) {
+	if ( Inv2t.charge == 1 ) {
 		inputHistoCollection.h_count->Fill("DiTauSign",weight);	
 	} else return;
 	

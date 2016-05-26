@@ -181,8 +181,11 @@ struct MyHistoCollection_LtoT {
 		h_count->SetBit(TH1::kCanRebin);
 		h_count->SetStats(0);
 		h_count->Fill("NoCuts", 0);
+		h_count->Fill("4 Jet",0.);	
+		h_count->Fill("1 Tau Match", 0.);	
+		h_count->Fill("Tau Match also 1Tight", 0.);	
 		h_count->Fill("4 Jets", 0.);	
-		h_count->Fill("2 Taus", 0.);	
+		h_count->Fill("1 Tau", 0.);	
 		h_count->Fill("1 Fake Loose Tau",0.);	
 		h_count->Fill("1 Fake also Tight",0.);	
 
@@ -281,12 +284,16 @@ class VBFSUSYLtoTfactors : public edm::EDAnalyzer {
 		// ---------event collections-----------------------------
 
 		MyEventCollection_LtoT baselineObjectSelectionCollection;
+		MyEventCollection_LtoT TauAnyIsoObjectSelectionCollection;
+		MyEventCollection_LtoT TauAnyIsoPlusNonesObjectSelectionCollection;
 		
 
 		// ---------histograms-----------------------------
 		edm::Service<TFileService> fs;	
 		TH1F* count;
 		MyHistoCollection_LtoT myHistoColl_baselineSelection;
+		MyHistoCollection_LtoT myHistoColl_TauAnyIsoObjectSelection;
+		MyHistoCollection_LtoT myHistoColl_TauAnyIsoPlusNonesObjectSelection;
 		
 		
 		// ----------member data ---------------------------
@@ -329,6 +336,8 @@ VBFSUSYLtoTfactors::VBFSUSYLtoTfactors(const edm::ParameterSet& iConfig):
 	//Event collection init
 
 	baselineObjectSelectionCollection.init("baselineObjectSelection");
+	TauAnyIsoObjectSelectionCollection.init("TauAnyIsoObjectSelection");
+	TauAnyIsoObjectSelectionCollection.init("TauAnyIsoPlusNonesObjectSelection");
 
 	//histogram initialization	
 	count = fs->make<TH1F>("counts", "", 1,0,1);
@@ -336,6 +345,8 @@ VBFSUSYLtoTfactors::VBFSUSYLtoTfactors(const edm::ParameterSet& iConfig):
 	count->SetStats(0);
 	count->Fill("NoCuts",0);
 	myHistoColl_baselineSelection.init("baselineObjectSelection");
+	myHistoColl_TauAnyIsoObjectSelection.init("TauAnyIsoObjectSelection");
+	myHistoColl_TauAnyIsoPlusNonesObjectSelection.init("TauAnyIsoPlusNonesObjectSelection");
 
 }
 
@@ -434,6 +445,10 @@ VBFSUSYLtoTfactors::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
 
 	//smart tau selection
 	//cout << "DEBUG: Tau vector size: " << tau.size() << endl;
+	std::vector<const pat::Tau*> anyiso;
+	std::vector<const pat::Tau*> anyisoplusnones;
+	std::vector<const pat::Tau*> nones;
+	
 	for (const pat::Tau &tau : *taus) {
 		//cout << "DEBUG: Tau counter: " << t << endl;
 		if(!(	fabs(tau.eta()) <= 2.1                              					)) continue;
@@ -461,8 +476,22 @@ VBFSUSYLtoTfactors::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
 
 		if( tau.tauID("byLooseCombinedIsolationDeltaBetaCorr3Hits")  > 0.5) {
 			baselineObjectSelectionCollection.tau.push_back(&tau);
+			anyiso.push_back(&tau);
 		}
+		else nones.push_back(&tau);
 
+	}
+
+
+	if(anyiso.size()>=1) {
+		anyisoplusnones.insert(anyisoplusnones.end(), anyiso.begin(), anyiso.end());
+		anyisoplusnones.insert(anyisoplusnones.end(), nones.begin(), nones.end());
+		for(unsigned int t =0;t<anyiso.size();++t) {
+			TauAnyIsoObjectSelectionCollection.tau.push_back(anyiso[t]);
+		}
+		for(unsigned int t =0;t<anyisoplusnones.size();++t){ 
+			TauAnyIsoPlusNonesObjectSelectionCollection.tau.push_back(anyisoplusnones[t]);
+		}
 	}
 
 	//
@@ -474,8 +503,6 @@ VBFSUSYLtoTfactors::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
 	for(const pat::Jet &jet : *jets){
 		if(!(      jet.pt() >= 30.                                                	)) continue;  // Original value 20
 		if(!(      fabs(jet.eta()) <= 5.0                                          )) continue;
-
-		//double NoDistance = TauJetMinDistance(TauNoIsoObjectSelectionCollection, jet[j].eta, jet[j].phi);
 
 		bool jetid=true;
 		if(!(      jet.neutralHadronEnergyFraction() < 0.99                                        )) jetid=false;
@@ -490,16 +517,22 @@ VBFSUSYLtoTfactors::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
 		//Filling Jet collection
 		if(      /*jet[j].pt >= 50.  &&*/ jetid		){
 			baselineObjectSelectionCollection.jet.push_back(&jet);	
+			TauAnyIsoObjectSelectionCollection.jet.push_back(&jet);
+			TauAnyIsoPlusNonesObjectSelectionCollection.jet.push_back(&jet);
 		}
 		
 		//Filling bJet collection
 		if(fabs(jet.eta()) <= 2.4 && jet.bDiscriminator("combinedSecondaryVertexBJetTags") /*jet[j].bDiscriminator_combinedSecondaryVertexBJetTags*/ > 0.244    ){
 			baselineObjectSelectionCollection.bjet.push_back(&jet);	
+			TauAnyIsoObjectSelectionCollection.bjet.push_back(&jet);
+			TauAnyIsoPlusNonesObjectSelectionCollection.bjet.push_back(&jet);
 		}
 	}	
 
 	//MET selection
 	baselineObjectSelectionCollection.met.push_back(&met);
+	TauAnyIsoObjectSelectionCollection.met.push_back(&met);
+	TauAnyIsoPlusNonesObjectSelectionCollection.met.push_back(&met);
 
 	
 	//Filling count plot
@@ -512,10 +545,14 @@ VBFSUSYLtoTfactors::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
 	//Filling Histograms for baseline selection
 
 	makeSelection (myHistoColl_baselineSelection, baselineObjectSelectionCollection, 1.);
+	makeSelection (myHistoColl_TauAnyIsoObjectSelection, TauAnyIsoObjectSelectionCollection, 1.);
+	makeSelection (myHistoColl_TauAnyIsoPlusNonesObjectSelection, TauAnyIsoPlusNonesObjectSelectionCollection, 1.);
 
 
 	//clearing event collections
 	baselineObjectSelectionCollection.clear();
+	TauAnyIsoObjectSelectionCollection.clear();
+	TauAnyIsoPlusNonesObjectSelectionCollection.clear();
 
 }
 
@@ -860,14 +897,42 @@ void VBFSUSYLtoTfactors::makeSelection (MyHistoCollection_LtoT &inputHistoCollec
 
 	inputHistoCollection.h_count->Fill("NoCuts",weight);
 	
+	bool oneJet = false;
+	bool foundTauMatch = false;
+	bool isAlsoTightTau = false;
+
+	if (inputEventCollection.jet.size() >= 4) oneJet = true;
+
+	for(unsigned int j=1; j<inputEventCollection.jet.size(); j++){
+
+		TLorentzVector v_tau;
+		TLorentzVector v_jet;
+
+		for(unsigned int t=1; t<inputEventCollection.tau.size(); t++){
+
+			v_tau.SetPtEtaPhiM(inputEventCollection.tau[t]->pt(),inputEventCollection.tau[t]->eta(),inputEventCollection.tau[t]->phi(),inputEventCollection.tau[t]->mass());
+			v_jet.SetPtEtaPhiM(inputEventCollection.jet[j]->pt(),inputEventCollection.jet[j]->eta(),inputEventCollection.jet[j]->phi(),inputEventCollection.jet[j]->mass());
+			double temp_deltaRtaujet = v_tau.DeltaR(v_jet); 
+			if ( temp_deltaRtaujet < 0.3 ) {
+				foundTauMatch = true;
+				if( inputEventCollection.tau[t]->tauID("byTightCombinedIsolationDeltaBetaCorr3Hits")  > 0.5) isAlsoTightTau = true;
+			}	
+		}
+	}
+
+	
+	if(oneJet) inputHistoCollection.h_count->Fill("4 Jet", weight);
+	if(foundTauMatch) inputHistoCollection.h_count->Fill("1 Tau Match", weight);	
+	if(isAlsoTightTau) inputHistoCollection.h_count->Fill("Tau Match also 1Tight", weight);	
+
 	//check if there are 4 jets in the event
 	if((int)(inputEventCollection.jet.size() >= 4)){
 		inputHistoCollection.h_count->Fill("4 Jets",weight);	
 	} else return;
 
 	//check if there are 4 jets in the event
-	if((int)(inputEventCollection.tau.size() >= 2)){
-		inputHistoCollection.h_count->Fill("2 Taus",weight);	
+	if((int)(inputEventCollection.tau.size() >= 1)){
+		inputHistoCollection.h_count->Fill("1 Tau",weight);	
 	} else return;
 
 	bool foundLooseMatch = false;
@@ -882,7 +947,7 @@ void VBFSUSYLtoTfactors::makeSelection (MyHistoCollection_LtoT &inputHistoCollec
 			v_jet.SetPtEtaPhiM(inputEventCollection.jet[j]->pt(),inputEventCollection.jet[j]->eta(),inputEventCollection.jet[j]->phi(),inputEventCollection.jet[j]->mass());
 			double temp_deltaRtaujet = v_tau.DeltaR(v_jet); 
 			if ( temp_deltaRtaujet < 0.3 ) {
-				foundLooseMatch = true;
+				if( inputEventCollection.tau[t]->tauID("byLooseCombinedIsolationDeltaBetaCorr3Hits") > 0.5) foundLooseMatch = true;
 				if( inputEventCollection.tau[t]->tauID("byTightCombinedIsolationDeltaBetaCorr3Hits")  > 0.5) isAlsoTight = true;
 			}	
 		}

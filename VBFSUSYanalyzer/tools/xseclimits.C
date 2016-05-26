@@ -7,6 +7,7 @@
 #include <TH1F.h>
 #include <TH2F.h>
 #include <TH2D.h>
+#include <TProfile.h>
 #include <iostream>
 #include <fstream>
 #include <cmath>
@@ -44,20 +45,26 @@ double LtoTfactor(string taupt) {
 	TH1F* h1_counts;
 	h1_counts = ((TH1F*)(inputfile->Get("demo/baselineObjectSelection/counts")));
 
-	double fourJetscounts = h1_counts->GetBinContent(2);
-	double twoLooseTaus = h1_counts->GetBinContent(3);
-	double oneLcounts = h1_counts->GetBinContent(4);
-	double alsoTcounts = h1_counts->GetBinContent(5);
+	double oneJetcounts = h1_counts->GetBinContent(2);
+	double oneTauMatchcounts = h1_counts->GetBinContent(3);
+	double jetAlsoTcounts = h1_counts->GetBinContent(4);
+	double fourJetscounts = h1_counts->GetBinContent(5);
+	double oneLooseTau = h1_counts->GetBinContent(6);
+	double oneLcounts = h1_counts->GetBinContent(7);
+	double alsoTcounts = h1_counts->GetBinContent(8);
 
 	//double fourJetscounts_err = binerrors(h1_counts, 2, 2);
 	//double twoLooseTaus_err = binerrors(h1_counts, 3, 3);
 	//double oneLcounts_err = binerrors(h1_counts, 4, 4);
 	//double alsoTcounts_err = binerrors(h1_counts, 5, 5);
-	
+	//double jetToTightProb = jetAlsoTcounts / oneJetcounts;
+	//double jetToTightProb = jetAlsoTcounts / fourJetscounts;
+	double jetToTightProb = jetAlsoTcounts / oneTauMatchcounts;
 	double looseToTightProb = alsoTcounts / oneLcounts;
 	//double looseToTightProb_err = sqrt( pow( (alsoTcounts_err / oneLcounts )   , 2.) + pow( ( (alsoTcounts * oneLcounts_err) / (oneLcounts * oneLcounts)     )    , 2.) );
 
-	double twoLooseTo2Tight = looseToTightProb * looseToTightProb;
+	//double twoLooseTo2Tight = looseToTightProb * looseToTightProb;
+	double twoLooseTo2Tight = looseToTightProb * jetToTightProb;
 	//double twoLooseTo2Tight_err = 2. * looseToTightProb * looseToTightProb_err;
 
 	return (twoLooseTo2Tight);	
@@ -111,7 +118,7 @@ TH2F* makeBackgroundPlot_LtoT(string taupt, string isoregion){
 	TH2F* h2_DiJetInvMass_vs_MET_LtoT;
 	TH1F* h_ditauchargeVBFinverted;
 	TH1F* h_count; 
-	h2_DiJetInvMass_vs_MET = ((TH2F*)(inputfile->Get(("demo/" + isoregion +"ObjectSelection/h2_DiJetInvMass_vs_MET").c_str())));
+	h2_DiJetInvMass_vs_MET = ((TH2F*)(inputfile->Get(("demo/" + isoregion +"VBFInvertedObjectSelection/h2_DiJetInvMass_vs_MET").c_str())));
 	//h_ditaucharge = ((TH1F*)(inputfile->Get(("demo/" + isoregion +"ObjectSelection/h_ditaucharge").c_str())));
 	h_count = ((TH1F*)(inputfile->Get(("demo/" + isoregion +"ObjectSelection/counts").c_str())));
 	h_ditauchargeVBFinverted = ((TH1F*)(inputfile->Get(("demo/" + isoregion +"VBFInvertedObjectSelection/h_ditaucharge").c_str())));
@@ -142,7 +149,10 @@ TH2F* makeBackgroundPlot_LtoT(string taupt, string isoregion){
 			double bincontent = h2_DiJetInvMass_vs_MET->GetBinContent (i, j);
 			double vbffactor = vbfConversionFactor(taupt, isoregion);
 			double ltotfactor = LtoTfactor(taupt);
+			cout << "LtoT: " << ltotfactor << endl;
+			cout << "VBFfactor: " << vbffactor <<endl;
 			h2_DiJetInvMass_vs_MET_LtoT->SetBinContent(i,j, (bincontent*vbffactor*ltotfactor));
+			//h2_DiJetInvMass_vs_MET_LtoT->SetBinContent(i,j, (bincontent*ltotfactor));
 
 		}
 	}
@@ -161,6 +171,10 @@ TH2F* makeBackgroundPlot_LtoT(string taupt, string isoregion){
 	//gPad->SetLogy();
 	h2_DiJetInvMass_vs_MET_eff->Draw("colz");
 	my_canvas->Print(("JetInvMass_vs_MET_eff_" + isoregion + "_" + taupt + "_LtoT.pdf").c_str());
+	gPad->SetLogy();
+	TH1D *p_met = h2_DiJetInvMass_vs_MET->ProjectionX();
+	p_met->Draw();
+	my_canvas->Print("p_met_original.root");
 	my_canvas->Close();
 	h2_DiJetInvMass_vs_MET_eff->Clear();
 	///cout << "Total denominator events for " << isoregion << " / "  <<taupt << " : " << ntotalevents << endl;
@@ -168,89 +182,34 @@ TH2F* makeBackgroundPlot_LtoT(string taupt, string isoregion){
 	return h2_DiJetInvMass_vs_MET_LtoT;
 }
 
-double getSensitivity(double signal, double background) { 
+double getSignificance(double signal, double background, double sigma) { 
+	return (   (signal) / ( (sigma * 0.5) + sqrt( background + (0.5 * background * background)))  );
+}
 
-	return ( (signal)/ (sqrt(background + pow((0.5 * background),2.)))  );
+double getXSection(double efficiency, double luminosity, double background, double sigma, double significance) { 
+	return ( (significance * ( (0.5 * sigma) + sqrt( background + (0.5 * background * background))  ) ) / (efficiency * luminosity)   );
 }
 
 double getSignalEvents(int xbin, int ybin, TH2F* signal_map, double xsec, double lumi){
-//TODO implement the proper efficiency input
-double efficiency = signal_map->GetBinContent(xbin,ybin);
+	double efficiency = signal_map->GetBinContent(xbin,ybin);
 	return (efficiency * xsec * lumi);
 }
 
+double getSignalEfficiency(int xbin, int ybin, TH2F* signal_map){
+	double efficiency = signal_map->GetBinContent(xbin,ybin);
+	return (efficiency);
+}
+
+
 double getBackgroudEvents(int xbin, int ybin, TH2F* background_map){
-	//TODO implement the proper events input
 	int nbinsx = background_map->GetNbinsX(); 
 	int nbinsy = background_map->GetNbinsY();
 	double events = background_map->Integral( xbin, nbinsx, ybin, nbinsy );
-	if (events > 0.) {
-		return (events); 
-	} else {
-		return 0.0000001;
-	}
+	return (events); 
 }
 
-void paleta(TH2F* h) {
-	//palette settings - completely independent
-	const Int_t NRGBs = 6;
-	const Int_t NCont = 999;
 
-	Double_t stops[NRGBs] = { 0.00, 0.1, 0.34, 0.61, 0.84, 1.00 };
-	Double_t red[NRGBs]   = { 0.99, 0.0, 0.00, 0.87, 1.00, 0.51 };
-	Double_t green[NRGBs] = { 0.00, 0.0, 0.81, 1.00, 0.20, 0.00 };
-	Double_t blue[NRGBs]  = { 0.99, 0.0, 1.00, 0.12, 0.00, 0.00 };
-
-
-	TColor::CreateGradientColorTable(NRGBs, stops, red, green, blue, NCont);
-	gStyle->SetNumberContours(NCont);
-
-	//gStyle->SetOptStat(0);
-
-	//here the actually interesting code starts
-	const Double_t min = 0.000001;
-	const Double_t max = 100000;
-
-	//const Int_t nLevels = 999;
-	//Double_t levels[nLevels];
-	const Int_t nLevels = 15;
-	Double_t levels[nLevels];
-
-	  levels[0] = 0.000000001; 
-	  levels[1] = 0.00000001; 
-	  levels[2] = 0.0000001; 
-	  levels[3] = 0.000001; 
-	  levels[4] = 0.00001;
-	  levels[5] = 0.0001;
-	  levels[6] = 0.001;
-	  levels[7] = 0.01; 
-	  levels[8] = 0.1; 
-	  levels[9] = 1.;
-	  levels[10] = 10.; 
-	  levels[11] = 100.; 
-	  levels[12] = 1000.;
-	  levels[13] = 10000.; 
-	  levels[14] = 100000.; 
-
-	//for(int i = 1; i < nLevels; i++) {
-	//	levels[i] = min + (max - min) / (nLevels - 1) * (i);
-	//}
-	//levels[0] = 0.01;
-	//  levels[0] = -1; //Interesting, but this also works as I want!
-
-	TCanvas * c = new TCanvas();
-	//TH2D *h  = new TH2D("h", "", 10, 0, 10, 10, 0, 10);
-	h->SetContour((sizeof(levels)/sizeof(Double_t)), levels);
-	gPad->SetLogz();
-	h->DrawClone("colz");// draw "axes", "contents", "statistics box"
-
-	h->GetZaxis()->SetRangeUser(min, max); // ... set the range ...
-
-	h->Draw("z same"); // draw the "color palette"
-	c->SaveAs("c.png");
-}
-
-void xSecLimits() {
+void makeSignificance() {
 
 	double xsec = 0.003106; //pb only for test purposes
 	double lumi = 85000.; 
@@ -259,37 +218,99 @@ void xSecLimits() {
 	h2_DiJetInvMass_vs_MET_eff_signal = makeEffPlot("taupt20", "Taui2TightIso");
 	h2_DiJetInvMass_vs_MET_background = makeBackgroundPlot_LtoT("taupt20", "Tau2LooseIsoInclusive");
 
+
+
 	int nbinsx = h2_DiJetInvMass_vs_MET_background->GetNbinsX(); 
 	int nbinsy = h2_DiJetInvMass_vs_MET_background->GetNbinsY();
 	
-	TH2F* h2_DiJetInvMass_vs_MET_sensitivity;
-	h2_DiJetInvMass_vs_MET_sensitivity = new TH2F ("h2_DiJetInvMass_vs_MET_sensitivity","h2_DiJetInvMass_vs_MET_sensitivity", nbinsx, 0., 240., nbinsy , 0., 2500.);		
-	h2_DiJetInvMass_vs_MET_sensitivity->GetYaxis()->SetTitle("M^{(jet,jet)} [GeV]");
-	h2_DiJetInvMass_vs_MET_sensitivity->GetXaxis()->SetTitle("E_{T}^{miss} [GeV]");
-	h2_DiJetInvMass_vs_MET_sensitivity->SetStats(0);
+	TH2F* h2_DiJetInvMass_vs_MET_significance;
+	h2_DiJetInvMass_vs_MET_significance = new TH2F ("h2_DiJetInvMass_vs_MET_significance","h2_DiJetInvMass_vs_MET_significance", nbinsx, 0., 240., nbinsy , 0., 2500.);		
+	h2_DiJetInvMass_vs_MET_significance->GetZaxis()->SetTitle("Significance");
+	h2_DiJetInvMass_vs_MET_significance->GetYaxis()->SetTitle("M^{(jet,jet)} [GeV]");
+	h2_DiJetInvMass_vs_MET_significance->GetXaxis()->SetTitle("E_{T}^{miss} [GeV]");
+	h2_DiJetInvMass_vs_MET_significance->SetStats(0);
 
 	for (int i = 0; i < nbinsx; i++) {
 
 		for (int j = 0; j < nbinsy; j++) {
-			double sensitivity = getSensitivity(
+			double sensitivity = getSignificance(
 					getSignalEvents( i , j, h2_DiJetInvMass_vs_MET_eff_signal, xsec, lumi), 
-					getBackgroudEvents( i, j, h2_DiJetInvMass_vs_MET_background)
+					getBackgroudEvents( i, j, h2_DiJetInvMass_vs_MET_background),
+					2.5 //sigma
 					);
 			cout << sensitivity << endl;
-			h2_DiJetInvMass_vs_MET_sensitivity->SetBinContent(i, j, sensitivity);
+			h2_DiJetInvMass_vs_MET_significance->SetBinContent(i, j, sensitivity);
 		}
 	}
 
-	//paleta(h2_DiJetInvMass_vs_MET_sensitivity);
+	//paleta(h2_DiJetInvMass_vs_MET_significance);
 
 	TCanvas *my_canvas = new TCanvas;
 	my_canvas->cd();
 	gPad->SetLogz();
 	
-	h2_DiJetInvMass_vs_MET_sensitivity->GetZaxis()->SetRangeUser(0.0000001,10000);
-	h2_DiJetInvMass_vs_MET_sensitivity->Draw("colz");
-	//my_canvas->Print(("JetInvMass_vs_MET_sensitivity_" + isoregion + "_" + taupt + "_LtoT.pdf").c_str());
-	my_canvas->Print("JetInvMass_vs_MET_sensitivity_Tau2TightIso_taupt20.pdf");
+	h2_DiJetInvMass_vs_MET_significance->GetZaxis()->SetRangeUser(0.0000001,10);
+	h2_DiJetInvMass_vs_MET_significance->Draw("colz");
+	//my_canvas->Print(("JetInvMass_vs_MET_significance_" + isoregion + "_" + taupt + "_LtoT.pdf").c_str());
+	//my_canvas->Print("JetInvMass_vs_MET_significance_Tau2TightIso_taupt20.pdf");
+	my_canvas->Print("JetInvMass_vs_MET_significance_Tau2TightIso_taupt20.root");
 	my_canvas->Close();
 }
 
+void makeXSection() {
+
+	double lumi = 85000.; 
+	TH2F* h2_DiJetInvMass_vs_MET_eff_signal;
+	TH2F* h2_DiJetInvMass_vs_MET_background;
+	//h2_DiJetInvMass_vs_MET_eff_signal = makeEffPlot("taupt20", "Taui2TightIso");
+	//h2_DiJetInvMass_vs_MET_background = makeBackgroundPlot_LtoT("taupt20", "Tau2LooseIsoInclusive");
+	h2_DiJetInvMass_vs_MET_eff_signal = makeEffPlot("taupt20", "Taui2TightIso");
+	//h2_DiJetInvMass_vs_MET_background = makeBackgroundPlot_LtoT("taupt20", "TauAnyIso");
+	h2_DiJetInvMass_vs_MET_background = makeBackgroundPlot_LtoT("taupt20", "TauAnyIsoPlusNones");
+
+	
+	int nbinsx = h2_DiJetInvMass_vs_MET_background->GetNbinsX(); 
+	int nbinsy = h2_DiJetInvMass_vs_MET_background->GetNbinsY();
+	
+	TH1D *p_met = h2_DiJetInvMass_vs_MET_background->ProjectionX();
+
+	
+	TH2F* h2_DiJetInvMass_vs_MET_xsec;
+	h2_DiJetInvMass_vs_MET_xsec = new TH2F ("h2_DiJetInvMass_vs_MET_xsec","h2_DiJetInvMass_vs_MET_xsec", nbinsx, 0., 240., nbinsy , 0., 2500.);		
+	h2_DiJetInvMass_vs_MET_xsec->GetYaxis()->SetTitle("M^{(jet,jet)} [GeV]");
+	h2_DiJetInvMass_vs_MET_xsec->GetZaxis()->SetTitle("#sigma pb^{-1} [GeV]");
+	h2_DiJetInvMass_vs_MET_xsec->GetXaxis()->SetTitle("E_{T}^{miss} [GeV]");
+	h2_DiJetInvMass_vs_MET_xsec->SetStats(0);
+
+	for (int i = 0; i < nbinsx; i++) {
+
+		for (int j = 0; j < nbinsy; j++) {
+			double xsec = getXSection(
+					getSignalEfficiency(i,j, h2_DiJetInvMass_vs_MET_eff_signal), 
+					lumi, 
+					getBackgroudEvents( i, j, h2_DiJetInvMass_vs_MET_background), 
+					2.5, //sigma
+					2.0 //significance
+					); 
+
+
+			cout << xsec << endl;
+			h2_DiJetInvMass_vs_MET_xsec->SetBinContent(i, j, xsec);
+		}
+	}
+
+
+	TCanvas *my_canvas = new TCanvas("mycanvas","mycanvas",1024.,768.);
+	my_canvas->cd();
+	gPad->SetLogz();
+	
+	h2_DiJetInvMass_vs_MET_xsec->GetZaxis()->SetRangeUser(0.001,1000);
+	//h2_DiJetInvMass_vs_MET_xsec->Draw("colz text");
+	h2_DiJetInvMass_vs_MET_xsec->Draw("colz");
+	my_canvas->Print("JetInvMass_vs_MET_xsec_Tau2TightIso_taupt20.root");
+	gPad->SetLogy();
+	p_met->Draw();
+	my_canvas->Print("p_met.root");
+	//my_canvas->Print("JetInvMass_vs_MET_xsec_Tau2TightIso_taupt20.pdf");
+	my_canvas->Close();
+}
