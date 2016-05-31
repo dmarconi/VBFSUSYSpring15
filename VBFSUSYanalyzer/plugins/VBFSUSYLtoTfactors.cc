@@ -473,9 +473,9 @@ VBFSUSYLtoTfactors::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
 		//cout << "DEBUG: leadChargedHadrCand_pt cut passed for tau : " << t << endl;
 		if(!(       (tau.tauID("decayModeFindingNewDMs") > 0.5) && (tau.signalChargedHadrCands().size() == 1)	)) continue;
 		//cout << "DEBUG: decayModeFindingNewDMs cut passed for tau : " << t << endl;
-
+		baselineObjectSelectionCollection.tau.push_back(&tau);
+		
 		if( tau.tauID("byLooseCombinedIsolationDeltaBetaCorr3Hits")  > 0.5) {
-			baselineObjectSelectionCollection.tau.push_back(&tau);
 			anyiso.push_back(&tau);
 		}
 		else nones.push_back(&tau);

@@ -26,7 +26,8 @@ double vbfConversionFactor(string taupt, string isoregion) {
 	TH1F* h_ditauchargeVBFinverted;
 
 	h_ditaucharge = ((TH1F*)(inputfile->Get(("demo/" + isoregion +"ObjectSelection/h_ditaucharge").c_str())));
-	h_ditauchargeVBFinverted = ((TH1F*)(inputfile->Get(("demo/" + isoregion +"VBFInvertedObjectSelection/h_ditaucharge").c_str())));
+	//h_ditauchargeVBFinverted = ((TH1F*)(inputfile->Get(("demo/" + isoregion +"VBFInvertedObjectSelection/h_ditaucharge").c_str())));
+	h_ditauchargeVBFinverted = ((TH1F*)(inputfile->Get(("demo/" + isoregion +"VBFInvertedSelection/h_ditaucharge").c_str())));
 
 	double counts = h_ditaucharge->GetBinContent(3); 
 	double counts_inverted = h_ditauchargeVBFinverted->GetBinContent(3);
@@ -64,7 +65,8 @@ double LtoTfactor(string taupt) {
 	//double looseToTightProb_err = sqrt( pow( (alsoTcounts_err / oneLcounts )   , 2.) + pow( ( (alsoTcounts * oneLcounts_err) / (oneLcounts * oneLcounts)     )    , 2.) );
 
 	//double twoLooseTo2Tight = looseToTightProb * looseToTightProb;
-	double twoLooseTo2Tight = looseToTightProb * jetToTightProb;
+	//double twoLooseTo2Tight = looseToTightProb * jetToTightProb;
+	double twoLooseTo2Tight = jetToTightProb * jetToTightProb;
 	//double twoLooseTo2Tight_err = 2. * looseToTightProb * looseToTightProb_err;
 
 	return (twoLooseTo2Tight);	
@@ -117,15 +119,19 @@ TH2F* makeBackgroundPlot_LtoT(string taupt, string isoregion){
 	TH2F* h2_DiJetInvMass_vs_MET;
 	TH2F* h2_DiJetInvMass_vs_MET_LtoT;
 	TH1F* h_ditauchargeVBFinverted;
-	TH1F* h_count; 
-	h2_DiJetInvMass_vs_MET = ((TH2F*)(inputfile->Get(("demo/" + isoregion +"VBFInvertedObjectSelection/h2_DiJetInvMass_vs_MET").c_str())));
+	TH1F* h_count;
+	cout << "bla bla" << endl;	
+	h2_DiJetInvMass_vs_MET = ((TH2F*)(inputfile->Get(("demo/" + isoregion +"VBFInvertedSelection/h2_DiJetInvMass_vs_MET").c_str())));
+	//h2_DiJetInvMass_vs_MET = ((TH2F*)(inputfile->Get(("demo/" + isoregion +"VBFInvertedObjectSelection/h2_DiJetInvMass_vs_MET").c_str())));
 	//h_ditaucharge = ((TH1F*)(inputfile->Get(("demo/" + isoregion +"ObjectSelection/h_ditaucharge").c_str())));
 	h_count = ((TH1F*)(inputfile->Get(("demo/" + isoregion +"ObjectSelection/counts").c_str())));
-	h_ditauchargeVBFinverted = ((TH1F*)(inputfile->Get(("demo/" + isoregion +"VBFInvertedObjectSelection/h_ditaucharge").c_str())));
+	//h_ditauchargeVBFinverted = ((TH1F*)(inputfile->Get(("demo/" + isoregion +"VBFInvertedObjectSelection/h_ditaucharge").c_str())));
+	h_ditauchargeVBFinverted = ((TH1F*)(inputfile->Get(("demo/" + isoregion +"VBFInvertedSelection/h_ditaucharge").c_str())));
+	cout << "bla bla bla" << endl;	
 	int nbinsx = h2_DiJetInvMass_vs_MET->GetNbinsX(); 
 	int nbinsy = h2_DiJetInvMass_vs_MET->GetNbinsY();
 	double ntotalevents = h_count->GetBinContent(1);
-	double ntotalnumevents = h2_DiJetInvMass_vs_MET->Integral( 0. , nbinsx, 0. , nbinsy );
+	//double ntotalnumevents = h2_DiJetInvMass_vs_MET->Integral( 0. , nbinsx, 0. , nbinsy );
 	//cout << "N total events: " << ntotalevents << endl;
 	//double ntotalevents = h_ditaucharge->GetBinContent(3);
 
@@ -168,9 +174,12 @@ TH2F* makeBackgroundPlot_LtoT(string taupt, string isoregion){
 
 	TCanvas *my_canvas = new TCanvas;
 	my_canvas->cd();
-	//gPad->SetLogy();
-	h2_DiJetInvMass_vs_MET_eff->Draw("colz");
-	my_canvas->Print(("JetInvMass_vs_MET_eff_" + isoregion + "_" + taupt + "_LtoT.pdf").c_str());
+	gPad->SetLogz();
+	double maximum = h2_DiJetInvMass_vs_MET->GetMaximum();
+	double minimum = h2_DiJetInvMass_vs_MET->GetMinimum();
+	h2_DiJetInvMass_vs_MET->GetZaxis()->SetRangeUser(minimum,maximum);
+	h2_DiJetInvMass_vs_MET->Draw("colz");
+	my_canvas->Print(("JetInvMass_vs_MET_" + isoregion + "_" + taupt + "_LtoT.pdf").c_str());
 	gPad->SetLogy();
 	TH1D *p_met = h2_DiJetInvMass_vs_MET->ProjectionX();
 	p_met->Draw();
@@ -266,8 +275,10 @@ void makeXSection() {
 	//h2_DiJetInvMass_vs_MET_background = makeBackgroundPlot_LtoT("taupt20", "Tau2LooseIsoInclusive");
 	h2_DiJetInvMass_vs_MET_eff_signal = makeEffPlot("taupt20", "Taui2TightIso");
 	//h2_DiJetInvMass_vs_MET_background = makeBackgroundPlot_LtoT("taupt20", "TauAnyIso");
-	h2_DiJetInvMass_vs_MET_background = makeBackgroundPlot_LtoT("taupt20", "TauAnyIsoPlusNones");
+	//h2_DiJetInvMass_vs_MET_background = makeBackgroundPlot_LtoT("taupt20", "TauAnyIsoPlusNones");
+	h2_DiJetInvMass_vs_MET_background = makeBackgroundPlot_LtoT("taupt20", "baseline");
 
+	cout << "bla bla bla bla" << endl;	
 	
 	int nbinsx = h2_DiJetInvMass_vs_MET_background->GetNbinsX(); 
 	int nbinsy = h2_DiJetInvMass_vs_MET_background->GetNbinsY();
@@ -303,6 +314,8 @@ void makeXSection() {
 	TCanvas *my_canvas = new TCanvas("mycanvas","mycanvas",1024.,768.);
 	my_canvas->cd();
 	gPad->SetLogz();
+	
+	cout << "bla bla bla bla bla" << endl;	
 	
 	h2_DiJetInvMass_vs_MET_xsec->GetZaxis()->SetRangeUser(0.001,1000);
 	//h2_DiJetInvMass_vs_MET_xsec->Draw("colz text");
