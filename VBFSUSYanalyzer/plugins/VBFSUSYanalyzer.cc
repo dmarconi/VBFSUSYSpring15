@@ -552,11 +552,11 @@ VBFSUSYanalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
 		//cout << "DEBUG: Tau eta : " << tau[t].eta << endl;
 		//cout << "DEBUG: Tau phi : " << tau[t].phi << endl;
 		//OLDID    //if(!(       tau[t].pt >= 45.                                            				)) continue;
-		//if(!(       tau.pt() >= 40.                                            				)) continue;
 		if(!(       tau.pt() >= 20.                                            				)) continue;
 		//if(!(       tau.pt() >= 25.                                            				)) continue;
 		//if(!(       tau.pt() >= 30.                                            				)) continue;
 		//if(!(       tau.pt() >= 35.                                            				)) continue;
+		//if(!(       tau.pt() >= 40.                                            				)) continue;
 		//cout << "DEBUG: Pt cut passed for tau : " << t << endl;
 		//OLDID  //if(!(       tau[t].tauID_againstElectronMediumMVA5 > 0.5                				)) continue;
 		if(!(       tau.tauID("againstElectronVLooseMVA5") > 0.5                				)) continue;

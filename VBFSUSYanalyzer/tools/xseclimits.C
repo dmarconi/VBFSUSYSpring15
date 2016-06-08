@@ -177,8 +177,11 @@ TH2F* makeBackgroundPlot_LtoT(string taupt, string isoregion){
 	gPad->SetLogz();
 	double maximum = h2_DiJetInvMass_vs_MET->GetMaximum();
 	double minimum = h2_DiJetInvMass_vs_MET->GetMinimum();
-	h2_DiJetInvMass_vs_MET->GetZaxis()->SetRangeUser(minimum,maximum);
-	h2_DiJetInvMass_vs_MET->Draw("colz");
+	//cout << "minimum: " << minimum << endl;
+	//h2_DiJetInvMass_vs_MET->GetZaxis()->SetRangeUser((minimum * 0.00000001),maximum);
+	h2_DiJetInvMass_vs_MET_LtoT->GetZaxis()->SetRangeUser(0.000001 , 10000);
+	h2_DiJetInvMass_vs_MET_LtoT->SetStats(0);
+	h2_DiJetInvMass_vs_MET_LtoT->Draw("colz");
 	my_canvas->Print(("JetInvMass_vs_MET_" + isoregion + "_" + taupt + "_LtoT.pdf").c_str());
 	gPad->SetLogy();
 	TH1D *p_met = h2_DiJetInvMass_vs_MET->ProjectionX();
@@ -287,6 +290,7 @@ void makeXSection() {
 
 	
 	TH2F* h2_DiJetInvMass_vs_MET_xsec;
+	TH2F* h2_DiJetInvMass_vs_MET_xsec_zoom;
 	h2_DiJetInvMass_vs_MET_xsec = new TH2F ("h2_DiJetInvMass_vs_MET_xsec","h2_DiJetInvMass_vs_MET_xsec", nbinsx, 0., 240., nbinsy , 0., 2500.);		
 	h2_DiJetInvMass_vs_MET_xsec->GetYaxis()->SetTitle("M^{(jet,jet)} [GeV]");
 	h2_DiJetInvMass_vs_MET_xsec->GetZaxis()->SetTitle("#sigma pb^{-1} [GeV]");
@@ -311,11 +315,23 @@ void makeXSection() {
 	}
 
 
+	cout << "bla bla bla bla bla" << endl;	
+
+	TCanvas *my_canvas_zoom = new TCanvas("mycanvas_zoom","mycanvas_zoom",1024.,768.);
+	my_canvas_zoom->cd();
+	gPad->SetLogz();
+	h2_DiJetInvMass_vs_MET_xsec_zoom = (TH2F*) h2_DiJetInvMass_vs_MET_xsec->Clone();
+	h2_DiJetInvMass_vs_MET_xsec_zoom->GetXaxis()->SetRangeUser(70.,200.);		
+	h2_DiJetInvMass_vs_MET_xsec_zoom->GetYaxis()->SetRangeUser(0.,1000.);		
+	double maximum_zoom = h2_DiJetInvMass_vs_MET_xsec_zoom->GetMaximum();
+	double minimum_zoom = h2_DiJetInvMass_vs_MET_xsec_zoom->GetMinimum();
+	h2_DiJetInvMass_vs_MET_xsec_zoom ->GetZaxis()->SetRangeUser(minimum_zoom,maximum_zoom);		
+	h2_DiJetInvMass_vs_MET_xsec_zoom->Draw("colz");
+	my_canvas_zoom->Print("JetInvMass_vs_MET_xsec_Tau2TightIso_taupt20_zoom.root");
+	
 	TCanvas *my_canvas = new TCanvas("mycanvas","mycanvas",1024.,768.);
 	my_canvas->cd();
 	gPad->SetLogz();
-	
-	cout << "bla bla bla bla bla" << endl;	
 	
 	h2_DiJetInvMass_vs_MET_xsec->GetZaxis()->SetRangeUser(0.001,1000);
 	//h2_DiJetInvMass_vs_MET_xsec->Draw("colz text");
