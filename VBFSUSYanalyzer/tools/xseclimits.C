@@ -20,8 +20,9 @@ double vbfefficiency(double evenCRcounts, double oddCRcounts){
 
 double vbfConversionFactor(string taupt, string isoregion) {
 
-	//TFile *inputfile = TFile::Open(("allQCD_"+ taupt +".root").c_str());
-	TFile *inputfile = TFile::Open("allQCD.root");
+	TFile *inputfile = TFile::Open(("allQCD_"+ taupt +".root").c_str());
+	//TFile *inputfile = TFile::Open("allQCD.root");
+	//TFile *inputfile = TFile::Open("allQCD_taupt20.root");
 	TH1F* h_ditaucharge;
 	TH1F* h_ditauchargeVBFinverted;
 
@@ -75,7 +76,9 @@ double LtoTfactor(string taupt) {
 
 
 TH2F* makeEffPlot(string taupt, string isoregion) {
-	TFile *inputfile = TFile::Open("VBFC1pmN2_C1ToTau_N2ToTauTau_LSP000_Stau295_Chargino300_1M.root");
+	//TFile *inputfile = TFile::Open("VBFC1pmN2_C1ToTau_N2ToTauTau_LSP000_Stau295_Chargino300_1M.root");
+	//TFile *inputfile = TFile::Open("VBFC1pmN2_C1ToTau_N2ToTauTau_LSP000_Stau195_Chargino200_1M.root");
+	TFile *inputfile = TFile::Open("VBFC1pmN2_C1ToTau_N2ToTauTau_LSP000_Stau095_Chargino100_1M.root");
 	TH2F* h2_DiJetInvMass_vs_MET;
 	TH1F* h_count; 
 	h2_DiJetInvMass_vs_MET = ((TH2F*)(inputfile->Get(("demo/" + isoregion +"ObjectSelection/h2_DiJetInvMass_vs_MET").c_str())));
@@ -114,8 +117,9 @@ TH2F* makeEffPlot(string taupt, string isoregion) {
 TH2F* makeBackgroundPlot_LtoT(string taupt, string isoregion){
 
 
-	//TFile *inputfile = TFile::Open(("allQCD_"+ taupt +".root").c_str());
-	TFile *inputfile = TFile::Open("allQCD.root");
+	TFile *inputfile = TFile::Open(("allQCD_"+ taupt +".root").c_str());
+	//TFile *inputfile = TFile::Open("allQCD.root");
+	//TFile *inputfile = TFile::Open("allQCD_taupt20.root");
 	TH2F* h2_DiJetInvMass_vs_MET;
 	TH2F* h2_DiJetInvMass_vs_MET_LtoT;
 	TH1F* h_ditauchargeVBFinverted;
@@ -155,14 +159,15 @@ TH2F* makeBackgroundPlot_LtoT(string taupt, string isoregion){
 			double bincontent = h2_DiJetInvMass_vs_MET->GetBinContent (i, j);
 			double vbffactor = vbfConversionFactor(taupt, isoregion);
 			double ltotfactor = LtoTfactor(taupt);
-			cout << "LtoT: " << ltotfactor << endl;
-			cout << "VBFfactor: " << vbffactor <<endl;
+			//cout << "LtoT: " << ltotfactor << endl;
+			//cout << "VBFfactor: " << vbffactor <<endl;
 			h2_DiJetInvMass_vs_MET_LtoT->SetBinContent(i,j, (bincontent*vbffactor*ltotfactor));
 			//h2_DiJetInvMass_vs_MET_LtoT->SetBinContent(i,j, (bincontent*ltotfactor));
 
 		}
 	}
 
+	cout << "cazzo" << endl;
 	for (int i = 0; i < nbinsx; i++) {
 
 		for (int j = 0; j < nbinsy; j++) {
@@ -171,6 +176,7 @@ TH2F* makeBackgroundPlot_LtoT(string taupt, string isoregion){
 
 		}
 	}
+
 
 	TCanvas *my_canvas = new TCanvas;
 	my_canvas->cd();
