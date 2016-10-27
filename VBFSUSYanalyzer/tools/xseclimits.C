@@ -34,7 +34,9 @@ double vbfConversionFactor(string taupt, string isoregion) {
 
 	double vbfeff = vbfefficiency(counts_inverted, counts);
 
+	delete inputfile;
 	return (vbfeff / (1. - vbfeff));
+
 
 }
 
@@ -57,18 +59,22 @@ double LtoTfactor(string taupt) {
 	double looseToTightProb = alsoTcounts / oneLcounts;
 	double twoLooseTo2Tight = jetToTightProb * jetToTightProb;
 
+	delete inputfile;
 	return (twoLooseTo2Tight);	
 
 }
 
 
-TH2F* makeEffPlot(string taupt, string isoregion, string chi) {
+TH2F* makeEffPlot(string taupt, string isoregion, string chi, string lsp) {
 	//TFile *inputfile = TFile::Open("VBFC1pmN2_C1ToTau_N2ToTauTau_LSP000_Stau295_Chargino300_1M.root");
 	//TFile *inputfile = TFile::Open("VBFC1pmN2_C1ToTau_N2ToTauTau_LSP000_Stau195_Chargino200_1M.root");
 	TFile *inputfile;
-	if (chi == "chi100") inputfile = TFile::Open((taupt + "/VBFC1pmN2_C1ToTau_N2ToTauTau_LSP000_Stau095_Chargino100_1M.root").c_str());
-	if (chi == "chi200") inputfile = TFile::Open((taupt + "/VBFC1pmN2_C1ToTau_N2ToTauTau_LSP000_Stau195_Chargino200_1M.root").c_str());
-	if (chi == "chi300") inputfile = TFile::Open((taupt + "/VBFC1pmN2_C1ToTau_N2ToTauTau_LSP000_Stau295_Chargino300_1M.root").c_str());
+	if ((chi == "chi100") && (lsp == "lsp000")) inputfile = TFile::Open((taupt + "/VBFC1pmN2_C1ToTau_N2ToTauTau_LSP000_Stau095_Chargino100_1M.root").c_str());
+	if ((chi == "chi200") && (lsp == "lsp000")) inputfile = TFile::Open((taupt + "/VBFC1pmN2_C1ToTau_N2ToTauTau_LSP000_Stau195_Chargino200_1M.root").c_str());
+	if ((chi == "chi300") && (lsp == "lsp000")) inputfile = TFile::Open((taupt + "/VBFC1pmN2_C1ToTau_N2ToTauTau_LSP000_Stau295_Chargino300_1M.root").c_str());
+	if ((chi == "chi100") && (lsp == "lsp050")) inputfile = TFile::Open((taupt + "/VBFC1pmN2_C1ToTau_N2ToTauTau_LSP050_Stau095_Chargino100_1M.root").c_str());
+	if ((chi == "chi200") && (lsp == "lsp050")) inputfile = TFile::Open((taupt + "/VBFC1pmN2_C1ToTau_N2ToTauTau_LSP050_Stau195_Chargino200_1M.root").c_str());
+	if ((chi == "chi300") && (lsp == "lsp050")) inputfile = TFile::Open((taupt + "/VBFC1pmN2_C1ToTau_N2ToTauTau_LSP050_Stau295_Chargino300_1M.root").c_str());
 	TH2F* h2_DiJetInvMass_vs_MET;
 	TH1F* h_count; 
 	h2_DiJetInvMass_vs_MET = ((TH2F*)(inputfile->Get(("demo/" + isoregion +"ObjectSelection/h2_DiJetInvMass_vs_MET").c_str())));
@@ -101,6 +107,7 @@ TH2F* makeEffPlot(string taupt, string isoregion, string chi) {
 	my_canvas->Print(("results/JetInvMass_vs_MET_eff_" + isoregion + "_" + taupt + ".pdf").c_str());
 	my_canvas->Close();
 	//h2_DiJetInvMass_vs_MET_eff->Clear();
+	//delete inputfile;
 	return h2_DiJetInvMass_vs_MET_eff;
 }
 
@@ -124,7 +131,6 @@ TH2F* makeBackgroundPlot_LtoT(string taupt, string isoregion){
 	int nbinsy = h2_DiJetInvMass_vs_MET->GetNbinsY();
 	double ntotalevents = h_count->GetBinContent(1);
 	//double ntotalnumevents = h2_DiJetInvMass_vs_MET->Integral( 0. , nbinsx, 0. , nbinsy );
-	//cout << "N total events: " << ntotalevents << endl;
 	//double ntotalevents = h_ditaucharge->GetBinContent(3);
 
 	//TODO convert to the tight plot
@@ -151,8 +157,6 @@ TH2F* makeBackgroundPlot_LtoT(string taupt, string isoregion){
 
 		}
 	}
-
-	//cout << "cazzo" << endl;
 	for (int i = 0; i < nbinsx; i++) {
 
 		for (int j = 0; j < nbinsy; j++) {
@@ -178,6 +182,7 @@ TH2F* makeBackgroundPlot_LtoT(string taupt, string isoregion){
 	my_canvas->Print("p_met_original.root");
 	my_canvas->Close();
 	h2_DiJetInvMass_vs_MET_eff->Clear();
+	
 	return h2_DiJetInvMass_vs_MET_LtoT;
 }
 
@@ -208,13 +213,13 @@ double getBackgroudEvents(int xbin, int ybin, TH2F* background_map){
 }
 
 
-void makeSignificance(string chi) {
+void makeSignificance(string chi, string lsp) {
 
 	double xsec = 0.003106; //pb only for test purposes
 	double lumi = 85000.; 
 	TH2F* h2_DiJetInvMass_vs_MET_eff_signal;
 	TH2F* h2_DiJetInvMass_vs_MET_background;
-	h2_DiJetInvMass_vs_MET_eff_signal = makeEffPlot("taupt20", "Taui2TightIso", "chi100");
+	h2_DiJetInvMass_vs_MET_eff_signal = makeEffPlot("taupt20", "Taui2TightIso", "chi100","lsp000");
 	h2_DiJetInvMass_vs_MET_background = makeBackgroundPlot_LtoT("taupt20", "Tau2LooseIsoInclusive");
 
 
@@ -237,7 +242,6 @@ void makeSignificance(string chi) {
 					getBackgroudEvents( i, j, h2_DiJetInvMass_vs_MET_background),
 					2.5 //sigma
 					);
-			cout << sensitivity << endl;
 			h2_DiJetInvMass_vs_MET_significance->SetBinContent(i, j, sensitivity);
 		}
 	}
@@ -256,16 +260,12 @@ void makeSignificance(string chi) {
 	my_canvas->Close();
 }
 
-void makeXSection(string taupt,string chi) {
+void makeXSection(string taupt,string chi, string lsp) {
 
 	double lumi = 85000.; 
 	TH2F* h2_DiJetInvMass_vs_MET_eff_signal;
 	TH2F* h2_DiJetInvMass_vs_MET_background;
-	//h2_DiJetInvMass_vs_MET_eff_signal = makeEffPlot("taupt20", "Taui2TightIso");
-	//h2_DiJetInvMass_vs_MET_background = makeBackgroundPlot_LtoT("taupt20", "Tau2LooseIsoInclusive");
-	h2_DiJetInvMass_vs_MET_eff_signal = makeEffPlot(taupt, "Taui2TightIso", chi);
-	//h2_DiJetInvMass_vs_MET_background = makeBackgroundPlot_LtoT("taupt20", "TauAnyIso");
-	//h2_DiJetInvMass_vs_MET_background = makeBackgroundPlot_LtoT("taupt20", "TauAnyIsoPlusNones");
+	h2_DiJetInvMass_vs_MET_eff_signal = makeEffPlot(taupt, "Taui2TightIso", chi, lsp);
 	h2_DiJetInvMass_vs_MET_background = makeBackgroundPlot_LtoT(taupt, "baseline");
 	
 	int nbinsx = h2_DiJetInvMass_vs_MET_background->GetNbinsX(); 
@@ -276,7 +276,7 @@ void makeXSection(string taupt,string chi) {
 	
 	TH2F* h2_DiJetInvMass_vs_MET_xsec;
 	TH2F* h2_DiJetInvMass_vs_MET_xsec_zoom;
-	h2_DiJetInvMass_vs_MET_xsec = new TH2F (("JetInvMass_vs_MET_xsec_" + chi + "_" + taupt).c_str(),("JetInvMass_vs_MET_xsec_" + chi + "_" + taupt).c_str(), nbinsx, 0., 240., nbinsy , 0., 2500.);		
+	h2_DiJetInvMass_vs_MET_xsec = new TH2F (("JetInvMass_vs_MET_xsec_" + chi + "_" + lsp + "_" + taupt).c_str(),("JetInvMass_vs_MET_xsec_" + chi + "_" + lsp + "_" + taupt).c_str(), nbinsx, 0., 240., nbinsy , 0., 2500.);		
 	h2_DiJetInvMass_vs_MET_xsec->GetYaxis()->SetTitle("M^{(jet,jet)} [GeV]");
 	h2_DiJetInvMass_vs_MET_xsec->GetZaxis()->SetTitle("#sigma pb^{-1} [GeV]");
 	h2_DiJetInvMass_vs_MET_xsec->GetXaxis()->SetTitle("E_{T}^{miss} [GeV]");
@@ -294,7 +294,6 @@ void makeXSection(string taupt,string chi) {
 					); 
 
 
-			cout << xsec << endl;
 			h2_DiJetInvMass_vs_MET_xsec->SetBinContent(i, j, xsec);
 		}
 	}
@@ -313,45 +312,37 @@ void makeXSection(string taupt,string chi) {
 	h2_DiJetInvMass_vs_MET_xsec_zoom->Draw("colz");
 	gPad->Modified();
 	gPad->Update();
-	my_canvas_zoom->Print(("results/JetInvMass_vs_MET_xsec_" + chi + "_" + taupt + "_zoom.pdf").c_str());
+	my_canvas_zoom->Print(("results/JetInvMass_vs_MET_xsec_" + chi + "_" + lsp + "_" + taupt + "_zoom.pdf").c_str());
 	
 	TCanvas *my_canvas = new TCanvas("mycanvas","mycanvas",1024.,768.);
 	my_canvas->cd();
 	gPad->SetLogz();
-	
+
+	int binmin = h2_DiJetInvMass_vs_MET_xsec->GetMinimumBin();
+	double minimum = h2_DiJetInvMass_vs_MET_xsec->GetMinimum(0.0001);
+	double x_min = h2_DiJetInvMass_vs_MET_xsec->GetXaxis()->GetBinCenter(binmin);
+	double y_min = h2_DiJetInvMass_vs_MET_xsec->GetYaxis()->GetBinCenter(binmin);
+	cout << "Minimum at " << minimum << " for " << chi << ", " << lsp << " and " << taupt << ": Jetinvmass " << y_min << " MET " << x_min << endl; 
+
 	h2_DiJetInvMass_vs_MET_xsec->GetZaxis()->SetRangeUser(0.001,1000);
 	h2_DiJetInvMass_vs_MET_xsec->Draw("colz");
 	gPad->Modified();
 	gPad->Update();
-	my_canvas->Print(("results/JetInvMass_vs_MET_xsec_" + chi + "_" + taupt + ".pdf").c_str());
+	my_canvas->Print(("results/JetInvMass_vs_MET_xsec_" + chi + "_" + lsp + "_" + taupt + ".pdf").c_str());
 	gPad->SetLogy();
 	p_met->Draw();
 	my_canvas->Print(("results/p_met" + taupt + ".root").c_str());
 	my_canvas->Close();
 }
 
-void makeNeededPlots(){
+void makeNeededPlots(string chi, string lsp){
 
 
-	makeXSection("taupt20","chi100");
-	makeXSection("taupt25","chi100");
-	makeXSection("taupt30","chi100");
-	makeXSection("taupt35","chi100");
-	makeXSection("taupt40","chi100");
-	makeXSection("taupt45","chi100");
-	
-	makeXSection("taupt20","chi200");
-	makeXSection("taupt25","chi200");
-	makeXSection("taupt30","chi200");
-	makeXSection("taupt35","chi200");
-	makeXSection("taupt40","chi200");
-	makeXSection("taupt45","chi200");
-
-	makeXSection("taupt20","chi300");
-	makeXSection("taupt25","chi300");
-	makeXSection("taupt30","chi300");
-	makeXSection("taupt35","chi300");
-	makeXSection("taupt40","chi300");
-	makeXSection("taupt45","chi300");
+	makeXSection("taupt20",chi,lsp);
+	makeXSection("taupt25",chi,lsp);
+	makeXSection("taupt30",chi,lsp);
+	makeXSection("taupt35",chi,lsp);
+	makeXSection("taupt40",chi,lsp);
+	makeXSection("taupt45",chi,lsp);
 
 }
