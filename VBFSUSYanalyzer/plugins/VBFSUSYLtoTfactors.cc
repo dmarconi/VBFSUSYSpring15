@@ -471,7 +471,7 @@ VBFSUSYLtoTfactors::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
 		//cout << "DEBUG: Muon veto cut passed for tau : " << t << endl;
 		if(!(       tau.leadChargedHadrCand()->pt() >= 5.0                      				)) continue;
 		//cout << "DEBUG: leadChargedHadrCand_pt cut passed for tau : " << t << endl;
-		if(!(       (tau.tauID("decayModeFindingNewDMs") > 0.5) && (tau.signalChargedHadrCands().size() == 1)	)) continue;
+		if(!(       (tau.tauID("decayModeFindingNewDMs") > 0.5) && (tau.signalChargedHadrCands().size() < 4)	)) continue;
 		//cout << "DEBUG: decayModeFindingNewDMs cut passed for tau : " << t << endl;
 		baselineObjectSelectionCollection.tau.push_back(&tau);
 		

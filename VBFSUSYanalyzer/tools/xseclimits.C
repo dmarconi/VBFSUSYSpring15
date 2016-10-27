@@ -20,9 +20,7 @@ double vbfefficiency(double evenCRcounts, double oddCRcounts){
 
 double vbfConversionFactor(string taupt, string isoregion) {
 
-	TFile *inputfile = TFile::Open(("allQCD_"+ taupt +".root").c_str());
-	//TFile *inputfile = TFile::Open("allQCD.root");
-	//TFile *inputfile = TFile::Open("allQCD_taupt20.root");
+	TFile *inputfile = TFile::Open((taupt + "/allQCD_"+ taupt +".root").c_str());
 	TH1F* h_ditaucharge;
 	TH1F* h_ditauchargeVBFinverted;
 
@@ -42,7 +40,7 @@ double vbfConversionFactor(string taupt, string isoregion) {
 
 double LtoTfactor(string taupt) {
 
-	TFile *inputfile = TFile::Open(("allQCD_"+ taupt +"_LtoT.root").c_str());
+	TFile *inputfile = TFile::Open(( taupt + "/allQCD_"+ taupt +"_LtoT.root").c_str());
 
 	TH1F* h1_counts;
 	h1_counts = ((TH1F*)(inputfile->Get("demo/baselineObjectSelection/counts")));
@@ -55,20 +53,9 @@ double LtoTfactor(string taupt) {
 	double oneLcounts = h1_counts->GetBinContent(7);
 	double alsoTcounts = h1_counts->GetBinContent(8);
 
-	//double fourJetscounts_err = binerrors(h1_counts, 2, 2);
-	//double twoLooseTaus_err = binerrors(h1_counts, 3, 3);
-	//double oneLcounts_err = binerrors(h1_counts, 4, 4);
-	//double alsoTcounts_err = binerrors(h1_counts, 5, 5);
-	//double jetToTightProb = jetAlsoTcounts / oneJetcounts;
-	//double jetToTightProb = jetAlsoTcounts / fourJetscounts;
 	double jetToTightProb = jetAlsoTcounts / oneTauMatchcounts;
 	double looseToTightProb = alsoTcounts / oneLcounts;
-	//double looseToTightProb_err = sqrt( pow( (alsoTcounts_err / oneLcounts )   , 2.) + pow( ( (alsoTcounts * oneLcounts_err) / (oneLcounts * oneLcounts)     )    , 2.) );
-
-	//double twoLooseTo2Tight = looseToTightProb * looseToTightProb;
-	//double twoLooseTo2Tight = looseToTightProb * jetToTightProb;
 	double twoLooseTo2Tight = jetToTightProb * jetToTightProb;
-	//double twoLooseTo2Tight_err = 2. * looseToTightProb * looseToTightProb_err;
 
 	return (twoLooseTo2Tight);	
 
@@ -78,7 +65,7 @@ double LtoTfactor(string taupt) {
 TH2F* makeEffPlot(string taupt, string isoregion) {
 	//TFile *inputfile = TFile::Open("VBFC1pmN2_C1ToTau_N2ToTauTau_LSP000_Stau295_Chargino300_1M.root");
 	//TFile *inputfile = TFile::Open("VBFC1pmN2_C1ToTau_N2ToTauTau_LSP000_Stau195_Chargino200_1M.root");
-	TFile *inputfile = TFile::Open("VBFC1pmN2_C1ToTau_N2ToTauTau_LSP000_Stau095_Chargino100_1M.root");
+	TFile *inputfile = TFile::Open((taupt + "/VBFC1pmN2_C1ToTau_N2ToTauTau_LSP000_Stau095_Chargino100_1M.root").c_str());
 	TH2F* h2_DiJetInvMass_vs_MET;
 	TH1F* h_count; 
 	h2_DiJetInvMass_vs_MET = ((TH2F*)(inputfile->Get(("demo/" + isoregion +"ObjectSelection/h2_DiJetInvMass_vs_MET").c_str())));
@@ -108,7 +95,7 @@ TH2F* makeEffPlot(string taupt, string isoregion) {
 	my_canvas->cd();
 	gPad->SetLogz();
 	h2_DiJetInvMass_vs_MET_eff->Draw("colz");
-	my_canvas->Print(("JetInvMass_vs_MET_eff_" + isoregion + "_" + taupt + ".pdf").c_str());
+	my_canvas->Print(("results/JetInvMass_vs_MET_eff_" + isoregion + "_" + taupt + ".pdf").c_str());
 	my_canvas->Close();
 	//h2_DiJetInvMass_vs_MET_eff->Clear();
 	return h2_DiJetInvMass_vs_MET_eff;
@@ -117,21 +104,19 @@ TH2F* makeEffPlot(string taupt, string isoregion) {
 TH2F* makeBackgroundPlot_LtoT(string taupt, string isoregion){
 
 
-	TFile *inputfile = TFile::Open(("allQCD_"+ taupt +".root").c_str());
+	TFile *inputfile = TFile::Open((taupt + "/allQCD_"+ taupt +".root").c_str());
 	//TFile *inputfile = TFile::Open("allQCD.root");
 	//TFile *inputfile = TFile::Open("allQCD_taupt20.root");
 	TH2F* h2_DiJetInvMass_vs_MET;
 	TH2F* h2_DiJetInvMass_vs_MET_LtoT;
 	TH1F* h_ditauchargeVBFinverted;
 	TH1F* h_count;
-	cout << "bla bla" << endl;	
 	h2_DiJetInvMass_vs_MET = ((TH2F*)(inputfile->Get(("demo/" + isoregion +"VBFInvertedSelection/h2_DiJetInvMass_vs_MET").c_str())));
 	//h2_DiJetInvMass_vs_MET = ((TH2F*)(inputfile->Get(("demo/" + isoregion +"VBFInvertedObjectSelection/h2_DiJetInvMass_vs_MET").c_str())));
 	//h_ditaucharge = ((TH1F*)(inputfile->Get(("demo/" + isoregion +"ObjectSelection/h_ditaucharge").c_str())));
 	h_count = ((TH1F*)(inputfile->Get(("demo/" + isoregion +"ObjectSelection/counts").c_str())));
 	//h_ditauchargeVBFinverted = ((TH1F*)(inputfile->Get(("demo/" + isoregion +"VBFInvertedObjectSelection/h_ditaucharge").c_str())));
 	h_ditauchargeVBFinverted = ((TH1F*)(inputfile->Get(("demo/" + isoregion +"VBFInvertedSelection/h_ditaucharge").c_str())));
-	cout << "bla bla bla" << endl;	
 	int nbinsx = h2_DiJetInvMass_vs_MET->GetNbinsX(); 
 	int nbinsy = h2_DiJetInvMass_vs_MET->GetNbinsY();
 	double ntotalevents = h_count->GetBinContent(1);
@@ -159,15 +144,12 @@ TH2F* makeBackgroundPlot_LtoT(string taupt, string isoregion){
 			double bincontent = h2_DiJetInvMass_vs_MET->GetBinContent (i, j);
 			double vbffactor = vbfConversionFactor(taupt, isoregion);
 			double ltotfactor = LtoTfactor(taupt);
-			//cout << "LtoT: " << ltotfactor << endl;
-			//cout << "VBFfactor: " << vbffactor <<endl;
 			h2_DiJetInvMass_vs_MET_LtoT->SetBinContent(i,j, (bincontent*vbffactor*ltotfactor));
-			//h2_DiJetInvMass_vs_MET_LtoT->SetBinContent(i,j, (bincontent*ltotfactor));
 
 		}
 	}
 
-	cout << "cazzo" << endl;
+	//cout << "cazzo" << endl;
 	for (int i = 0; i < nbinsx; i++) {
 
 		for (int j = 0; j < nbinsy; j++) {
@@ -183,8 +165,6 @@ TH2F* makeBackgroundPlot_LtoT(string taupt, string isoregion){
 	gPad->SetLogz();
 	double maximum = h2_DiJetInvMass_vs_MET->GetMaximum();
 	double minimum = h2_DiJetInvMass_vs_MET->GetMinimum();
-	//cout << "minimum: " << minimum << endl;
-	//h2_DiJetInvMass_vs_MET->GetZaxis()->SetRangeUser((minimum * 0.00000001),maximum);
 	h2_DiJetInvMass_vs_MET_LtoT->GetZaxis()->SetRangeUser(0.000001 , 10000);
 	h2_DiJetInvMass_vs_MET_LtoT->SetStats(0);
 	h2_DiJetInvMass_vs_MET_LtoT->Draw("colz");
@@ -195,8 +175,6 @@ TH2F* makeBackgroundPlot_LtoT(string taupt, string isoregion){
 	my_canvas->Print("p_met_original.root");
 	my_canvas->Close();
 	h2_DiJetInvMass_vs_MET_eff->Clear();
-	///cout << "Total denominator events for " << isoregion << " / "  <<taupt << " : " << ntotalevents << endl;
-	//cout << "Total numerator events for " << isoregion << " / "  <<taupt << " : " << ntotalnumevents << endl;
 	return h2_DiJetInvMass_vs_MET_LtoT;
 }
 
@@ -271,23 +249,21 @@ void makeSignificance() {
 	h2_DiJetInvMass_vs_MET_significance->Draw("colz");
 	//my_canvas->Print(("JetInvMass_vs_MET_significance_" + isoregion + "_" + taupt + "_LtoT.pdf").c_str());
 	//my_canvas->Print("JetInvMass_vs_MET_significance_Tau2TightIso_taupt20.pdf");
-	my_canvas->Print("JetInvMass_vs_MET_significance_Tau2TightIso_taupt20.root");
+	my_canvas->Print("results/JetInvMass_vs_MET_significance_Tau2TightIso_taupt20.root");
 	my_canvas->Close();
 }
 
-void makeXSection() {
+void makeXSection(string taupt) {
 
 	double lumi = 85000.; 
 	TH2F* h2_DiJetInvMass_vs_MET_eff_signal;
 	TH2F* h2_DiJetInvMass_vs_MET_background;
 	//h2_DiJetInvMass_vs_MET_eff_signal = makeEffPlot("taupt20", "Taui2TightIso");
 	//h2_DiJetInvMass_vs_MET_background = makeBackgroundPlot_LtoT("taupt20", "Tau2LooseIsoInclusive");
-	h2_DiJetInvMass_vs_MET_eff_signal = makeEffPlot("taupt20", "Taui2TightIso");
+	h2_DiJetInvMass_vs_MET_eff_signal = makeEffPlot(taupt, "Taui2TightIso");
 	//h2_DiJetInvMass_vs_MET_background = makeBackgroundPlot_LtoT("taupt20", "TauAnyIso");
 	//h2_DiJetInvMass_vs_MET_background = makeBackgroundPlot_LtoT("taupt20", "TauAnyIsoPlusNones");
-	h2_DiJetInvMass_vs_MET_background = makeBackgroundPlot_LtoT("taupt20", "baseline");
-
-	cout << "bla bla bla bla" << endl;	
+	h2_DiJetInvMass_vs_MET_background = makeBackgroundPlot_LtoT(taupt, "baseline");
 	
 	int nbinsx = h2_DiJetInvMass_vs_MET_background->GetNbinsX(); 
 	int nbinsy = h2_DiJetInvMass_vs_MET_background->GetNbinsY();
@@ -321,7 +297,6 @@ void makeXSection() {
 	}
 
 
-	cout << "bla bla bla bla bla" << endl;	
 
 	TCanvas *my_canvas_zoom = new TCanvas("mycanvas_zoom","mycanvas_zoom",1024.,768.);
 	my_canvas_zoom->cd();
@@ -333,19 +308,24 @@ void makeXSection() {
 	double minimum_zoom = h2_DiJetInvMass_vs_MET_xsec_zoom->GetMinimum();
 	h2_DiJetInvMass_vs_MET_xsec_zoom ->GetZaxis()->SetRangeUser(minimum_zoom,maximum_zoom);		
 	h2_DiJetInvMass_vs_MET_xsec_zoom->Draw("colz");
-	my_canvas_zoom->Print("JetInvMass_vs_MET_xsec_Tau2TightIso_taupt20_zoom.root");
+	my_canvas_zoom->Print(("results/JetInvMass_vs_MET_xsec_Tau2TightIso_" + taupt + "_zoom.root").c_str());
 	
 	TCanvas *my_canvas = new TCanvas("mycanvas","mycanvas",1024.,768.);
 	my_canvas->cd();
 	gPad->SetLogz();
 	
 	h2_DiJetInvMass_vs_MET_xsec->GetZaxis()->SetRangeUser(0.001,1000);
-	//h2_DiJetInvMass_vs_MET_xsec->Draw("colz text");
 	h2_DiJetInvMass_vs_MET_xsec->Draw("colz");
-	my_canvas->Print("JetInvMass_vs_MET_xsec_Tau2TightIso_taupt20.root");
+	my_canvas->Print(("results/JetInvMass_vs_MET_xsec_Tau2TightIso_" + taupt + ".root").c_str());
 	gPad->SetLogy();
 	p_met->Draw();
-	my_canvas->Print("p_met.root");
-	//my_canvas->Print("JetInvMass_vs_MET_xsec_Tau2TightIso_taupt20.pdf");
+	my_canvas->Print(("results/p_met" + taupt + ".root").c_str());
 	my_canvas->Close();
+}
+
+void makeNeededPlots(){
+
+
+	makeXSection("taupt20");
+
 }

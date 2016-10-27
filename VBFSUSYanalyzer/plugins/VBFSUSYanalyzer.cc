@@ -557,6 +557,7 @@ VBFSUSYanalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
 		//if(!(       tau.pt() >= 30.                                            				)) continue;
 		//if(!(       tau.pt() >= 35.                                            				)) continue;
 		//if(!(       tau.pt() >= 40.                                            				)) continue;
+		//if(!(       tau.pt() >= 45.                                            				)) continue;
 		//cout << "DEBUG: Pt cut passed for tau : " << t << endl;
 		//OLDID  //if(!(       tau[t].tauID_againstElectronMediumMVA5 > 0.5                				)) continue;
 		if(!(       tau.tauID("againstElectronVLooseMVA5") > 0.5                				)) continue;
@@ -565,7 +566,7 @@ VBFSUSYanalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
 		//cout << "DEBUG: Muon veto cut passed for tau : " << t << endl;
 		if(!(       tau.leadChargedHadrCand()->pt() >= 5.0                      				)) continue;
 		//cout << "DEBUG: leadChargedHadrCand_pt cut passed for tau : " << t << endl;
-		if(!(       (tau.tauID("decayModeFindingNewDMs") > 0.5) && (tau.signalChargedHadrCands().size() == 1)	)) continue;
+		if(!(       (tau.tauID("decayModeFindingNewDMs") > 0.5) && (tau.signalChargedHadrCands().size() < 4)	)) continue;
 		//cout << "DEBUG: decayModeFindingNewDMs cut passed for tau : " << t << endl;
 
 		baselineObjectSelectionCollection.tau.push_back(&tau);
