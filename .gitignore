@@ -1,0 +1,10 @@
+
+*.pdf
+
+*.d
+
+VBFSUSYanalyzer/tools/p_met_original.root
+
+*.pcm
+
+*.so
