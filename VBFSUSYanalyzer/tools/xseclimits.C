@@ -295,12 +295,12 @@ void makeXSection(string taupt,string chi, string lsp) {
 	string lsp_value;
 	string taupt_value;
 
-	if (chi == "chi100") {chi_value = "#tilde{#chi}^{#pm}_{1} = #tilde{#chi}^{0}_{2} = 100 GeV";}
-	else if (chi == "chi200") {chi_value = "#tilde{#chi}^{#pm}_{1} = #tilde{#chi}^{0}_{2} = 200 GeV";}
-	else if (chi == "chi300") {chi_value = "#tilde{#chi}^{#pm}_{1} = #tilde{#chi}^{0}_{2} = 300 GeV";}
+	if (chi == "chi100") {chi_value = "m(#tilde{#chi}^{#pm}_{1}) = m(#tilde{#chi}^{0}_{2}) = 100 GeV";}
+	else if (chi == "chi200") {chi_value = "m(#tilde{#chi}^{#pm}_{1}) = m(#tilde{#chi}^{0}_{2}) = 200 GeV";}
+	else if (chi == "chi300") {chi_value = "m(#tilde{#chi}^{#pm}_{1}) = m(#tilde{#chi}^{0}_{2}) = 300 GeV";}
 
-	if (lsp == "lsp000") {lsp_value = "#tilde{#chi}^{0}_{1} = 0 GeV";}
-	else if (lsp == "lsp050") {lsp_value = "#tilde{#chi}^{0}_{1} = 50 GeV";}
+	if (lsp == "lsp000") {lsp_value = "m(#tilde{#chi}^{0}_{1}) = 0 GeV";}
+	else if (lsp == "lsp050") {lsp_value = "m(#tilde{#chi}^{0}_{1}) = 50 GeV";}
 
 	if (taupt == "taupt20") {taupt_value = "#tau_{Pt} = 20 GeV";}
 	else if (taupt == "taupt25") {taupt_value = "#tau_{pt} = 25 GeV";}
@@ -315,9 +315,10 @@ void makeXSection(string taupt,string chi, string lsp) {
 
 
 	//defining legend
-	TLegend* leg = new TLegend(0.61,0.7,0.86,0.9);
-	leg->SetTextSize(0.03);
+	TLegend* leg = new TLegend(0.63,0.68,0.86,0.9);
+	leg->SetTextSize(0.02);
 	leg->AddEntry((TObject*)0, (chi_value).c_str(), "");
+	leg->AddEntry((TObject*)0, "m(#tilde{#chi}^{#pm}_{1}) - m(#tilde{#tau}_{1}) = 5 GeV", "");
 	leg->AddEntry((TObject*)0, (lsp_value).c_str(), "");
 	leg->AddEntry((TObject*)0, (taupt_value).c_str(), "");
 
