@@ -8,3 +8,9 @@ VBFSUSYanalyzer/tools/p_met_original.root
 *.pcm
 
 *.so
+
+VBFSUSYanalyzer/tools/results/p_mettaupt30.root
+
+VBFSUSYanalyzer/tools/results/p_mettaupt20.root
+
+VBFSUSYanalyzer/tools/results/p_mettaupt25.root

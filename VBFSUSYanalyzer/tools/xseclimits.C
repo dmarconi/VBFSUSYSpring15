@@ -120,25 +120,20 @@ TH2F* makeBackgroundPlot_LtoT(string taupt, string isoregion){
 
 
 	TFile *inputfile = TFile::Open((taupt + "/allQCD_"+ taupt +".root").c_str());
-	//TFile *inputfile = TFile::Open("allQCD.root");
-	//TFile *inputfile = TFile::Open("allQCD_taupt20.root");
+
 	TH2F* h2_DiJetInvMass_vs_MET;
 	TH2F* h2_DiJetInvMass_vs_MET_LtoT;
 	TH1F* h_ditauchargeVBFinverted;
 	TH1F* h_count;
+
 	h2_DiJetInvMass_vs_MET = ((TH2F*)(inputfile->Get(("demo/" + isoregion +"VBFInvertedSelection/h2_DiJetInvMass_vs_MET").c_str())));
-	//h2_DiJetInvMass_vs_MET = ((TH2F*)(inputfile->Get(("demo/" + isoregion +"VBFInvertedObjectSelection/h2_DiJetInvMass_vs_MET").c_str())));
-	//h_ditaucharge = ((TH1F*)(inputfile->Get(("demo/" + isoregion +"ObjectSelection/h_ditaucharge").c_str())));
 	h_count = ((TH1F*)(inputfile->Get(("demo/" + isoregion +"ObjectSelection/counts").c_str())));
-	//h_ditauchargeVBFinverted = ((TH1F*)(inputfile->Get(("demo/" + isoregion +"VBFInvertedObjectSelection/h_ditaucharge").c_str())));
 	h_ditauchargeVBFinverted = ((TH1F*)(inputfile->Get(("demo/" + isoregion +"VBFInvertedSelection/h_ditaucharge").c_str())));
+
 	int nbinsx = h2_DiJetInvMass_vs_MET->GetNbinsX();
 	int nbinsy = h2_DiJetInvMass_vs_MET->GetNbinsY();
 	double ntotalevents = h_count->GetBinContent(1);
-	//double ntotalnumevents = h2_DiJetInvMass_vs_MET->Integral( 0. , nbinsx, 0. , nbinsy );
-	//double ntotalevents = h_ditaucharge->GetBinContent(3);
 
-	//TODO convert to the tight plot
 	h2_DiJetInvMass_vs_MET_LtoT = new TH2F ("h2_DiJetInvMass_vs_MET_LtoT","h2_DiJetInvMass_vs_MET_LtoT", nbinsx, 0., 240., nbinsy , 0., 2500.);
 	h2_DiJetInvMass_vs_MET_LtoT->GetYaxis()->SetTitle("M^{(jet,jet)} [GeV]");
 	h2_DiJetInvMass_vs_MET_LtoT->GetXaxis()->SetTitle("E_{T}^{miss} [GeV]");
@@ -149,8 +144,6 @@ TH2F* makeBackgroundPlot_LtoT(string taupt, string isoregion){
 	h2_DiJetInvMass_vs_MET_eff->GetYaxis()->SetTitle("M^{(jet,jet)} [GeV]");
 	h2_DiJetInvMass_vs_MET_eff->GetXaxis()->SetTitle("E_{T}^{miss} [GeV]");
 	h2_DiJetInvMass_vs_MET_eff->SetStats(0);
-
-	//TODO fill the 2 tight map applying the 2fold method for every bin
 
 	for (int i = 0; i < nbinsx; i++) {
 
