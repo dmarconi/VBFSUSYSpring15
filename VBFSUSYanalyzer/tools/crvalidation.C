@@ -25,6 +25,12 @@ void makeplot (string isoregion, string plotname) {
   TFile *allTT_ifile = TFile::Open("crvalidation/allTT.root");
   TFile *allVV_ifile = TFile::Open("crvalidation/allVV.root");
   TFile *allWJets_ifile = TFile::Open("crvalidation/allWJets.root");
+  TFile *signal_lsp000_chi100 = TFile::Open("crvalidation/VBFC1pmN2_C1ToTau_N2ToTauTau_LSP000_Stau095_Chargino100_1M.root");
+  TFile *signal_lsp000_chi200 = TFile::Open("crvalidation/VBFC1pmN2_C1ToTau_N2ToTauTau_LSP000_Stau195_Chargino200_1M.root");
+  TFile *signal_lsp000_chi300 = TFile::Open("crvalidation/VBFC1pmN2_C1ToTau_N2ToTauTau_LSP000_Stau295_Chargino300_1M.root");
+  TFile *signal_lsp050_chi100 = TFile::Open("crvalidation/VBFC1pmN2_C1ToTau_N2ToTauTau_LSP050_Stau095_Chargino100_1M.root");
+  TFile *signal_lsp050_chi200 = TFile::Open("crvalidation/VBFC1pmN2_C1ToTau_N2ToTauTau_LSP050_Stau195_Chargino200_1M.root");
+  TFile *signal_lsp050_chi300 = TFile::Open("crvalidation/VBFC1pmN2_C1ToTau_N2ToTauTau_LSP050_Stau295_Chargino300_1M.root");
 
   //defining the different background plots
   TH1F* crplot_allDY;
@@ -34,6 +40,36 @@ void makeplot (string isoregion, string plotname) {
   TH1F* crplot_allWJets;
   TH1F* crplot_allSum;
   TH1F* crplot_allSum_err;
+
+  TH1F* crplot_sig_lsp000_chi100 = ((TH1F*)(signal_lsp000_chi100->Get(("demo/" + isoregion +"ObjectSelection/" + plotname).c_str())));
+  crplot_sig_lsp000_chi100->SetLineColor(kBlue);
+  crplot_sig_lsp000_chi100->SetLineWidth(3);
+  crplot_sig_lsp000_chi100->SetStats(0);
+
+  TH1F* crplot_sig_lsp000_chi200 = ((TH1F*)(signal_lsp000_chi200->Get(("demo/" + isoregion +"ObjectSelection/" + plotname).c_str())));
+  crplot_sig_lsp000_chi200->SetLineColor(kRed);
+  crplot_sig_lsp000_chi200->SetLineWidth(3);
+  crplot_sig_lsp000_chi200->SetStats(0);
+
+  TH1F* crplot_sig_lsp000_chi300 = ((TH1F*)(signal_lsp000_chi300->Get(("demo/" + isoregion +"ObjectSelection/" + plotname).c_str())));
+  crplot_sig_lsp000_chi300->SetLineColor(kBlack);
+  crplot_sig_lsp000_chi300->SetLineWidth(3);
+  crplot_sig_lsp000_chi300->SetStats(0);
+
+  TH1F* crplot_sig_lsp050_chi100 = ((TH1F*)(signal_lsp050_chi100->Get(("demo/" + isoregion +"ObjectSelection/" + plotname).c_str())));
+  crplot_sig_lsp050_chi100->SetLineColor(kBlue);
+  crplot_sig_lsp050_chi100->SetLineWidth(3);
+  crplot_sig_lsp050_chi100->SetStats(0);
+
+  TH1F* crplot_sig_lsp050_chi200 = ((TH1F*)(signal_lsp050_chi200->Get(("demo/" + isoregion +"ObjectSelection/" + plotname).c_str())));
+  crplot_sig_lsp050_chi200->SetLineColor(kRed);
+  crplot_sig_lsp050_chi200->SetLineWidth(3);
+  crplot_sig_lsp050_chi200->SetStats(0);
+
+  TH1F* crplot_sig_lsp050_chi300 = ((TH1F*)(signal_lsp050_chi300->Get(("demo/" + isoregion +"ObjectSelection/" + plotname).c_str())));
+  crplot_sig_lsp050_chi300->SetLineColor(kBlack);
+  crplot_sig_lsp050_chi300->SetLineWidth(3);
+  crplot_sig_lsp050_chi300->SetStats(0);
 
   crplot_allDY = ((TH1F*)(allDY_ifile->Get(("demo/" + isoregion +"ObjectSelection/" + plotname).c_str())));
   crplot_allDY->SetFillColor(594);
@@ -61,7 +97,7 @@ void makeplot (string isoregion, string plotname) {
   crplot_allWJets->SetLineColor(610);
   crplot_allWJets->SetStats(0);
 
-  //creating and rescaling the bkg sum plot
+  //creating and Yaxis rescaling the bkg sum and sig plots
   crplot_allSum = (TH1F*) crplot_allDY->Clone();
   crplot_allSum->SetTitle("CMS Work in Progress");
   crplot_allSum->Add(crplot_allQCD);
@@ -76,6 +112,16 @@ void makeplot (string isoregion, string plotname) {
 	for (int i = 0; i < nbins; i++) {
     if ( (crplot_allSum->GetBinContent(i) < minimum) && (crplot_allSum->GetBinContent(i) != 0.) ) minimum = crplot_allSum->GetBinContent(i);
     if ( crplot_allSum->GetBinContent(i) > maximum) maximum = crplot_allSum->GetBinContent(i);
+
+    if ( (crplot_sig_lsp000_chi100->GetBinContent(i) < minimum) && (crplot_sig_lsp000_chi100->GetBinContent(i) != 0.) ) minimum = crplot_sig_lsp000_chi100->GetBinContent(i);
+    if ( crplot_sig_lsp000_chi100->GetBinContent(i) > maximum) maximum = crplot_sig_lsp000_chi100->GetBinContent(i);
+
+    if ( (crplot_sig_lsp000_chi200->GetBinContent(i) < minimum) && (crplot_sig_lsp000_chi200->GetBinContent(i) != 0.) ) minimum = crplot_sig_lsp000_chi200->GetBinContent(i);
+    if ( crplot_sig_lsp000_chi200->GetBinContent(i) > maximum) maximum = crplot_sig_lsp000_chi200->GetBinContent(i);
+
+    if ( (crplot_sig_lsp000_chi300->GetBinContent(i) < minimum) && (crplot_sig_lsp000_chi300->GetBinContent(i) != 0.) ) minimum = crplot_sig_lsp000_chi300->GetBinContent(i);
+    if ( crplot_sig_lsp000_chi300->GetBinContent(i) > maximum) maximum = crplot_sig_lsp000_chi300->GetBinContent(i);
+
   }
 
   crplot_allSum->GetYaxis()->SetRangeUser( (minimum * 0.1) , (maximum * 10.) );
@@ -93,13 +139,18 @@ void makeplot (string isoregion, string plotname) {
 
 
   //defining legend
-	TLegend* leg = new TLegend(0.70,0.65,0.9,0.9);
+	TLegend* leg = new TLegend(0.70,0.55,0.9,0.9);
+  leg->SetTextSize(0.02);
   leg->AddEntry(crplot_allDY,"Drell-Yan","f");
   leg->AddEntry(crplot_allQCD,"QCD","f");
   leg->AddEntry(crplot_allTT,"t#bar{t}","f");
   leg->AddEntry(crplot_allVV,"VV","f");
   leg->AddEntry(crplot_allWJets,"W + jets","f");
   leg->AddEntry(crplot_allSum_err, "#sigma^{total}_{stat}");
+  leg->AddEntry(crplot_sig_lsp000_chi100, "#tilde{#chi}^{#pm}_{1} = 100 GeV");
+  leg->AddEntry(crplot_sig_lsp000_chi200, "#tilde{#chi}^{#pm}_{1} = 200 GeV");
+  leg->AddEntry(crplot_sig_lsp000_chi300, "#tilde{#chi}^{#pm}_{1} = 300 GeV");
+  leg->AddEntry((TObject*)0, "#tilde{#chi}^{0}_{1} = 0 GeV", "");
 
   //creating canvas
   TCanvas *my_canvas = new TCanvas("c1","c1",10,10,600,600);
@@ -117,6 +168,9 @@ void makeplot (string isoregion, string plotname) {
   crplot_allSum->Draw("HIST");
   hs->Draw("HIST+same");
   crplot_allSum_err->Draw("e2+same");
+  crplot_sig_lsp000_chi100->Draw("HIST+same");
+  crplot_sig_lsp000_chi200->Draw("HIST+same");
+  crplot_sig_lsp000_chi300->Draw("HIST+same");
   leg->Draw();
   gPad->SetLogy();
   my_canvas->Print(("results/" + plotname + "_" + isoregion +".pdf").c_str());
@@ -125,4 +179,15 @@ void makeplot (string isoregion, string plotname) {
 
 void printplots() {
   makeplot("Tau2TightIsoVBFInverted","h_dijetinvariantmass");
+  makeplot("Tau2TightIsoVBFInverted","h_met");
+  makeplot("Taui2TightIso","h_dijetinvariantmass");
+  makeplot("Taui2TightIso","h_met");
+  makeplot("Tau1TightIso","h_dijetinvariantmass");
+  makeplot("Tau1TightIso","h_met");
+  makeplot("Tau1TightIsoVBFInverted","h_dijetinvariantmass");
+  makeplot("Tau1TightIsoVBFInverted","h_met");
+  makeplot("TauAntiMediumIso","h_dijetinvariantmass");
+  makeplot("TauAntiMediumIso","h_met");
+  makeplot("Tau2LooseIsoInclusive","h_dijetinvariantmass");
+  makeplot("Tau2LooseIsoInclusive","h_met");
 }
