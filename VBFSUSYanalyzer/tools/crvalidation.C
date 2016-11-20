@@ -180,14 +180,18 @@ void makeplot (string isoregion, string plotname) {
 void printplots() {
   makeplot("Tau2TightIsoVBFInverted","h_dijetinvariantmass");
   makeplot("Tau2TightIsoVBFInverted","h_met");
+  makeplot("Tau2TightIsoVBFInverted","h_tau2pt");
+  makeplot("Tau2TightIsoVBFInverted","h_jet1pt");
   makeplot("Taui2TightIso","h_dijetinvariantmass");
   makeplot("Taui2TightIso","h_met");
-  makeplot("Tau1TightIso","h_dijetinvariantmass");
-  makeplot("Tau1TightIso","h_met");
-  makeplot("Tau1TightIsoVBFInverted","h_dijetinvariantmass");
-  makeplot("Tau1TightIsoVBFInverted","h_met");
-  makeplot("TauAntiMediumIso","h_dijetinvariantmass");
-  makeplot("TauAntiMediumIso","h_met");
+  makeplot("Taui2TightIso","h_tau2pt");
+  makeplot("Taui2TightIso","h_jet1pt");
   makeplot("Tau2LooseIsoInclusive","h_dijetinvariantmass");
   makeplot("Tau2LooseIsoInclusive","h_met");
+  makeplot("Tau2LooseIsoInclusive","h_tau2pt");
+  makeplot("Tau2LooseIsoInclusive","h_jet1pt");
+  makeplot("Tau2LooseIsoInclusiveVBFInverted","h_dijetinvariantmass");
+  makeplot("Tau2LooseIsoInclusiveVBFInverted","h_met");
+  makeplot("Tau2LooseIsoInclusiveVBFInverted","h_tau2pt");
+  makeplot("Tau2LooseIsoInclusiveVBFInverted","h_jet1pt");
 }
