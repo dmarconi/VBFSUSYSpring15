@@ -277,7 +277,7 @@ void makeXSection(string taupt,string chi, string lsp) {
 	h2_DiJetInvMass_vs_MET_xsec = new TH2F (("JetInvMass_vs_MET_xsec_" + chi + "_" + lsp + "_" + taupt).c_str(),("JetInvMass_vs_MET_xsec_" + chi + "_" + lsp + "_" + taupt).c_str(), nbinsx, 0., 240., nbinsy , 0., 2500.);
 	h2_DiJetInvMass_vs_MET_xsec->SetTitle("CMS Work in Progress");
 	h2_DiJetInvMass_vs_MET_xsec->GetYaxis()->SetTitle("M_{(jet,jet)} [GeV]");
-	h2_DiJetInvMass_vs_MET_xsec->GetZaxis()->SetTitle("#sigma_{lim} pb^{-1} [GeV]");
+	h2_DiJetInvMass_vs_MET_xsec->GetZaxis()->SetTitle("#sigma_{lim} pb");
 	h2_DiJetInvMass_vs_MET_xsec->GetXaxis()->SetTitle("E_{T}^{miss} [GeV]");
 	h2_DiJetInvMass_vs_MET_xsec->GetYaxis()->SetTitleOffset(1.40);
 	h2_DiJetInvMass_vs_MET_xsec->GetZaxis()->SetTitleOffset(1.13);
@@ -286,7 +286,7 @@ void makeXSection(string taupt,string chi, string lsp) {
 	//Converting model point into doubles
 	string chi_value;
 	string lsp_value;
-	string taupt_value;
+	string taupt_label;
 
 	if (chi == "chi100") {chi_value = "m(#tilde{#chi}^{#pm}_{1}) = m(#tilde{#chi}^{0}_{2}) = 100 GeV";}
 	else if (chi == "chi200") {chi_value = "m(#tilde{#chi}^{#pm}_{1}) = m(#tilde{#chi}^{0}_{2}) = 200 GeV";}
@@ -295,12 +295,12 @@ void makeXSection(string taupt,string chi, string lsp) {
 	if (lsp == "lsp000") {lsp_value = "m(#tilde{#chi}^{0}_{1}) = 0 GeV";}
 	else if (lsp == "lsp050") {lsp_value = "m(#tilde{#chi}^{0}_{1}) = 50 GeV";}
 
-	if (taupt == "taupt20") {taupt_value = "#tau_{Pt} = 20 GeV";}
-	else if (taupt == "taupt25") {taupt_value = "#tau_{pt} = 25 GeV";}
-	else if (taupt == "taupt30") {taupt_value = "#tau_{pt} = 30 GeV";}
-	else if (taupt == "taupt35") {taupt_value = "#tau_{pt} = 35 GeV";}
-	else if (taupt == "taupt40") {taupt_value = "#tau_{pt} = 40 GeV";}
-	else if (taupt == "taupt45") {taupt_value = "#tau_{pt} = 45 GeV";}
+	if (taupt == "taupt20") {taupt_label = "#tau_{Pt} = 20 GeV";}
+	else if (taupt == "taupt25") {taupt_label = "#tau_{pt} = 25 GeV";}
+	else if (taupt == "taupt30") {taupt_label = "#tau_{pt} = 30 GeV";}
+	else if (taupt == "taupt35") {taupt_label = "#tau_{pt} = 35 GeV";}
+	else if (taupt == "taupt40") {taupt_label = "#tau_{pt} = 40 GeV";}
+	else if (taupt == "taupt45") {taupt_label = "#tau_{pt} = 45 GeV";}
 
 	//if ((chi == "chi100") && (lsp == "lsp000")) inputfile = TFile::Open((taupt + "/VBFC1pmN2_C1ToTau_N2ToTauTau_LSP000_Stau095_Chargino100_1M.root").c_str());
 
@@ -313,7 +313,7 @@ void makeXSection(string taupt,string chi, string lsp) {
 	leg->AddEntry((TObject*)0, (chi_value).c_str(), "");
 	leg->AddEntry((TObject*)0, "m(#tilde{#chi}^{#pm}_{1}) - m(#tilde{#tau}_{1}) = 5 GeV", "");
 	leg->AddEntry((TObject*)0, (lsp_value).c_str(), "");
-	leg->AddEntry((TObject*)0, (taupt_value).c_str(), "");
+	leg->AddEntry((TObject*)0, (taupt_label).c_str(), "");
 
 	for (int i = 0; i < nbinsx; i++) {
 
@@ -353,7 +353,7 @@ void makeXSection(string taupt,string chi, string lsp) {
 	my_canvas->cd();
 
 	int binmin = h2_DiJetInvMass_vs_MET_xsec->GetMinimumBin();
-	double minimum = 100000000000000000.;
+	double minimum = FLT_MAX;
 	double x_min = 0.;
 	double y_min = 0.;
 	for (int i = 0; i < nbinsx; i++) {
@@ -369,7 +369,16 @@ void makeXSection(string taupt,string chi, string lsp) {
 		}
 	}
 
-	cout << "Minimum at " << minimum << " for " << chi << ", " << lsp << " and " << taupt << ": Jetinvmass " << y_min << " MET " << x_min << endl;
+	double taupt_value = 0.;
+	if (taupt == "taupt20") {taupt_value = 20.;} else
+	if (taupt == "taupt25") {taupt_value = 25.;} else
+	if (taupt == "taupt30") {taupt_value = 30.;} else
+	if (taupt == "taupt35") {taupt_value = 35.;} else
+	if (taupt == "taupt40") {taupt_value = 40.;} else
+	if (taupt == "taupt45") taupt_value = 45.;
+
+	//cout << "Minimum at " << minimum << " for " << chi << ", " << lsp << " and " << taupt << ": Jetinvmass " << y_min << " MET " << x_min << endl;
+	cout << minimum << " & $<$ " << taupt_value << " & $<$ " << y_min << "  & $<$ " << x_min << " \\\\ " << endl;
 
 	h2_DiJetInvMass_vs_MET_xsec->GetZaxis()->SetRangeUser(0.001,1000);
 	h2_DiJetInvMass_vs_MET_xsec->Draw("colz");
