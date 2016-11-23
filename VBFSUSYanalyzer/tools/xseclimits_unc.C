@@ -74,6 +74,27 @@ double vbfConversionFactor_statunc(string taupt, string isoregion) {
 
 }
 
+double vbfConversionFactorSyst(string taupt, string isoregion, double variation) {
+
+	TFile *inputfile = TFile::Open((taupt + "/allQCD_"+ taupt +".root").c_str());
+	TH1F* h_ditaucharge;
+	TH1F* h_ditauchargeVBFinverted;
+
+	h_ditaucharge = ((TH1F*)(inputfile->Get(("demo/" + isoregion +"ObjectSelection/h_ditaucharge").c_str())));
+	//h_ditauchargeVBFinverted = ((TH1F*)(inputfile->Get(("demo/" + isoregion +"VBFInvertedObjectSelection/h_ditaucharge").c_str())));
+	h_ditauchargeVBFinverted = ((TH1F*)(inputfile->Get(("demo/" + isoregion +"VBFInvertedSelection/h_ditaucharge").c_str())));
+
+	double counts = h_ditaucharge->GetBinContent(3) + (variation * h_ditaucharge->GetBinContent(3));
+	double counts_inverted = h_ditauchargeVBFinverted->GetBinContent(3) + (variation * h_ditauchargeVBFinverted->GetBinContent(3));
+
+
+	double vbfeff = vbfefficiency(counts_inverted, counts);
+
+	delete inputfile;
+	return (vbfeff / (1. - vbfeff));
+
+
+}
 
 double LtoTfactor(string taupt) {
 
@@ -117,6 +138,24 @@ double LtoTfactor_statunc(string taupt) {
 
 }
 
+double LtoTfactorSyst(string taupt, double variation) {
+
+	TFile *inputfile = TFile::Open(( taupt + "/allQCD_"+ taupt +"_LtoT.root").c_str());
+
+	TH1F* h1_counts;
+	h1_counts = ((TH1F*)(inputfile->Get("demo/baselineObjectSelection/counts")));
+
+	double oneTauMatchcounts = h1_counts->GetBinContent(3) + (variation * h1_counts->GetBinContent(3));
+	double jetAlsoTcounts = h1_counts->GetBinContent(4) + (variation * h1_counts->GetBinContent(4));
+
+	double jetToTightProb = jetAlsoTcounts / oneTauMatchcounts;
+	double twoLooseTo2Tight = jetToTightProb * jetToTightProb;
+
+	delete inputfile;
+	return (twoLooseTo2Tight);
+
+}
+
 TH2F* makeEffPlot(string taupt, string isoregion, string chi, string lsp) {
 	//TFile *inputfile = TFile::Open("VBFC1pmN2_C1ToTau_N2ToTauTau_LSP000_Stau295_Chargino300_1M.root");
 	//TFile *inputfile = TFile::Open("VBFC1pmN2_C1ToTau_N2ToTauTau_LSP000_Stau195_Chargino200_1M.root");
@@ -153,14 +192,6 @@ TH2F* makeEffPlot(string taupt, string isoregion, string chi, string lsp) {
 
 		}
 	}
-	TCanvas *my_canvas = new TCanvas;
-	my_canvas->cd();
-	gPad->SetLogz();
-	h2_DiJetInvMass_vs_MET_eff->Draw("colz");
-	my_canvas->Print(("results/JetInvMass_vs_MET_eff_" + isoregion + "_" + taupt + ".pdf").c_str());
-	my_canvas->Close();
-	//h2_DiJetInvMass_vs_MET_eff->Clear();
-	//delete inputfile;
 	return h2_DiJetInvMass_vs_MET_eff;
 }
 
@@ -203,6 +234,44 @@ TH2F* makeEffPlotStatUnc(string taupt, string isoregion, string chi, string lsp)
 		}
 	}
 	return h2_DiJetInvMass_vs_MET_eff_statunc;
+}
+
+TH2F* makeEffPlotSyst(string taupt, string isoregion, string chi, string lsp, double variation) {
+	//TFile *inputfile = TFile::Open("VBFC1pmN2_C1ToTau_N2ToTauTau_LSP000_Stau295_Chargino300_1M.root");
+	//TFile *inputfile = TFile::Open("VBFC1pmN2_C1ToTau_N2ToTauTau_LSP000_Stau195_Chargino200_1M.root");
+	TFile *inputfile;
+	if ((chi == "chi100") && (lsp == "lsp000")){ inputfile = TFile::Open((taupt + "/VBFC1pmN2_C1ToTau_N2ToTauTau_LSP000_Stau095_Chargino100_1M.root").c_str());}
+	else if ((chi == "chi200") && (lsp == "lsp000")){ inputfile = TFile::Open((taupt + "/VBFC1pmN2_C1ToTau_N2ToTauTau_LSP000_Stau195_Chargino200_1M.root").c_str());}
+	else if ((chi == "chi300") && (lsp == "lsp000")){ inputfile = TFile::Open((taupt + "/VBFC1pmN2_C1ToTau_N2ToTauTau_LSP000_Stau295_Chargino300_1M.root").c_str());}
+	else if ((chi == "chi100") && (lsp == "lsp050")){ inputfile = TFile::Open((taupt + "/VBFC1pmN2_C1ToTau_N2ToTauTau_LSP050_Stau095_Chargino100_1M.root").c_str());}
+	else if ((chi == "chi200") && (lsp == "lsp050")){ inputfile = TFile::Open((taupt + "/VBFC1pmN2_C1ToTau_N2ToTauTau_LSP050_Stau195_Chargino200_1M.root").c_str());}
+	else if ((chi == "chi300") && (lsp == "lsp050")) inputfile = TFile::Open((taupt + "/VBFC1pmN2_C1ToTau_N2ToTauTau_LSP050_Stau295_Chargino300_1M.root").c_str());
+
+	TH2F* h2_DiJetInvMass_vs_MET;
+	TH1F* h_count;
+
+	h2_DiJetInvMass_vs_MET = ((TH2F*)(inputfile->Get(("demo/" + isoregion +"ObjectSelection/h2_DiJetInvMass_vs_MET").c_str())));
+	//h_ditaucharge = ((TH1F*)(inputfile->Get(("demo/" + isoregion +"ObjectSelection/h_ditaucharge").c_str())));
+	h_count = ((TH1F*)(inputfile->Get(("demo/" + isoregion +"ObjectSelection/counts").c_str())));
+	int nbinsx = h2_DiJetInvMass_vs_MET->GetNbinsX();
+	int nbinsy = h2_DiJetInvMass_vs_MET->GetNbinsY();
+	double ntotalevents = h_count->GetBinContent(1) + (variation * h_count->GetBinContent(1));
+	//double ntotalevents = h_ditaucharge->GetBinContent(3);
+
+	TH2F* h2_DiJetInvMass_vs_MET_eff;
+	h2_DiJetInvMass_vs_MET_eff = new TH2F ("h2_DiJetInvMass_vs_MET_eff","h2_DiJetInvMass_vs_MET_eff", nbinsx, 0., 240., nbinsy , 0., 2500.);
+	h2_DiJetInvMass_vs_MET_eff->GetYaxis()->SetTitle("M^{(jet,jet)} [GeV]");
+	h2_DiJetInvMass_vs_MET_eff->GetXaxis()->SetTitle("E_{T}^{miss} [GeV]");
+	h2_DiJetInvMass_vs_MET_eff->SetStats(0);
+
+	for (int i = 0; i < nbinsx; i++) {
+
+		for (int j = 0; j < nbinsy; j++) {
+			double integral = h2_DiJetInvMass_vs_MET->Integral( i, nbinsx, j, nbinsy ) + (variation * h2_DiJetInvMass_vs_MET->Integral( i, nbinsx, j, nbinsy ));
+			h2_DiJetInvMass_vs_MET_eff->SetBinContent(i,j, (integral/ntotalevents));
+		}
+	}
+	return h2_DiJetInvMass_vs_MET_eff;
 }
 
 TH2F* makeBackgroundPlot_LtoT(string taupt, string isoregion){
@@ -283,6 +352,43 @@ TH2F* makeBackgroundPlot_LtoT_StatUnc(string taupt, string isoregion){
 	return h2_DiJetInvMass_vs_MET_LtoT_statunc;
 }
 
+TH2F* makeBackgroundPlot_LtoT_Syst(string taupt, string isoregion, double variation){
+
+
+	TFile *inputfile = TFile::Open((taupt + "/allQCD_"+ taupt +".root").c_str());
+
+	TH2F* h2_DiJetInvMass_vs_MET;
+	TH2F* h2_DiJetInvMass_vs_MET_LtoT;
+	TH1F* h_ditauchargeVBFinverted;
+	TH1F* h_count;
+
+	h2_DiJetInvMass_vs_MET = ((TH2F*)(inputfile->Get(("demo/" + isoregion +"VBFInvertedSelection/h2_DiJetInvMass_vs_MET").c_str())));
+	h_count = ((TH1F*)(inputfile->Get(("demo/" + isoregion +"ObjectSelection/counts").c_str())));
+	h_ditauchargeVBFinverted = ((TH1F*)(inputfile->Get(("demo/" + isoregion +"VBFInvertedSelection/h_ditaucharge").c_str())));
+
+	int nbinsx = h2_DiJetInvMass_vs_MET->GetNbinsX();
+	int nbinsy = h2_DiJetInvMass_vs_MET->GetNbinsY();
+	double ntotalevents = h_count->GetBinContent(1) + (variation * h_count->GetBinContent(1));
+
+	h2_DiJetInvMass_vs_MET_LtoT = new TH2F ("h2_DiJetInvMass_vs_MET_LtoT","h2_DiJetInvMass_vs_MET_LtoT", nbinsx, 0., 240., nbinsy , 0., 2500.);
+	h2_DiJetInvMass_vs_MET_LtoT->GetYaxis()->SetTitle("M^{(jet,jet)} [GeV]");
+	h2_DiJetInvMass_vs_MET_LtoT->GetXaxis()->SetTitle("E_{T}^{miss} [GeV]");
+	h2_DiJetInvMass_vs_MET_LtoT->SetStats(0);
+
+	for (int i = 0; i < nbinsx; i++) {
+
+		for (int j = 0; j < nbinsy; j++) {
+			double bincontent = h2_DiJetInvMass_vs_MET->GetBinContent(i,j) + (variation * h2_DiJetInvMass_vs_MET->GetBinContent(i,j));
+			double vbffactor = vbfConversionFactorSyst(taupt, isoregion, variation);
+			double ltotfactor = LtoTfactorSyst(taupt,variation);
+			h2_DiJetInvMass_vs_MET_LtoT->SetBinContent(i,j, (bincontent*vbffactor*ltotfactor));
+
+		}
+	}
+
+	return h2_DiJetInvMass_vs_MET_LtoT;
+}
+
 double getSignalEfficiency(int xbin, int ybin, TH2F* signal_map){
 	double efficiency = signal_map->GetBinContent(xbin,ybin);
 	return (efficiency);
@@ -342,14 +448,22 @@ void makeXSection(string taupt,string chi, string lsp) {
 
   double lumi = 85000.;
   TH2F* h2_DiJetInvMass_vs_MET_eff_signal;
-  TH2F* h2_DiJetInvMass_vs_MET_eff_signal_stat;
+	TH2F* h2_DiJetInvMass_vs_MET_eff_signal_stat;
+	TH2F* h2_DiJetInvMass_vs_MET_eff_signal_systup;
+	TH2F* h2_DiJetInvMass_vs_MET_eff_signal_systdown;
   TH2F* h2_DiJetInvMass_vs_MET_background;
-  TH2F* h2_DiJetInvMass_vs_MET_background_stat;
+	TH2F* h2_DiJetInvMass_vs_MET_background_stat;
+	TH2F* h2_DiJetInvMass_vs_MET_background_systup;
+	TH2F* h2_DiJetInvMass_vs_MET_background_systdown;
 
   h2_DiJetInvMass_vs_MET_eff_signal = makeEffPlot(taupt, "Taui2TightIso", chi, lsp);
-  h2_DiJetInvMass_vs_MET_eff_signal_stat = makeEffPlotStatUnc(taupt, "Taui2TightIso", chi, lsp);
-  h2_DiJetInvMass_vs_MET_background = makeBackgroundPlot_LtoT(taupt, "baseline");
-  h2_DiJetInvMass_vs_MET_background_stat = makeBackgroundPlot_LtoT_StatUnc(taupt, "baseline");
+	h2_DiJetInvMass_vs_MET_eff_signal_stat = makeEffPlotStatUnc(taupt, "Taui2TightIso", chi, lsp);
+	h2_DiJetInvMass_vs_MET_eff_signal_systup = makeEffPlotSyst(taupt, "Taui2TightIso", chi, lsp, 0.5);
+	h2_DiJetInvMass_vs_MET_eff_signal_systdown = makeEffPlotSyst(taupt, "Taui2TightIso", chi, lsp, -0.5);
+	h2_DiJetInvMass_vs_MET_background = makeBackgroundPlot_LtoT(taupt, "baseline");
+	h2_DiJetInvMass_vs_MET_background_stat = makeBackgroundPlot_LtoT_StatUnc(taupt, "baseline");
+	h2_DiJetInvMass_vs_MET_background_systup = makeBackgroundPlot_LtoT_Syst(taupt, "baseline", 0.5);
+	h2_DiJetInvMass_vs_MET_background_systdown = makeBackgroundPlot_LtoT_Syst(taupt, "baseline", -0.5);
 
   int nbinsx = h2_DiJetInvMass_vs_MET_background->GetNbinsX();
 	int nbinsy = h2_DiJetInvMass_vs_MET_background->GetNbinsY();
@@ -365,7 +479,11 @@ void makeXSection(string taupt,string chi, string lsp) {
 	h2_DiJetInvMass_vs_MET_xsec->SetStats(0);
 
   TH2F* h2_DiJetInvMass_vs_MET_xsec_stat;
-  h2_DiJetInvMass_vs_MET_xsec_stat = new TH2F (("JetInvMass_vs_MET_xsec_" + chi + "_" + lsp + "_" + taupt).c_str(),("JetInvMass_vs_MET_xsec_" + chi + "_" + lsp + "_" + taupt).c_str(), nbinsx, 0., 240., nbinsy , 0., 2500.);
+	TH2F* h2_DiJetInvMass_vs_MET_xsec_systup;
+	TH2F* h2_DiJetInvMass_vs_MET_xsec_systdown;
+	h2_DiJetInvMass_vs_MET_xsec_stat = new TH2F (("JetInvMass_vs_MET_xsec_" + chi + "_" + lsp + "_" + taupt).c_str(),("JetInvMass_vs_MET_xsec_" + chi + "_" + lsp + "_" + taupt).c_str(), nbinsx, 0., 240., nbinsy , 0., 2500.);
+	h2_DiJetInvMass_vs_MET_xsec_systup = new TH2F (("JetInvMass_vs_MET_xsec_" + chi + "_" + lsp + "_" + taupt).c_str(),("JetInvMass_vs_MET_xsec_" + chi + "_" + lsp + "_" + taupt).c_str(), nbinsx, 0., 240., nbinsy , 0., 2500.);
+	h2_DiJetInvMass_vs_MET_xsec_systdown = new TH2F (("JetInvMass_vs_MET_xsec_" + chi + "_" + lsp + "_" + taupt).c_str(),("JetInvMass_vs_MET_xsec_" + chi + "_" + lsp + "_" + taupt).c_str(), nbinsx, 0., 240., nbinsy , 0., 2500.);
 
 
   for (int i = 0; i < nbinsx; i++) {
@@ -389,9 +507,25 @@ void makeXSection(string taupt,string chi, string lsp) {
         2.0 //significance
         );
 
-        h2_DiJetInvMass_vs_MET_xsec->SetBinContent(i, j, xsec);
-        h2_DiJetInvMass_vs_MET_xsec_stat->SetBinContent(i, j, xsec_statunc);
+				double xsec_systup = getXSection(
+						getSignalEfficiency(i,j, h2_DiJetInvMass_vs_MET_eff_signal_systup),
+						lumi,
+						getBackgroudEvents( i, j, h2_DiJetInvMass_vs_MET_background_systup),
+						2.5, //sigma
+						2.0 //significance
+						);
+				double xsec_systdown = getXSection(
+						getSignalEfficiency(i,j, h2_DiJetInvMass_vs_MET_eff_signal_systdown),
+						lumi,
+						getBackgroudEvents( i, j, h2_DiJetInvMass_vs_MET_background_systdown),
+						2.5, //sigma
+						2.0 //significance
+						);
 
+						h2_DiJetInvMass_vs_MET_xsec->SetBinContent(i, j, xsec);
+						h2_DiJetInvMass_vs_MET_xsec_stat->SetBinContent(i, j, xsec_statunc);
+						h2_DiJetInvMass_vs_MET_xsec_systup->SetBinContent(i, j, xsec_systup);
+						h2_DiJetInvMass_vs_MET_xsec_systdown->SetBinContent(i, j, xsec_systdown);
 		}
 	}
 
@@ -425,8 +559,10 @@ void makeXSection(string taupt,string chi, string lsp) {
 		}
 	}
 	double minimum_statunc = h2_DiJetInvMass_vs_MET_xsec_stat->GetBinContent(i_min,j_min);
+	double minimum_systup_var = h2_DiJetInvMass_vs_MET_xsec_systup->GetBinContent(i_min,j_min) - minimum;
+	double minimum_systdown_var = minimum - h2_DiJetInvMass_vs_MET_xsec_systdown->GetBinContent(i_min,j_min);
 
-	cout << minimum << " \\pm "<< minimum_statunc << " & $<$ " << taupt_value << " & $<$ " << y_min << "  & $<$ " << x_min << " \\\\ " << endl;
+	cout << "$"<<minimum << "\\pm"<< minimum_statunc << "^{" << minimum_systup_var << "}_{" << minimum_systdown_var << "}$ & $<$ " << taupt_value << " & $<$ " << y_min << "  & $<$ " << x_min << " \\\\ " << endl;
 
 
 }
@@ -434,11 +570,21 @@ void makeXSection(string taupt,string chi, string lsp) {
 void makeXsecLimPlots(string chi, string lsp){
 
 	makeXSection("taupt20",chi,lsp);
+	makeXSection("taupt25",chi,lsp);
+	makeXSection("taupt30",chi,lsp);
+	makeXSection("taupt35",chi,lsp);
+	makeXSection("taupt40",chi,lsp);
+	makeXSection("taupt45",chi,lsp);
 
 }
 
 void fullXsecLimScan(){
 
 	makeXsecLimPlots("chi100", "lsp000");
+	makeXsecLimPlots("chi200", "lsp000");
+	makeXsecLimPlots("chi300", "lsp000");
+	makeXsecLimPlots("chi100", "lsp050");
+	makeXsecLimPlots("chi200", "lsp050");
+	makeXsecLimPlots("chi300", "lsp050");
 
 }
