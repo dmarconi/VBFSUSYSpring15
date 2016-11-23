@@ -137,7 +137,6 @@ TH2F* makeEffPlot(string taupt, string isoregion, string chi, string lsp) {
 	int nbinsx = h2_DiJetInvMass_vs_MET->GetNbinsX();
 	int nbinsy = h2_DiJetInvMass_vs_MET->GetNbinsY();
 	double ntotalevents = h_count->GetBinContent(1);
-	//cout << "N total events: " << ntotalevents << endl;
 	//double ntotalevents = h_ditaucharge->GetBinContent(3);
 
 	TH2F* h2_DiJetInvMass_vs_MET_eff;
@@ -184,8 +183,7 @@ TH2F* makeEffPlotStatUnc(string taupt, string isoregion, string chi, string lsp)
 	int nbinsy = h2_DiJetInvMass_vs_MET->GetNbinsY();
   double ntotalevents = h_count->GetBinContent(1);
   double ntotalevents_statunc = h_count->GetBinError(1);
-	//cout << "N total events: " << ntotalevents << endl;
-	//double ntotalevents = h_ditaucharge->GetBinContent(3);
+		//double ntotalevents = h_ditaucharge->GetBinContent(3);
 
 	TH2F* h2_DiJetInvMass_vs_MET_eff_statunc;
 	h2_DiJetInvMass_vs_MET_eff_statunc = new TH2F ("h2_DiJetInvMass_vs_MET_eff_statunc","h2_DiJetInvMass_vs_MET_eff_statunc", nbinsx, 0., 240., nbinsy , 0., 2500.);
@@ -193,17 +191,15 @@ TH2F* makeEffPlotStatUnc(string taupt, string isoregion, string chi, string lsp)
 	h2_DiJetInvMass_vs_MET_eff_statunc->GetXaxis()->SetTitle("E_{T}^{miss} [GeV]");
 	h2_DiJetInvMass_vs_MET_eff_statunc->SetStats(0);
 
+
 	for (int i = 0; i < nbinsx; i++) {
 
 		for (int j = 0; j < nbinsy; j++) {
       double integral_statunc = 0.;
       double integral = h2_DiJetInvMass_vs_MET->IntegralAndError( i, nbinsx, j, nbinsy, integral_statunc );
-       h2_DiJetInvMass_vs_MET_eff_statunc->SetBinContent(i,j,
-        //error propagation
-        ( (integral/ntotalevents) *
-        sqrt( (integral_statunc / integral) * (integral_statunc / integral)
-            + (ntotalevents_statunc / ntotalevents) * (ntotalevents_statunc / ntotalevents) ) )
-      );
+			double eff = integral / ntotalevents;
+			double eff_statunc = eff * sqrt (pow((ntotalevents_statunc/ntotalevents),2.) + pow((integral_statunc/integral),2.));
+      h2_DiJetInvMass_vs_MET_eff_statunc->SetBinContent(i,j,eff_statunc);
 		}
 	}
 	return h2_DiJetInvMass_vs_MET_eff_statunc;
@@ -293,7 +289,7 @@ double getSignalEfficiency(int xbin, int ybin, TH2F* signal_map){
 }
 
 double getSignalEfficiencyStatUnc(int xbin, int ybin, TH2F* signal_map){
-	double efficiency = signal_map->GetBinError(xbin,ybin);
+	double efficiency = signal_map->GetBinContent(xbin,ybin);
 	return (efficiency);
 }
 
@@ -330,20 +326,19 @@ double getXSectionStatUnc(double efficiency, double efficiency_statunc, double l
   double bkg_part = sqrt( background + (0.5 * background * background));
   double bkg_part_statunc = sqrt(0.5 * ( (var_b / var_a) + 0.5 * ( var_a / var_b ) ) ) * background_statunc;
 
-  double var_c = significance / luminosity;
-  double var_d = 0.5 * sigma;
+  double var_c = significance * ((0.5 * sigma) + bkg_part );
+	double var_c_statunc = significance * bkg_part_statunc;
+  double var_d = efficiency * luminosity;
+	double var_d_statunc = luminosity * efficiency_statunc;
 
-  double xsec = var_c * (var_d + bkg_part) / efficiency;
-  double xsec_statunc = xsec * sqrt( pow((bkg_part_statunc/bkg_part),2.) + pow((efficiency_statunc/efficiency),2.) );
+  double xsec = var_c / var_d;
+	//double xsec_statunc = xsec * sqrt( pow((bkg_part_statunc/bkg_part),2.) + pow((efficiency_statunc/efficiency),2.) );
+	double xsec_statunc = xsec * sqrt( pow((var_c_statunc/var_c),2.) + pow((var_d_statunc/var_d),2.) );
 
   return (  xsec_statunc  );
 }
 
 void makeXSection(string taupt,string chi, string lsp) {
-
-  //create eff plot
-
-  //create bg plot
 
   double lumi = 85000.;
   TH2F* h2_DiJetInvMass_vs_MET_eff_signal;
@@ -397,10 +392,41 @@ void makeXSection(string taupt,string chi, string lsp) {
         h2_DiJetInvMass_vs_MET_xsec->SetBinContent(i, j, xsec);
         h2_DiJetInvMass_vs_MET_xsec_stat->SetBinContent(i, j, xsec_statunc);
 
-        cout << "xsec: " << xsec << " unc: " << xsec_statunc << endl;
-
 		}
 	}
+
+	//Cross section minimum
+	int binmin = h2_DiJetInvMass_vs_MET_xsec->GetMinimumBin();
+	double minimum = FLT_MAX;
+	double x_min = 0.;
+	double y_min = 0.;
+	int i_min = -1;
+	int j_min = -1;
+	double taupt_value = 0.;
+	if (taupt == "taupt20") {taupt_value = 20.;} else
+	if (taupt == "taupt25") {taupt_value = 25.;} else
+	if (taupt == "taupt30") {taupt_value = 30.;} else
+	if (taupt == "taupt35") {taupt_value = 35.;} else
+	if (taupt == "taupt40") {taupt_value = 40.;} else
+	if (taupt == "taupt45") taupt_value = 45.;
+
+	for (int i = 0; i < nbinsx; i++) {
+
+		for (int j = 0; j < nbinsy; j++) {
+			if ((h2_DiJetInvMass_vs_MET_xsec->GetBinContent(i,j) < minimum) && (h2_DiJetInvMass_vs_MET_xsec->GetBinContent(i,j) > 0)){
+				minimum = h2_DiJetInvMass_vs_MET_xsec->GetBinContent(i,j);
+				x_min = h2_DiJetInvMass_vs_MET_xsec->GetXaxis()->GetBinCenter(i);
+				x_min = x_min - 0.5 * h2_DiJetInvMass_vs_MET_xsec->GetXaxis()->GetBinWidth(i);
+				y_min = h2_DiJetInvMass_vs_MET_xsec->GetYaxis()->GetBinCenter(j);
+				y_min = y_min - 0.5 * h2_DiJetInvMass_vs_MET_xsec->GetYaxis()->GetBinWidth(i);
+				i_min = i;
+				j_min = j;
+			}
+		}
+	}
+	double minimum_statunc = h2_DiJetInvMass_vs_MET_xsec_stat->GetBinContent(i_min,j_min);
+
+	cout << minimum << " \\pm "<< minimum_statunc << " & $<$ " << taupt_value << " & $<$ " << y_min << "  & $<$ " << x_min << " \\\\ " << endl;
 
 
 }
