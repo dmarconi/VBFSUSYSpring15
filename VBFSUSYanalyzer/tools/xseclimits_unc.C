@@ -562,7 +562,8 @@ void makeXSection(string taupt,string chi, string lsp) {
 	double minimum_systup_var = h2_DiJetInvMass_vs_MET_xsec_systup->GetBinContent(i_min,j_min) - minimum;
 	double minimum_systdown_var = minimum - h2_DiJetInvMass_vs_MET_xsec_systdown->GetBinContent(i_min,j_min);
 
-	cout << "$"<<minimum << "\\pm"<< minimum_statunc << "^{" << minimum_systup_var << "}_{" << minimum_systdown_var << "}$ & $<$ " << taupt_value << " & $<$ " << y_min << "  & $<$ " << x_min << " \\\\ " << endl;
+	cout << " for " << chi << ", " << lsp << " and " << taupt << endl;
+	cout << "$"<<minimum << "\\pm"<< minimum_statunc << "^{+" << minimum_systup_var << "}_{-" << minimum_systdown_var << "}$ & $<$ " << taupt_value << " & $<$ " << y_min << "  & $<$ " << x_min << " \\\\ " << endl;
 
 
 }
