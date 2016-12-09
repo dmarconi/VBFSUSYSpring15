@@ -8,12 +8,16 @@
 #include <TStyle.h>
 #include <TFile.h>
 #include <TH1F.h>
+#include <TGraph.h>
+#include <TMultiGraph.h>
+#include <TGraphErrors.h>
 #include <TH2F.h>
 #include <TH2D.h>
 #include <TProfile.h>
 #include <iostream>
 #include <fstream>
 #include <cmath>
+#include <array>
 
 
 double vbfefficiency(double evenCRcounts, double oddCRcounts){
@@ -417,5 +421,148 @@ void fullXsecLimScan(){
 	makeXsecLimPlots("chi100", "lsp050");
 	makeXsecLimPlots("chi200", "lsp050");
 	makeXsecLimPlots("chi300", "lsp050");
+
+}
+
+void makeComparisonPlots() {
+
+	Int_t n1 = 13;
+	Int_t n2 = 3;
+	Double_t x1[n1], y1[n1], x1_err[n1] ,y1_err[n1];
+	Double_t x2[n2], y2[n2], x2_err[n2] ,y2_err[n2];
+
+	x2[0] = 100;
+	x2[1] = 200;
+	x2[2] = 300;
+
+	x2_err[0] = 0.;
+	x2_err[1] = 0.;
+	x2_err[2] = 0.;
+
+	y2[0] = 0.0327396;
+	y2[1] = 0.0333074;
+	y2[2] = 0.0345751;
+
+	y2_err[0] = 0.00680598 + sqrt(pow( 0.00368, 2.) + pow( 0.001193, 2.));
+	y2_err[1] = 0.0069229+ sqrt(pow(0.00375, 2.) + pow( 0.00121, 2.));
+	y2_err[2] =  0.00701739 + sqrt(pow(0.00382, 2.) + pow( 0.00123, 2.));
+
+	x1[0] = 100;
+	x1[1] = 125;
+	x1[2] = 150;
+	x1[3] = 175;
+	x1[4] = 200;
+	x1[5] = 225;
+	x1[6] = 250;
+	x1[7] = 275;
+	x1[8] = 300;
+	x1[9] = 325;
+	x1[10] = 350;
+	x1[11] = 375;
+	x1[12] = 400;
+
+	x1_err[0] = 0.;
+	x1_err[1] = 0.;
+	x1_err[2] = 0.;
+	x1_err[3] = 0.;
+	x1_err[4] = 0.;
+	x1_err[5] = 0.;
+	x1_err[6] = 0.;
+	x1_err[7] = 0.;
+	x1_err[8] = 0.;
+	x1_err[9] = 0.;
+	x1_err[10] = 0.;
+	x1_err[11] = 0.;
+	x1_err[12] = 0.;
+
+
+	y1[0] = 22670.1;
+	y1[1] = 10034.8;
+	y1[2] = 5180.86;
+	y1[3] = 2953.28;
+	y1[4] = 1807.39;
+	y1[5] = 1165.09;
+	y1[6] = 782.487;
+	y1[7] = 543.03;
+	y1[8] = 386.936;
+	y1[9] = 281.911;
+	y1[10] = 209.439;
+	y1[11] = 158.06;
+	y1[12] = 121.013;
+
+	y1_err[0] = 973.967;
+	y1_err[1] = 457.604;
+	y1_err[2] = 253.223;
+	y1_err[3] = 154.386;
+	y1_err[4] = 101.316;
+	y1_err[5] = 68.8042;
+	y1_err[6] = 48.7463;
+	y1_err[7] = 35.4083;
+	y1_err[8] = 26.3602;
+	y1_err[9] = 20.0201;
+	y1_err[10] = 15.4539;
+	y1_err[11] = 12.0956;
+	y1_err[12] = 9.61659;
+
+	for(Int_t i = 0; i < n1; i++) y1[i] *= 0.001;
+	for(Int_t i = 0; i < n1; i++) y1_err[i] *= 0.001;
+
+	double y_max = y1[0] * 1.5;
+	double y_min = y2[2] * 0.5;
+	double x_max = 450.;
+	double x_min = 0.;
+
+	TGraph *gr1 = new TGraphErrors (n1, x1, y1, x1_err, y1_err);
+	gr1->SetMarkerColor(4);
+	gr1->SetMarkerStyle(21);
+
+	TGraph *gr2 = new TGraphErrors (n2, x2, y2, x2_err, y2_err);
+	gr2->SetMarkerColor(6);
+	gr2->SetMarkerStyle(21);
+
+	TH1F* lim_comparison_bkg = new TH1F ("lim_comparison","lim_comparison", 9, 0. , 450.);
+	lim_comparison_bkg->SetTitle("CMS Work in Progress");
+	lim_comparison_bkg->GetYaxis()->SetTitle("#sigma [pb]");
+	lim_comparison_bkg->GetXaxis()->SetTitle("m(#tilde{#chi}^{#pm}_{1}) = m(#tilde{#chi}^{0}_{2}) [GeV]");
+	lim_comparison_bkg->GetYaxis()->SetTitleOffset(1.40);
+	lim_comparison_bkg->GetYaxis()->SetRangeUser(y_min,y_max);
+	lim_comparison_bkg->GetXaxis()->SetRangeUser(0.,450.);
+	lim_comparison_bkg->SetStats(0);
+
+	TH1F* lim_comparison = new TH1F ("lim_comparison","lim_comparison", 9, x_min - 25. , x_max - 25.);
+	lim_comparison->SetStats(0);
+	lim_comparison->SetMarkerStyle(21);
+	lim_comparison->SetMarkerColor(6);
+	lim_comparison->SetBinContent( 3, y2[0]);
+	lim_comparison->SetBinContent( 5, y2[1]);
+	lim_comparison->SetBinContent( 7, y2[2]);
+	lim_comparison->SetBinError( 3, y2_err[0]);
+	lim_comparison->SetBinError( 5, y2_err[1]);
+	lim_comparison->SetBinError( 7, y2_err[2]);
+
+
+	// create a multigraph and draw it
+	TMultiGraph  *mg  = new TMultiGraph();
+	mg->Add(gr1);
+  //mg->Add(gr2);
+	//mg->GetXaxis()->SetTitle("E_{#gamma} (GeV)");
+  //mg->GetYaxis()->SetTitle("Coefficients");
+
+	//defining legend
+	TLegend* leg = new TLegend(0.63,0.68,0.86,0.9);
+	leg->SetTextSize(0.04);
+	leg->AddEntry(gr1, "#sigma^{CMS} [pb]", "LP");
+	leg->AddEntry(lim_comparison, "#sigma_{lim}^{VBF} [pb]", "Pe");
+
+	TCanvas *my_canvas = new TCanvas("mycanvas","mycanvas",600.,600.);
+	my_canvas->cd();
+	gPad->SetLogy();
+
+	lim_comparison_bkg->Draw();
+	lim_comparison->Draw("Pe+same");
+  mg->Draw("LP");
+	leg->Draw("same");
+	my_canvas->Update();
+	my_canvas->Print("results/xsec_confront.pdf");
 
 }
