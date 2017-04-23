@@ -708,41 +708,41 @@ VBFSUSYLtoTfactors::fillHistoCollection (MyHistoCollection_LtoT &inputHistoColle
 
 		//fill tau charge and  cosdeltaphi and deltaeta and 2Dpt-plot
 		inputHistoCollection.h_ditaucharge ->Fill(Inv2t.charge,weight_);
-		if(verbose_)std::cout<<"Pass selection -> Fill ditaucharge="<< Inv2t.charge <<", weight="<<weight_;<<std::endl;
-		inputHistoCollection.h_ditaucosdeltaphi ->Fill(Inv2t.cosDphi,weight_;);
-		if(verbose_)std::cout<<"Pass selection -> Fill ditaucosdeltaphi="<< Inv2t.cosDphi <<", weight="<<weight_;<<std::endl;
-		inputHistoCollection.h_ditaudeltaeta->Fill(Inv2t.dEta,weight_;);
-		if(verbose_)std::cout<<"Pass selection -> Fill ditaudeltaeta="<< Inv2t.dEta <<", weight="<<weight_;<<std::endl;
-		inputHistoCollection.h2_tau1pt_vs_tau2pt->Fill(inputEventCollection.tau[Inv2t.first]->pt(),inputEventCollection.tau[Inv2t.second]->pt(),weight_;);
+		if(verbose_)std::cout<<"Pass selection -> Fill ditaucharge="<< Inv2t.charge <<", weight="<<weight_<<std::endl;
+		inputHistoCollection.h_ditaucosdeltaphi ->Fill(Inv2t.cosDphi,weight_);
+		if(verbose_)std::cout<<"Pass selection -> Fill ditaucosdeltaphi="<< Inv2t.cosDphi <<", weight="<<weight_<<std::endl;
+		inputHistoCollection.h_ditaudeltaeta->Fill(Inv2t.dEta,weight_);
+		if(verbose_)std::cout<<"Pass selection -> Fill ditaudeltaeta="<< Inv2t.dEta <<", weight="<<weight_<<std::endl;
+		inputHistoCollection.h2_tau1pt_vs_tau2pt->Fill(inputEventCollection.tau[Inv2t.first]->pt(),inputEventCollection.tau[Inv2t.second]->pt(),weight_);
 	}
 
 	//fill tau pt and eta
 	if (Inv2t.first < 99999) {
-		inputHistoCollection.h_tau1pt->Fill(inputEventCollection.tau[Inv2t.first]->pt(),weight_;);
-		inputHistoCollection.h_tau1eta->Fill(inputEventCollection.tau[Inv2t.first]->eta(),weight_;);
-		if(verbose_)std::cout<<"Pass selection -> Fill tau1pt="<< inputEventCollection.tau[Inv2t.first]->pt() <<", weight="<<weight_;<<std::endl;
-		if(verbose_)std::cout<<"Pass selection -> Fill tau1eta="<< inputEventCollection.tau[Inv2t.first]->eta() <<", weight="<<weight_;<<std::endl;
+		inputHistoCollection.h_tau1pt->Fill(inputEventCollection.tau[Inv2t.first]->pt(),weight_);
+		inputHistoCollection.h_tau1eta->Fill(inputEventCollection.tau[Inv2t.first]->eta(),weight_);
+		if(verbose_)std::cout<<"Pass selection -> Fill tau1pt="<< inputEventCollection.tau[Inv2t.first]->pt() <<", weight="<<weight_<<std::endl;
+		if(verbose_)std::cout<<"Pass selection -> Fill tau1eta="<< inputEventCollection.tau[Inv2t.first]->eta() <<", weight="<<weight_<<std::endl;
 	}
 	if (Inv2t.second < 99999) {
-		inputHistoCollection.h_tau2pt->Fill(inputEventCollection.tau[Inv2t.second]->pt(),weight_;);
-		inputHistoCollection.h_tau2eta->Fill(inputEventCollection.tau[Inv2t.second]->eta(),weight_;);
-		if(verbose_)std::cout<<"Pass selection -> Fill tau2pt="<< inputEventCollection.tau[Inv2t.second]->pt() <<", weight="<<weight_;<<std::endl;
-		if(verbose_)std::cout<<"Pass selection -> Fill tau2eta="<< inputEventCollection.tau[Inv2t.second]->eta() <<", weight="<<weight_;<<std::endl;
+		inputHistoCollection.h_tau2pt->Fill(inputEventCollection.tau[Inv2t.second]->pt(),weight_);
+		inputHistoCollection.h_tau2eta->Fill(inputEventCollection.tau[Inv2t.second]->eta(),weight_);
+		if(verbose_)std::cout<<"Pass selection -> Fill tau2pt="<< inputEventCollection.tau[Inv2t.second]->pt() <<", weight="<<weight_<<std::endl;
+		if(verbose_)std::cout<<"Pass selection -> Fill tau2eta="<< inputEventCollection.tau[Inv2t.second]->eta() <<", weight="<<weight_<<std::endl;
 	}
 
 	//fill ht with taus included
-	inputHistoCollection.h_ht_withtau -> Fill(ht_jetsPtau,weight_;);
-	if(verbose_)std::cout<<"Pass selection -> Fill ht_withtau="<< ht_jetsPtau <<", weight="<<weight_;<<std::endl;
+	inputHistoCollection.h_ht_withtau -> Fill(ht_jetsPtau,weight_);
+	if(verbose_)std::cout<<"Pass selection -> Fill ht_withtau="<< ht_jetsPtau <<", weight="<<weight_<<std::endl;
 
 	// MET
-	inputHistoCollection.h_met -> Fill(inputEventCollection.met[0]->pt(),weight_;);
-	if(verbose_)std::cout<<"Pass selection -> Fill met="<< inputEventCollection.met[0]->pt() <<", weight="<<weight_;<<std::endl;
+	inputHistoCollection.h_met -> Fill(inputEventCollection.met[0]->pt(),weight_);
+	if(verbose_)std::cout<<"Pass selection -> Fill met="<< inputEventCollection.met[0]->pt() <<", weight="<<weight_<<std::endl;
 
 	//fill DiJetInvMass_vs_DiJetDEta
-	inputHistoCollection.h2_DiJetInvMass_vs_DiJetDEta -> Fill(Inv2j.dEta, Inv2j.Mass,weight_;);
+	inputHistoCollection.h2_DiJetInvMass_vs_DiJetDEta -> Fill(Inv2j.dEta, Inv2j.Mass,weight_);
 
 	//fill DiJetInvMass_vs_MET
-	inputHistoCollection.h2_DiJetInvMass_vs_MET -> Fill(inputEventCollection.met[0]->pt(), Inv2j.Mass,weight_;);
+	inputHistoCollection.h2_DiJetInvMass_vs_MET -> Fill(inputEventCollection.met[0]->pt(), Inv2j.Mass,weight_);
 	//________________________________________
 
 }
