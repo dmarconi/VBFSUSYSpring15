@@ -85,8 +85,9 @@ process.demo = cms.EDAnalyzer('VBFSUSYLtoTfactors',
 		jets = cms.InputTag("slimmedJets"),
 		fatjets = cms.InputTag("slimmedJetsAK8"),
 		mets = cms.InputTag("slimmedMETs"),
-        taupt = cms.double(20),
-        verbose = cms.bool(False),
+        taupt = cms.double(20.),
+		eventweight = cms.double(1.),
+        verbose = cms.bool(True),
 		)
 
 process.TFileService = cms.Service("TFileService",

@@ -17,7 +17,7 @@ process.source = cms.Source("PoolSource",
 	fileNames = cms.untracked.vstring( filelist )
     )
 
-process.demo = cms.EDAnalyzer('VBFSUSYLtoTfactors',
+process.demo = cms.EDAnalyzer('VBFSUSYanalyzer',
 		vertices = cms.InputTag("offlineSlimmedPrimaryVertices"),
 		muons = cms.InputTag("slimmedMuons"),
 		electrons = cms.InputTag("slimmedElectrons"),
@@ -26,9 +26,9 @@ process.demo = cms.EDAnalyzer('VBFSUSYLtoTfactors',
 		jets = cms.InputTag("slimmedJets"),
 		fatjets = cms.InputTag("slimmedJetsAK8"),
 		mets = cms.InputTag("slimmedMETs"),
-	    taupt = cms.double(20.),
+		taupt = cms.double(45.),
 		eventweight = cms.double(1.),
-	    verbose = cms.bool(False),
+		verbose = cms.bool(False),
 )
 
 process.TFileService = cms.Service("TFileService",
