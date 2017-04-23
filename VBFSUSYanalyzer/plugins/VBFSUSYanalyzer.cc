@@ -371,14 +371,15 @@ class VBFSUSYanalyzer : public edm::EDAnalyzer {
 		edm::EDGetTokenT<pat::JetCollection> fatjetToken_;
 		edm::EDGetTokenT<pat::METCollection> metToken_;
 
+		bool verbose_;
+		double taupt_;
+
 };
 
 //---------------------------------
 // constants, enums and typedefs
 //---------------------------------
 
-		bool verbose_;
-		double taupt_;
 
 //---------------------------------
 // static data member definitions

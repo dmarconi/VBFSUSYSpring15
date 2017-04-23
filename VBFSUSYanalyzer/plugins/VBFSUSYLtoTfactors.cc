@@ -317,6 +317,9 @@ class VBFSUSYLtoTfactors : public edm::EDAnalyzer {
 		edm::EDGetTokenT<pat::JetCollection> jetToken_;
 		edm::EDGetTokenT<pat::JetCollection> fatjetToken_;
 		edm::EDGetTokenT<pat::METCollection> metToken_;
+		
+		bool verbose_;
+		double taupt_;
 
 };
 
@@ -327,9 +330,6 @@ class VBFSUSYLtoTfactors : public edm::EDAnalyzer {
 //---------------------------------
 // static data member definitions
 //---------------------------------
-
-bool verbose_;
-double taupt_;
 
 //---------------------------------
 // constructors and destructor
