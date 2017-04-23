@@ -321,7 +321,7 @@ class VBFSUSYLtoTfactors : public edm::EDAnalyzer {
 		bool verbose_;
 		double taupt_;
 
-};
+;
 
 //---------------------------------
 // constants, enums and typedefs
@@ -416,8 +416,8 @@ VBFSUSYLtoTfactors::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
 	if (verbose_){
 		for (const pat::Electron &el : *electrons) {
 			if (el.pt() < 5) continue;
-			printf("elec with pt %4.1f, supercluster eta %+5.3f, sigmaIetaIeta %.3f (%.3f with full5x5 shower shapes), lost hits %d, pass conv veto %d\n",
-				el.pt(), el.superCluster()->eta(), el.sigmaIetaIeta(), el.full5x5_sigmaIetaIeta(), el.gsfTrack()->trackerExpectedHitsInner().numberOfLostHits(), el.passConversionVeto());
+			printf("elec with pt %4.1f, supercluster eta %+5.3f, sigmaIetaIeta %.3f (%.3f with full5x5 shower shapes), pass conv veto %d\n",
+				el.pt(), el.superCluster()->eta(), el.sigmaIetaIeta(), el.full5x5_sigmaIetaIeta(), el.passConversionVeto());
 			}
 	}
 

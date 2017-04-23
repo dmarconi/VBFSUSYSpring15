@@ -508,8 +508,8 @@ VBFSUSYanalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
 	if (verbose_){
 		for (const pat::Electron &el : *electrons) {
 			if (el.pt() < 5) continue;
-			printf("elec with pt %4.1f, supercluster eta %+5.3f, sigmaIetaIeta %.3f (%.3f with full5x5 shower shapes), lost hits %d, pass conv veto %d\n",
-				el.pt(), el.superCluster()->eta(), el.sigmaIetaIeta(), el.full5x5_sigmaIetaIeta(), el.gsfTrack()->trackerExpectedHitsInner().numberOfLostHits(), el.passConversionVeto());
+			printf("elec with pt %4.1f, supercluster eta %+5.3f, sigmaIetaIeta %.3f (%.3f with full5x5 shower shapes), pass conv veto %d\n",
+				el.pt(), el.superCluster()->eta(), el.sigmaIetaIeta(), el.full5x5_sigmaIetaIeta(), el.passConversionVeto());
 			}
 	}
 
@@ -570,10 +570,10 @@ VBFSUSYanalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
 	for (const pat::Tau &tau : *taus) {
 		if (verbose_) cout << "Tau object"<< endl;
 		if(!(	fabs(tau.eta()) <= 2.1                              					)) continue;
-		if (verbose_) cout << "Eta cut passed for tau : " << t << endl;
-		if (verbose_) cout << "Tau pt : " << tau[t].pt() << endl;
-		if (verbose_) cout << "Tau eta : " << tau[t].eta() << endl;
-		if (verbose_) cout << "Tau phi : " << tau[t].phi() << endl;
+		if (verbose_) cout << "Eta cut passed for tau" << endl;
+		if (verbose_) cout << "Tau pt : " << tau.pt() << endl;
+		if (verbose_) cout << "Tau eta : " << tau.eta() << endl;
+		if (verbose_) cout << "Tau phi : " << tau.phi() << endl;
 		if(!(       tau.pt() >= taupt_                                            				)) continue;
 		if (verbose_) cout << "Pt cut passed for tau" << endl;
 		if(!(       tau.tauID("againstElectronVLooseMVA5") > 0.5                				)) continue;
@@ -882,7 +882,7 @@ VBFSUSYanalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
 	//------------------------------------------//
 	//clearing event collections
 	//------------------------------------------//
-	
+
 	baselineObjectSelectionCollection.clear();
 	baselineVBFInvertedObjectSelectionCollection.clear();
 	TauAnyIsoObjectSelectionCollection.clear();
