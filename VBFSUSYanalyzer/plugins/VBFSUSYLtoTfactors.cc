@@ -2,7 +2,7 @@
 //
 // Package:    VBFSUSYSpring15/VBFSUSYLtoTfactors
 // Class:      VBFSUSYLtoTfactors
-// 
+//
 /**\class VBFSUSYLtoTfactors VBFSUSYLtoTfactors.cc VBFSUSYSpring15/VBFSUSYLtoTfactors/plugins/VBFSUSYLtoTfactors.cc
 
 Description: [one line class summary]
@@ -17,13 +17,18 @@ Implementation:
 //
 
 
+//---------------------------------
 // system include files
+//---------------------------------
+
 #include <memory>
 #include <string>
 #include <vector>
 #include <utility>
 
+//---------------------------------
 // user include files
+//---------------------------------
 
 #include "FWCore/Framework/interface/Frameworkfwd.h"
 #include "FWCore/Framework/interface/EDAnalyzer.h"
@@ -46,7 +51,9 @@ Implementation:
 #include "DataFormats/PatCandidates/interface/MET.h"
 #include "DataFormats/PatCandidates/interface/PackedCandidate.h"
 
+//---------------------------------
 // -- Root
+//---------------------------------
 
 #include "TROOT.h"
 #include "TApplication.h"
@@ -60,7 +67,9 @@ Implementation:
 #include "TGraphAsymmErrors.h"
 #include "TLorentzVector.h"
 
+//---------------------------------
 // useful structs
+//---------------------------------
 
 struct MassAndIndex {
 	std::string label;
@@ -104,8 +113,9 @@ struct TauProperties {
 	}
 };
 
-
+//---------------------------------
 struct MyEventCollection_LtoT {
+//---------------------------------
 
 	std::string label;
 	bool goodVertex;
@@ -169,25 +179,27 @@ struct MyHistoCollection_LtoT {
 	TH2F* h2_tau1pt_vs_tau2pt;
 	TH2F* h2_DiJetInvMass_vs_MET;
 
+	//---------------------------------
+	//Plot init
+	//---------------------------------
+
 	void init(const std::string & inputlabel) {
 
 		label = inputlabel;
 		TFileDirectory subDir = fs->mkdir( inputlabel );
 		TH1::SetDefaultSumw2();
-		//f->mkdir(inputlabel.c_str());
-		//f->cd(inputlabel.c_str());
 
 		h_count = subDir.make<TH1F>("counts", "", 1,0,1);
 		h_count->SetBit(TH1::kCanRebin);
 		h_count->SetStats(0);
 		h_count->Fill("NoCuts", 0);
-		h_count->Fill("4 Jet",0.);	
-		h_count->Fill("1 Tau Match", 0.);	
-		h_count->Fill("Tau Match also 1Tight", 0.);	
-		h_count->Fill("4 Jets", 0.);	
-		h_count->Fill("1 Tau", 0.);	
-		h_count->Fill("1 Fake Loose Tau",0.);	
-		h_count->Fill("1 Fake also Tight",0.);	
+		h_count->Fill("4 Jet",0.);
+		h_count->Fill("1 Tau Match", 0.);
+		h_count->Fill("Tau Match also 1Tight", 0.);
+		h_count->Fill("4 Jets", 0.);
+		h_count->Fill("1 Tau", 0.);
+		h_count->Fill("1 Fake Loose Tau",0.);
+		h_count->Fill("1 Fake also Tight",0.);
 
 		h_njet = subDir.make<TH1F>("h_njet", "h_njet", 21, -0.5, 20.5);
 		h_njet->GetXaxis()->SetTitle("number of jets not matched to #tau");
@@ -251,9 +263,9 @@ struct MyHistoCollection_LtoT {
 	}
 };
 
-
+//---------------------------------
 // class declaration
-//
+//---------------------------------
 
 class VBFSUSYLtoTfactors : public edm::EDAnalyzer {
 	public:
@@ -267,36 +279,35 @@ class VBFSUSYLtoTfactors : public edm::EDAnalyzer {
 		virtual void beginJob() override;
 		virtual void analyze(const edm::Event&, const edm::EventSetup&) override;
 		virtual void endJob() override;
-		void fillHistoCollection (MyHistoCollection_LtoT &, MyEventCollection_LtoT, double, bool verbose=false);
+		void fillHistoCollection (MyHistoCollection_LtoT &, MyEventCollection_LtoT, double, bool verbose_);
 		std::pair<unsigned int,unsigned int> LeadingJets(MyEventCollection_LtoT);
 		std::pair<unsigned int,unsigned int> LeadingTaus(MyEventCollection_LtoT);
 		double TauJetMinDistance(MyEventCollection_LtoT , const pat::Jet &);
 		TauProperties Inv2tMassIndex(MyEventCollection_LtoT);
 		MassAndIndex Inv2jMassIndex(MyEventCollection_LtoT);
-		void makeSelection (MyHistoCollection_LtoT &, MyEventCollection_LtoT, double , bool verbose=false);
+		void makeSelection (MyHistoCollection_LtoT &, MyEventCollection_LtoT, double , bool verbose_);
 
-		//virtual void beginRun(edm::Run const&, edm::EventSetup const&) override;
-		//virtual void endRun(edm::Run const&, edm::EventSetup const&) override;
-		//virtual void beginLuminosityBlock(edm::LuminosityBlock const&, edm::EventSetup const&) override;
-		//virtual void endLuminosityBlock(edm::LuminosityBlock const&, edm::EventSetup const&) override;
-
-
+		//---------------------------------
 		// ---------event collections-----------------------------
+		//---------------------------------
 
 		MyEventCollection_LtoT baselineObjectSelectionCollection;
 		MyEventCollection_LtoT TauAnyIsoObjectSelectionCollection;
 		MyEventCollection_LtoT TauAnyIsoPlusNonesObjectSelectionCollection;
-		
 
+		//---------------------------------
 		// ---------histograms-----------------------------
-		edm::Service<TFileService> fs;	
+		//---------------------------------
+
+		edm::Service<TFileService> fs;
 		TH1F* count;
 		MyHistoCollection_LtoT myHistoColl_baselineSelection;
 		MyHistoCollection_LtoT myHistoColl_TauAnyIsoObjectSelection;
 		MyHistoCollection_LtoT myHistoColl_TauAnyIsoPlusNonesObjectSelection;
-		
-		
+
+		//---------------------------------
 		// ----------member data ---------------------------
+		//---------------------------------
 
 		edm::EDGetTokenT<reco::VertexCollection> vtxToken_;
 		edm::EDGetTokenT<pat::MuonCollection> muonToken_;
@@ -309,17 +320,21 @@ class VBFSUSYLtoTfactors : public edm::EDAnalyzer {
 
 };
 
-//
+//---------------------------------
 // constants, enums and typedefs
-//
+//---------------------------------
 
-//
+//---------------------------------
 // static data member definitions
-//
+//---------------------------------
 
-//
+bool verbose_;
+double taupt_;
+
+//---------------------------------
 // constructors and destructor
-//
+//---------------------------------
+
 VBFSUSYLtoTfactors::VBFSUSYLtoTfactors(const edm::ParameterSet& iConfig):
 
 	vtxToken_(consumes<reco::VertexCollection>(iConfig.getParameter<edm::InputTag>("vertices"))),
@@ -329,17 +344,22 @@ VBFSUSYLtoTfactors::VBFSUSYLtoTfactors(const edm::ParameterSet& iConfig):
 	photonToken_(consumes<pat::PhotonCollection>(iConfig.getParameter<edm::InputTag>("photons"))),
 	jetToken_(consumes<pat::JetCollection>(iConfig.getParameter<edm::InputTag>("jets"))),
 	fatjetToken_(consumes<pat::JetCollection>(iConfig.getParameter<edm::InputTag>("fatjets"))),
-	metToken_(consumes<pat::METCollection>(iConfig.getParameter<edm::InputTag>("mets")))
+	metToken_(consumes<pat::METCollection>(iConfig.getParameter<edm::InputTag>("mets"))),
+	verbose_(iConfig.getParameter<double>"verbose"),
+	taupt_(iConfig.getParameter<double>"taupt")
 
 {
-
+	//---------------------------------
 	//Event collection init
+	//---------------------------------
 
 	baselineObjectSelectionCollection.init("baselineObjectSelection");
 	TauAnyIsoObjectSelectionCollection.init("TauAnyIsoObjectSelection");
 	TauAnyIsoObjectSelectionCollection.init("TauAnyIsoPlusNonesObjectSelection");
+	//---------------------------------
+	//histogram initialization
+	//---------------------------------
 
-	//histogram initialization	
 	count = fs->make<TH1F>("counts", "", 1,0,1);
 	count->SetBit(TH1::kCanRebin);
 	count->SetStats(0);
@@ -360,16 +380,21 @@ VBFSUSYLtoTfactors::~VBFSUSYLtoTfactors()
 }
 
 
-//
+//---------------------------------
 // member functions
-//
+//---------------------------------
 
+//---------------------------------
 // ------------ method called for each event  ------------
+//---------------------------------
+
 	void
 VBFSUSYLtoTfactors::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 {
 	using namespace edm;
 	using namespace std;
+
+	//CMS Handles initialization
 
 	edm::Handle<reco::VertexCollection> vertices;
 	iEvent.getByToken(vtxToken_, vertices);
@@ -378,103 +403,99 @@ VBFSUSYLtoTfactors::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
 
 	edm::Handle<pat::MuonCollection> muons;
 	iEvent.getByToken(muonToken_, muons);
-	//for (const pat::Muon &mu : *muons) {
-	//	if (mu.pt() < 5 || !mu.isLooseMuon()) continue;
-	//	printf("muon with pt %4.1f, dz(PV) %+5.3f, POG loose id %d, tight id %d\n",
-	//			mu.pt(), mu.muonBestTrack()->dz(PV.position()), mu.isLooseMuon(), mu.isTightMuon(PV));
-	//}
+	if (verbose_){
+		for (const pat::Muon &mu : *muons) {
+			if (mu.pt() < 5 || !mu.isLooseMuon()) continue;
+			printf("muon with pt %4.1f, dz(PV) %+5.3f, POG loose id %d, tight id %d\n",
+					mu.pt(), mu.muonBestTrack()->dz(PV.position()), mu.isLooseMuon(), mu.isTightMuon(PV));
+			}
+	}
 
 	edm::Handle<pat::ElectronCollection> electrons;
 	iEvent.getByToken(electronToken_, electrons);
-	//for (const pat::Electron &el : *electrons) {
-	//	if (el.pt() < 5) continue;
-	//printf("elec with pt %4.1f, supercluster eta %+5.3f, sigmaIetaIeta %.3f (%.3f with full5x5 shower shapes), lost hits %d, pass conv veto %d\n",
-	//		el.pt(), el.superCluster()->eta(), el.sigmaIetaIeta(), el.full5x5_sigmaIetaIeta(), el.gsfTrack()->trackerExpectedHitsInner().numberOfLostHits(), el.passConversionVeto());
-	//}
+	if (verbose_){
+		for (const pat::Electron &el : *electrons) {
+			if (el.pt() < 5) continue;
+			printf("elec with pt %4.1f, supercluster eta %+5.3f, sigmaIetaIeta %.3f (%.3f with full5x5 shower shapes), lost hits %d, pass conv veto %d\n",
+				el.pt(), el.superCluster()->eta(), el.sigmaIetaIeta(), el.full5x5_sigmaIetaIeta(), el.gsfTrack()->trackerExpectedHitsInner().numberOfLostHits(), el.passConversionVeto());
+			}
+	}
 
 	edm::Handle<pat::PhotonCollection> photons;
 	iEvent.getByToken(photonToken_, photons);
-	//for (const pat::Photon &pho : *photons) {
-	//	if (pho.pt() < 20 or pho.chargedHadronIso()/pho.pt() > 0.3) continue;
-	//	printf("phot with pt %4.1f, supercluster eta %+5.3f, sigmaIetaIeta %.3f (%.3f with full5x5 shower shapes)\n",
-	//			pho.pt(), pho.superCluster()->eta(), pho.sigmaIetaIeta(), pho.full5x5_sigmaIetaIeta());
-	//}
-
+	if (verbose_){
+		for (const pat::Photon &pho : *photons) {
+			if (pho.pt() < 20 or pho.chargedHadronIso()/pho.pt() > 0.3) continue;
+			printf("phot with pt %4.1f, supercluster eta %+5.3f, sigmaIetaIeta %.3f (%.3f with full5x5 shower shapes)\n",
+					pho.pt(), pho.superCluster()->eta(), pho.sigmaIetaIeta(), pho.full5x5_sigmaIetaIeta());
+				}
+	}
 
 	edm::Handle<pat::TauCollection> taus;
 	iEvent.getByToken(tauToken_, taus);
-	//for (const pat::Tau &tau : *taus) {
-	//	if (tau.pt() < 20) continue;
-	//	printf("tau  with pt %4.1f, dxy signif %.1f, ID(byMediumCombinedIsolationDeltaBetaCorr3Hits) %.1f, lead candidate pt %.1f, pdgId %d \n",
-	//			tau.pt(), tau.dxy_Sig(), tau.tauID("byMediumCombinedIsolationDeltaBetaCorr3Hits"), tau.leadCand()->pt(), tau.leadCand()->pdgId());
-	//}
-
+	if (verbose_){
+		for (const pat::Tau &tau : *taus) {
+			if (tau.pt() < 20) continue;
+			printf("tau  with pt %4.1f, dxy signif %.1f, ID(byMediumCombinedIsolationDeltaBetaCorr3Hits) %.1f, lead candidate pt %.1f, pdgId %d \n",
+				tau.pt(), tau.dxy_Sig(), tau.tauID("byMediumCombinedIsolationDeltaBetaCorr3Hits"), tau.leadCand()->pt(), tau.leadCand()->pdgId());
+		}
+	}
 
 	edm::Handle<pat::JetCollection> jets;
 	iEvent.getByToken(jetToken_, jets);
-	//int ijet = 0;
-	//for (const pat::Jet &j : *jets) {
-	//	if (j.pt() < 20) continue;
-	//	printf("jet  with pt %5.1f (raw pt %5.1f), eta %+4.2f, btag CSV %.3f, CISV %.3f, pileup mva disc %+.2f\n",
-	//			j.pt(), j.pt()*j.jecFactor("Uncorrected"), j.eta(), std::max(0.f,j.bDiscriminator("combinedSecondaryVertexBJetTags")), std::max(0.f,j.bDiscriminator("combinedInclusiveSecondaryVertexBJetTags")), j.userFloat("pileupJetId:fullDiscriminant"));
-	//	if ((++ijet) == 1) { // for the first jet, let's print the leading constituents
-	//		std::vector<reco::CandidatePtr> daus(j.daughterPtrVector());
-	//		std::sort(daus.begin(), daus.end(), [](const reco::CandidatePtr &p1, const reco::CandidatePtr &p2) { return p1->pt() > p2->pt(); }); // the joys of C++11
-	//		for (unsigned int i2 = 0, n = daus.size(); i2 < n && i2 <= 3; ++i2) {
-	//			const pat::PackedCandidate &cand = dynamic_cast<const pat::PackedCandidate &>(*daus[i2]);
-	//			printf("         constituent %3d: pt %6.2f, dz(pv) %+.3f, pdgId %+3d\n", i2,cand.pt(),cand.dz(PV.position()),cand.pdgId());
-	//		}
-	//	}
-	//}
-
+	if (verbose_){
+		int ijet = 0;
+		for (const pat::Jet &j : *jets) {
+			if (j.pt() < 20) continue;
+			printf("jet  with pt %5.1f (raw pt %5.1f), eta %+4.2f, btag CSV %.3f, CISV %.3f, pileup mva disc %+.2f\n",
+					j.pt(), j.pt()*j.jecFactor("Uncorrected"), j.eta(), std::max(0.f,j.bDiscriminator("combinedSecondaryVertexBJetTags")), std::max(0.f,j.bDiscriminator("combinedInclusiveSecondaryVertexBJetTags")), j.userFloat("pileupJetId:fullDiscriminant"));
+					if ((++ijet) == 1) { // for the first jet, let's print the leading constituents
+					std::vector<reco::CandidatePtr> daus(j.daughterPtrVector());
+					std::sort(daus.begin(), daus.end(), [](const reco::CandidatePtr &p1, const reco::CandidatePtr &p2) { return p1->pt() > p2->pt(); }); // the joys of C++11
+					for (unsigned int i2 = 0, n = daus.size(); i2 < n && i2 <= 3; ++i2) {
+						const pat::PackedCandidate &cand = dynamic_cast<const pat::PackedCandidate &>(*daus[i2]);
+						printf("         constituent %3d: pt %6.2f, dz(pv) %+.3f, pdgId %+3d\n", i2,cand.pt(),cand.dz(PV.position()),cand.pdgId());
+					}
+				}
+			}
+		}
 
 	edm::Handle<pat::METCollection> mets;
 	iEvent.getByToken(metToken_, mets);
 	const pat::MET &met = mets->front();
-	//printf("MET: pt %5.1f, phi %+4.2f, sumEt (%.1f). genMET %.1f. MET with JES up/down: %.1f/%.1f\n",
-	//		met.pt(), met.phi(), met.sumEt(),
-	//		met.genMET()->pt(),
-	//		met.shiftedPt(pat::MET::JetEnUp), met.shiftedPt(pat::MET::JetEnDown));
+	if (verbose_){
+		printf("MET: pt %5.1f, phi %+4.2f, sumEt (%.1f). genMET %.1f. MET with JES up/down: %.1f/%.1f\n",
+				met.pt(), met.phi(), met.sumEt(),
+				met.genMET()->pt(),
+				met.shiftedPt(pat::MET::JetEnUp), met.shiftedPt(pat::MET::JetEnDown));
+}
 
-	//printf("\n");
-
-	//std::vector<int> tights;
-	//std::vector<int> mediums;
-	//std::vector<int> looses;
-	//std::vector<int> nones;
 
 	//smart tau selection
-	//cout << "DEBUG: Tau vector size: " << tau.size() << endl;
+	if (verbose_) cout << "Tau vector size: " << tau.size() << endl;
 	std::vector<const pat::Tau*> anyiso;
 	std::vector<const pat::Tau*> anyisoplusnones;
 	std::vector<const pat::Tau*> nones;
-	
+
 	for (const pat::Tau &tau : *taus) {
-		//cout << "DEBUG: Tau counter: " << t << endl;
+		if (verbose_) cout << "Tau counter: " << t << endl;
 		if(!(	fabs(tau.eta()) <= 2.1                              					)) continue;
-		//cout << "DEBUG: Eta cut passed for tau : " << t << endl;
-		//cout << "DEBUG: Tau pt : " << tau[t].pt << endl;
-		//cout << "DEBUG: Tau eta : " << tau[t].eta << endl;
-		//cout << "DEBUG: Tau phi : " << tau[t].phi << endl;
-		//OLDID    //if(!(       tau[t].pt >= 45.                                            				)) continue;
-		if(!(       tau.pt() >= 20.                                            				)) continue;
-		//if(!(       tau.pt() >= 25.                                            				)) continue;
-		//if(!(       tau.pt() >= 30.                                            				)) continue;
-		//if(!(       tau.pt() >= 35.                                            				)) continue;
-		//if(!(       tau.pt() >= 40.                                            				)) continue;
-		//if(!(       tau.pt() >= 45.                                            				)) continue;
-		//cout << "DEBUG: Pt cut passed for tau : " << t << endl;
-		//OLDID  //if(!(       tau[t].tauID_againstElectronMediumMVA5 > 0.5                				)) continue;
+		if (verbose_) cout << "Eta cut passed for tau : " << t << endl;
+		if (verbose_) cout << "Tau pt : " << tau[t].pt << endl;
+		if (verbose_) cout << "Tau eta : " << tau[t].eta << endl;
+		if (verbose_) cout << "Tau phi : " << tau[t].phi << endl;
+		if(!(       tau.pt() >= taupt_                                            				)) continue;
+		if (verbose_) cout << "Pt cut passed for tau : " << t << endl;
 		if(!(       tau.tauID("againstElectronVLooseMVA5") > 0.5                				)) continue;
-		//cout << "DEBUG: Electron veto cut passed for tau : " << t << endl;
+		if (verbose_) cout << "Electron veto cut passed for tau : " << t << endl;
 		if(!(       tau.tauID("againstMuonLoose3") > 0.5                        				)) continue;
-		//cout << "DEBUG: Muon veto cut passed for tau : " << t << endl;
+		if (verbose_) cout << "Muon veto cut passed for tau : " << t << endl;
 		if(!(       tau.leadChargedHadrCand()->pt() >= 5.0                      				)) continue;
-		//cout << "DEBUG: leadChargedHadrCand_pt cut passed for tau : " << t << endl;
+		if (verbose_) cout << "leadChargedHadrCand_pt cut passed for tau : " << t << endl;
 		if(!(       (tau.tauID("decayModeFindingNewDMs") > 0.5) && (tau.signalChargedHadrCands().size() < 4)	)) continue;
-		//cout << "DEBUG: decayModeFindingNewDMs cut passed for tau : " << t << endl;
+		if (verbose_) cout << "decayModeFindingNewDMs cut passed for tau : " << t << endl;
 		baselineObjectSelectionCollection.tau.push_back(&tau);
-		
+
 		if( tau.tauID("byLooseCombinedIsolationDeltaBetaCorr3Hits")  > 0.5) {
 			anyiso.push_back(&tau);
 		}
@@ -489,17 +510,12 @@ VBFSUSYLtoTfactors::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
 		for(unsigned int t =0;t<anyiso.size();++t) {
 			TauAnyIsoObjectSelectionCollection.tau.push_back(anyiso[t]);
 		}
-		for(unsigned int t =0;t<anyisoplusnones.size();++t){ 
+		for(unsigned int t =0;t<anyisoplusnones.size();++t){
 			TauAnyIsoPlusNonesObjectSelectionCollection.tau.push_back(anyisoplusnones[t]);
 		}
 	}
 
-	//
 
-
-	// jet && bjet selection
-	// ? id ?
-	//cout << "jet.size(): " << jet.size() << endl;
 	for(const pat::Jet &jet : *jets){
 		if(!(      jet.pt() >= 30.                                                	)) continue;  // Original value 20
 		if(!(      fabs(jet.eta()) <= 5.0                                          )) continue;
@@ -513,35 +529,35 @@ VBFSUSYLtoTfactors::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
 			if(!(      jet.chargedEmEnergyFraction() < 0.99                            		)) jetid=false;
 			if(!(      jet.chargedHadronMultiplicity() > 0					)) jetid=false;
 		}
-		
+
 		//Filling Jet collection
 		if(      /*jet[j].pt >= 50.  &&*/ jetid		){
-			baselineObjectSelectionCollection.jet.push_back(&jet);	
+			baselineObjectSelectionCollection.jet.push_back(&jet);
 			TauAnyIsoObjectSelectionCollection.jet.push_back(&jet);
 			TauAnyIsoPlusNonesObjectSelectionCollection.jet.push_back(&jet);
 		}
-		
+
 		//Filling bJet collection
 		if(fabs(jet.eta()) <= 2.4 && jet.bDiscriminator("combinedSecondaryVertexBJetTags") /*jet[j].bDiscriminator_combinedSecondaryVertexBJetTags*/ > 0.244    ){
-			baselineObjectSelectionCollection.bjet.push_back(&jet);	
+			baselineObjectSelectionCollection.bjet.push_back(&jet);
 			TauAnyIsoObjectSelectionCollection.bjet.push_back(&jet);
 			TauAnyIsoPlusNonesObjectSelectionCollection.bjet.push_back(&jet);
 		}
-	}	
+	}
 
 	//MET selection
 	baselineObjectSelectionCollection.met.push_back(&met);
 	TauAnyIsoObjectSelectionCollection.met.push_back(&met);
 	TauAnyIsoPlusNonesObjectSelectionCollection.met.push_back(&met);
 
-	
+
 	//Filling count plot
 	count->Fill("NoCuts",1.);
 
 	//------------------------------------------//
 	//------- EVENT SELECTION START ------------//
 	//------------------------------------------//
-	
+
 	//Filling Histograms for baseline selection
 
 	makeSelection (myHistoColl_baselineSelection, baselineObjectSelectionCollection, 1.);
@@ -559,20 +575,20 @@ VBFSUSYLtoTfactors::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
 
 
 // ------------ method called once each job just before starting event loop  ------------
-	void 
+	void
 VBFSUSYLtoTfactors::beginJob()
 {
 }
 
 // ------------ method called once each job just after ending the event loop  ------------
-	void 
-VBFSUSYLtoTfactors::endJob() 
+	void
+VBFSUSYLtoTfactors::endJob()
 {
 }
 
 // ------------ method called when starting to processes a run  ------------
 /*
-   void 
+   void
    VBFSUSYLtoTfactors::beginRun(edm::Run const&, edm::EventSetup const&)
    {
    }
@@ -580,7 +596,7 @@ VBFSUSYLtoTfactors::endJob()
 
 // ------------ method called when ending the processing of a run  ------------
 /*
-   void 
+   void
    VBFSUSYLtoTfactors::endRun(edm::Run const&, edm::EventSetup const&)
    {
    }
@@ -588,7 +604,7 @@ VBFSUSYLtoTfactors::endJob()
 
 // ------------ method called when starting to processes a luminosity block  ------------
 /*
-   void 
+   void
    VBFSUSYLtoTfactors::beginLuminosityBlock(edm::LuminosityBlock const&, edm::EventSetup const&)
    {
    }
@@ -596,27 +612,26 @@ VBFSUSYLtoTfactors::endJob()
 
 // ------------ method called when ending the processing of a luminosity block  ------------
 /*
-   void 
+   void
    VBFSUSYLtoTfactors::endLuminosityBlock(edm::LuminosityBlock const&, edm::EventSetup const&)
    {
    }
    */
 
-void 
-VBFSUSYLtoTfactors::fillHistoCollection (MyHistoCollection_LtoT &inputHistoCollection, MyEventCollection_LtoT inputEventCollection, double weight, bool verbose) {
+void
+VBFSUSYLtoTfactors::fillHistoCollection (MyHistoCollection_LtoT &inputHistoCollection, MyEventCollection_LtoT inputEventCollection, double weight, bool verbose_) {
 
 	// ---------------------
 	// -- fill histograms --
-	// ---------------------	  
+	// ---------------------
 
 	using namespace std;
 
 
-	//bool verbose=false;	
-	//JETS	  
+	//JETS
 
 	//find index of leading jets
-	std::pair<unsigned int,unsigned int> jetIndex=LeadingJets(inputEventCollection);  
+	std::pair<unsigned int,unsigned int> jetIndex=LeadingJets(inputEventCollection);
 
 	//find max value for 2-jet-mass
 	MassAndIndex Inv2j = Inv2jMassIndex(inputEventCollection);
@@ -633,40 +648,33 @@ VBFSUSYLtoTfactors::fillHistoCollection (MyHistoCollection_LtoT &inputHistoColle
 
 	//fill jet count
 	inputHistoCollection.h_njet->Fill( (int)inputEventCollection.jet.size(),weight );
-	if(verbose)std::cout<<"Pass selection -> Fill njet="<<inputEventCollection.jet.size()<<", weight="<<weight<<std::endl;
+	if(verbose_)std::cout<<"Pass selection -> Fill njet="<<inputEventCollection.jet.size()<<", weight="<<weight<<std::endl;
 
 	//fill jet pt indizes
 	if (jetIndex.first < 99999)  {
 		inputHistoCollection.h_jet1pt->Fill(inputEventCollection.jet[jetIndex.first]->pt(),weight);
 		inputHistoCollection.h_jet1eta->Fill(inputEventCollection.jet[jetIndex.first]->eta(),weight);
-		if(verbose)std::cout<<"Pass selection -> Fill jet1pt="<<inputEventCollection.jet[jetIndex.first]->pt()<<", weight="<<weight<<std::endl;
-		if(verbose)std::cout<<"Pass selection -> Fill jet1eta="<<inputEventCollection.jet[jetIndex.first]->eta()<<", weight="<<weight<<std::endl;
+		if(verbose_)std::cout<<"Pass selection -> Fill jet1pt="<<inputEventCollection.jet[jetIndex.first]->pt()<<", weight="<<weight<<std::endl;
+		if(verbose_)std::cout<<"Pass selection -> Fill jet1eta="<<inputEventCollection.jet[jetIndex.first]->eta()<<", weight="<<weight<<std::endl;
 	}
 	if (jetIndex.second < 99999) {
 		inputHistoCollection.h_jet2pt->Fill(inputEventCollection.jet[jetIndex.second]->pt(),weight);
 		inputHistoCollection.h_jet2eta->Fill(inputEventCollection.jet[jetIndex.second]->eta(),weight);
-		if(verbose)std::cout<<"Pass selection -> Fill jet2pt="<<inputEventCollection.jet[jetIndex.second]->pt()<<", weight="<<weight<<std::endl;
-		if(verbose)std::cout<<"Pass selection -> Fill jet2eta="<<inputEventCollection.jet[jetIndex.second]->eta()<<", weight="<<weight<<std::endl;
+		if(verbose_)std::cout<<"Pass selection -> Fill jet2pt="<<inputEventCollection.jet[jetIndex.second]->pt()<<", weight="<<weight<<std::endl;
+		if(verbose_)std::cout<<"Pass selection -> Fill jet2eta="<<inputEventCollection.jet[jetIndex.second]->eta()<<", weight="<<weight<<std::endl;
 	}
 
 	//fill 2-jet-event inv. mass and eta-difference
 	if ( Inv2j.Mass >= 0 ) {
 		inputHistoCollection.h_dijetinvariantmass ->Fill(Inv2j.Mass,weight);
 		inputHistoCollection.h_dijetdeltaeta ->Fill(Inv2j.dEta,weight);
-		if(verbose)std::cout<<"Pass selection -> Fill dijetinvariantmass="<< Inv2j.Mass <<", weight="<<weight<<std::endl;
-		if(verbose)std::cout<<"Pass selection -> Fill dijetdeltaeta="<< Inv2j.dEta <<", weight="<<weight<<std::endl;
+		if(verbose_)std::cout<<"Pass selection -> Fill dijetinvariantmass="<< Inv2j.Mass <<", weight="<<weight<<std::endl;
+		if(verbose_)std::cout<<"Pass selection -> Fill dijetdeltaeta="<< Inv2j.dEta <<", weight="<<weight<<std::endl;
 	}
 
 	//fill ht distribution
 	inputHistoCollection.h_ht -> Fill(ht_jets,weight);
-	if(verbose)std::cout<<"Pass selection -> Fill ht_jets="<< ht_jets <<", weight="<<weight<<std::endl;
-
-	//fill jet tau distance distribution
-	//if(jetIndex.first<99999 && jetIndex.second<99999){
-	//	inputHistoCollection.h_jetTauDistanceFirst->Fill(TauJetMinDistance(inputEventCollection,inputEventCollection.jet[jetIndex.first]->eta, inputEventCollection.jet[jetIndex.first]->phi));
-	//	inputHistoCollection.h_jetTauDistanceSecond->Fill(TauJetMinDistance(inputEventCollection,inputEventCollection.jet[jetIndex.second]->eta, inputEventCollection.jet[jetIndex.second]->phi));	 
-	//}
-	//____________________________________________________________________________________________
+	if(verbose_)std::cout<<"Pass selection -> Fill ht_jets="<< ht_jets <<", weight="<<weight<<std::endl;
 
 	//TAUS
 
@@ -686,39 +694,39 @@ VBFSUSYLtoTfactors::fillHistoCollection (MyHistoCollection_LtoT &inputHistoColle
 	if ( (Inv2t.first < 99999) && (Inv2t.second < 99999) ) {
 		//determine leading two tau invariant mass
 		inputHistoCollection.h_ditauinvariantmass ->Fill(Inv2t.Mass,weight);
-		if(verbose)std::cout<<"Pass selection -> Fill ditauinvariantmass="<< Inv2t.Mass <<", weight="<<weight<<std::endl;
+		if(verbose_)std::cout<<"Pass selection -> Fill ditauinvariantmass="<< Inv2t.Mass <<", weight="<<weight<<std::endl;
 
 		//fill tau charge and  cosdeltaphi and deltaeta and 2Dpt-plot
 		inputHistoCollection.h_ditaucharge ->Fill(Inv2t.charge,weight);
-		if(verbose)std::cout<<"Pass selection -> Fill ditaucharge="<< Inv2t.charge <<", weight="<<weight<<std::endl;
-		inputHistoCollection.h_ditaucosdeltaphi ->Fill(Inv2t.cosDphi,weight);	
-		if(verbose)std::cout<<"Pass selection -> Fill ditaucosdeltaphi="<< Inv2t.cosDphi <<", weight="<<weight<<std::endl;
+		if(verbose_)std::cout<<"Pass selection -> Fill ditaucharge="<< Inv2t.charge <<", weight="<<weight<<std::endl;
+		inputHistoCollection.h_ditaucosdeltaphi ->Fill(Inv2t.cosDphi,weight);
+		if(verbose_)std::cout<<"Pass selection -> Fill ditaucosdeltaphi="<< Inv2t.cosDphi <<", weight="<<weight<<std::endl;
 		inputHistoCollection.h_ditaudeltaeta->Fill(Inv2t.dEta,weight);
-		if(verbose)std::cout<<"Pass selection -> Fill ditaudeltaeta="<< Inv2t.dEta <<", weight="<<weight<<std::endl;
-		inputHistoCollection.h2_tau1pt_vs_tau2pt->Fill(inputEventCollection.tau[Inv2t.first]->pt(),inputEventCollection.tau[Inv2t.second]->pt(),weight);   
+		if(verbose_)std::cout<<"Pass selection -> Fill ditaudeltaeta="<< Inv2t.dEta <<", weight="<<weight<<std::endl;
+		inputHistoCollection.h2_tau1pt_vs_tau2pt->Fill(inputEventCollection.tau[Inv2t.first]->pt(),inputEventCollection.tau[Inv2t.second]->pt(),weight);
 	}
 
 	//fill tau pt and eta
 	if (Inv2t.first < 99999) {
 		inputHistoCollection.h_tau1pt->Fill(inputEventCollection.tau[Inv2t.first]->pt(),weight);
 		inputHistoCollection.h_tau1eta->Fill(inputEventCollection.tau[Inv2t.first]->eta(),weight);
-		if(verbose)std::cout<<"Pass selection -> Fill tau1pt="<< inputEventCollection.tau[Inv2t.first]->pt() <<", weight="<<weight<<std::endl;
-		if(verbose)std::cout<<"Pass selection -> Fill tau1eta="<< inputEventCollection.tau[Inv2t.first]->eta() <<", weight="<<weight<<std::endl;
+		if(verbose_)std::cout<<"Pass selection -> Fill tau1pt="<< inputEventCollection.tau[Inv2t.first]->pt() <<", weight="<<weight<<std::endl;
+		if(verbose_)std::cout<<"Pass selection -> Fill tau1eta="<< inputEventCollection.tau[Inv2t.first]->eta() <<", weight="<<weight<<std::endl;
 	}
 	if (Inv2t.second < 99999) {
 		inputHistoCollection.h_tau2pt->Fill(inputEventCollection.tau[Inv2t.second]->pt(),weight);
 		inputHistoCollection.h_tau2eta->Fill(inputEventCollection.tau[Inv2t.second]->eta(),weight);
-		if(verbose)std::cout<<"Pass selection -> Fill tau2pt="<< inputEventCollection.tau[Inv2t.second]->pt() <<", weight="<<weight<<std::endl;
-		if(verbose)std::cout<<"Pass selection -> Fill tau2eta="<< inputEventCollection.tau[Inv2t.second]->eta() <<", weight="<<weight<<std::endl;
+		if(verbose_)std::cout<<"Pass selection -> Fill tau2pt="<< inputEventCollection.tau[Inv2t.second]->pt() <<", weight="<<weight<<std::endl;
+		if(verbose_)std::cout<<"Pass selection -> Fill tau2eta="<< inputEventCollection.tau[Inv2t.second]->eta() <<", weight="<<weight<<std::endl;
 	}
 
 	//fill ht with taus included
 	inputHistoCollection.h_ht_withtau -> Fill(ht_jetsPtau,weight);
-	if(verbose)std::cout<<"Pass selection -> Fill ht_withtau="<< ht_jetsPtau <<", weight="<<weight<<std::endl;
+	if(verbose_)std::cout<<"Pass selection -> Fill ht_withtau="<< ht_jetsPtau <<", weight="<<weight<<std::endl;
 
 	// MET
 	inputHistoCollection.h_met -> Fill(inputEventCollection.met[0]->pt(),weight);
-	if(verbose)std::cout<<"Pass selection -> Fill met="<< inputEventCollection.met[0]->pt() <<", weight="<<weight<<std::endl;
+	if(verbose_)std::cout<<"Pass selection -> Fill met="<< inputEventCollection.met[0]->pt() <<", weight="<<weight<<std::endl;
 
 	//fill DiJetInvMass_vs_DiJetDEta
 	inputHistoCollection.h2_DiJetInvMass_vs_DiJetDEta -> Fill(Inv2j.dEta, Inv2j.Mass,weight);
@@ -727,7 +735,7 @@ VBFSUSYLtoTfactors::fillHistoCollection (MyHistoCollection_LtoT &inputHistoColle
 	inputHistoCollection.h2_DiJetInvMass_vs_MET -> Fill(inputEventCollection.met[0]->pt(), Inv2j.Mass,weight);
 	//________________________________________
 
-} 
+}
 
 //-----------------
 //leading jet finder
@@ -793,9 +801,9 @@ double TauJetMinDistance(MyEventCollection_LtoT collection, const pat::Jet &jet)
 		TLorentzVector v_jet;
 		v_tau.SetPtEtaPhiM(collection.tau[t]->pt(),collection.tau[t]->eta(),collection.tau[t]->phi(),collection.tau[t]->mass());
 		v_jet.SetPtEtaPhiM(jet.pt(),jet.eta(),jet.phi(),jet.mass());
-		double temp_mindeltaRtaujet = v_tau.DeltaR(v_jet); 
+		double temp_mindeltaRtaujet = v_tau.DeltaR(v_jet);
 		if (temp_mindeltaRtaujet < minDeltaRtauJet) minDeltaRtauJet = temp_mindeltaRtaujet;
-	} 
+	}
 	return minDeltaRtauJet;
 }
 
@@ -804,10 +812,10 @@ double TauJetMinDistance(MyEventCollection_LtoT collection, const pat::Jet &jet)
 //__________________________
 
 MassAndIndex VBFSUSYLtoTfactors::Inv2jMassIndex(MyEventCollection_LtoT collection)
-{	
+{
 	struct MassAndIndex Inv2jMass("Inv2jMass");
 	TLorentzVector jet1_4v;
-	TLorentzVector jet2_4v; 
+	TLorentzVector jet2_4v;
 
 	double Mass=0.;
 	double dEtaCheck=0.;
@@ -854,19 +862,19 @@ MassAndIndex VBFSUSYLtoTfactors::Inv2jMassIndex(MyEventCollection_LtoT collectio
 		Inv2jMass.signEta=sign;
 		Inv2jMass.dEta=dEta;
 		//std::cout<<"chose jets "<<first<<" and "<<second<<std::endl;
-	}    
+	}
 	return Inv2jMass;
 }
 
 //--------------------------
 //2-tau system properties
-//__________________________  
+//__________________________
 
 TauProperties VBFSUSYLtoTfactors::Inv2tMassIndex(MyEventCollection_LtoT collection)
 {
 	struct TauProperties Inv2tMass("Inv2tMass");
 	TLorentzVector tau1_4v;
-	TLorentzVector tau2_4v; 
+	TLorentzVector tau2_4v;
 
 	std::pair<unsigned int,unsigned int> tauIndex=LeadingTaus(collection);
 	Inv2tMass.first = tauIndex.first;
@@ -896,7 +904,7 @@ TauProperties VBFSUSYLtoTfactors::Inv2tMassIndex(MyEventCollection_LtoT collecti
 void VBFSUSYLtoTfactors::makeSelection (MyHistoCollection_LtoT &inputHistoCollection, MyEventCollection_LtoT inputEventCollection, double weight, bool verbose) {
 
 	inputHistoCollection.h_count->Fill("NoCuts",weight);
-	
+
 	bool oneJet = false;
 	bool foundTauMatch = false;
 	bool isAlsoTightTau = false;
@@ -912,55 +920,55 @@ void VBFSUSYLtoTfactors::makeSelection (MyHistoCollection_LtoT &inputHistoCollec
 
 			v_tau.SetPtEtaPhiM(inputEventCollection.tau[t]->pt(),inputEventCollection.tau[t]->eta(),inputEventCollection.tau[t]->phi(),inputEventCollection.tau[t]->mass());
 			v_jet.SetPtEtaPhiM(inputEventCollection.jet[j]->pt(),inputEventCollection.jet[j]->eta(),inputEventCollection.jet[j]->phi(),inputEventCollection.jet[j]->mass());
-			double temp_deltaRtaujet = v_tau.DeltaR(v_jet); 
+			double temp_deltaRtaujet = v_tau.DeltaR(v_jet);
 			if ( temp_deltaRtaujet < 0.3 ) {
 				foundTauMatch = true;
 				if( inputEventCollection.tau[t]->tauID("byTightCombinedIsolationDeltaBetaCorr3Hits")  > 0.5) isAlsoTightTau = true;
-			}	
+			}
 		}
 	}
 
-	
+
 	if(oneJet) inputHistoCollection.h_count->Fill("4 Jet", weight);
-	if(foundTauMatch) inputHistoCollection.h_count->Fill("1 Tau Match", weight);	
-	if(isAlsoTightTau) inputHistoCollection.h_count->Fill("Tau Match also 1Tight", weight);	
+	if(foundTauMatch) inputHistoCollection.h_count->Fill("1 Tau Match", weight);
+	if(isAlsoTightTau) inputHistoCollection.h_count->Fill("Tau Match also 1Tight", weight);
 
 	//check if there are 4 jets in the event
 	if((int)(inputEventCollection.jet.size() >= 4)){
-		inputHistoCollection.h_count->Fill("4 Jets",weight);	
+		inputHistoCollection.h_count->Fill("4 Jets",weight);
 	} else return;
 
 	//check if there are 4 jets in the event
 	if((int)(inputEventCollection.tau.size() >= 1)){
-		inputHistoCollection.h_count->Fill("1 Tau",weight);	
+		inputHistoCollection.h_count->Fill("1 Tau",weight);
 	} else return;
 
 	bool foundLooseMatch = false;
 	bool isAlsoTight = false;
 
 	for(unsigned int t=1; t<inputEventCollection.tau.size(); t++){
-	
+
 		TLorentzVector v_tau;
 		TLorentzVector v_jet;
 		for(unsigned int j=1; j<inputEventCollection.jet.size(); j++){
 			v_tau.SetPtEtaPhiM(inputEventCollection.tau[t]->pt(),inputEventCollection.tau[t]->eta(),inputEventCollection.tau[t]->phi(),inputEventCollection.tau[t]->mass());
 			v_jet.SetPtEtaPhiM(inputEventCollection.jet[j]->pt(),inputEventCollection.jet[j]->eta(),inputEventCollection.jet[j]->phi(),inputEventCollection.jet[j]->mass());
-			double temp_deltaRtaujet = v_tau.DeltaR(v_jet); 
+			double temp_deltaRtaujet = v_tau.DeltaR(v_jet);
 			if ( temp_deltaRtaujet < 0.3 ) {
 				if( inputEventCollection.tau[t]->tauID("byLooseCombinedIsolationDeltaBetaCorr3Hits") > 0.5) foundLooseMatch = true;
 				if( inputEventCollection.tau[t]->tauID("byTightCombinedIsolationDeltaBetaCorr3Hits")  > 0.5) isAlsoTight = true;
-			}	
+			}
 		}
 
 	}
 
 	if(foundLooseMatch){
 		inputHistoCollection.h_count->Fill("1 Fake Loose Tau",weight);
-	} else return;	
+	} else return;
 
 	if(isAlsoTight){
 		inputHistoCollection.h_count->Fill("1 Fake also Tight",weight);
-	} else return;	
+	} else return;
 
 	fillHistoCollection ( inputHistoCollection, inputEventCollection,weight);
 

@@ -26,9 +26,11 @@ process.demo = cms.EDAnalyzer('VBFSUSYanalyzer',
 		jets = cms.InputTag("slimmedJets"),
 		fatjets = cms.InputTag("slimmedJetsAK8"),
 		mets = cms.InputTag("slimmedMETs"),
+		taupt = cms.double(20),
+		verbose = cms.bool(False),
 )
 
-process.TFileService = cms.Service("TFileService", 
+process.TFileService = cms.Service("TFileService",
 					fileName = cms.string(outfile)
 				)
 
