@@ -321,7 +321,7 @@ class VBFSUSYLtoTfactors : public edm::EDAnalyzer {
 		bool verbose_;
 		double taupt_;
 
-;
+};
 
 //---------------------------------
 // constants, enums and typedefs
