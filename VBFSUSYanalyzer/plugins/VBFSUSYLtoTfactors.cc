@@ -317,7 +317,7 @@ class VBFSUSYLtoTfactors : public edm::EDAnalyzer {
 		edm::EDGetTokenT<pat::JetCollection> jetToken_;
 		edm::EDGetTokenT<pat::JetCollection> fatjetToken_;
 		edm::EDGetTokenT<pat::METCollection> metToken_;
-		
+
 		bool verbose_;
 		double taupt_;
 
@@ -478,22 +478,22 @@ VBFSUSYLtoTfactors::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
 	std::vector<const pat::Tau*> nones;
 
 	for (const pat::Tau &tau : *taus) {
-		if (verbose_) cout << "Tau counter: " << t << endl;
+		if (verbose_) cout << "Tau object"<< endl;
 		if(!(	fabs(tau.eta()) <= 2.1                              					)) continue;
-		if (verbose_) cout << "Eta cut passed for tau : " << t << endl;
-		if (verbose_) cout << "Tau pt : " << tau[t].pt << endl;
-		if (verbose_) cout << "Tau eta : " << tau[t].eta << endl;
-		if (verbose_) cout << "Tau phi : " << tau[t].phi << endl;
+		if (verbose_) cout << "Eta cut passed for tau" << endl;
+		if (verbose_) cout << "Tau pt : " << tau.pt() << endl;
+		if (verbose_) cout << "Tau eta : " << tau.eta() << endl;
+		if (verbose_) cout << "Tau phi : " << tau.phi() << endl;
 		if(!(       tau.pt() >= taupt_                                            				)) continue;
-		if (verbose_) cout << "Pt cut passed for tau : " << t << endl;
+		if (verbose_) cout << "Pt cut passed for tau" << endl;
 		if(!(       tau.tauID("againstElectronVLooseMVA5") > 0.5                				)) continue;
-		if (verbose_) cout << "Electron veto cut passed for tau : " << t << endl;
+		if (verbose_) cout << "Electron veto cut passed for tau" << endl;
 		if(!(       tau.tauID("againstMuonLoose3") > 0.5                        				)) continue;
-		if (verbose_) cout << "Muon veto cut passed for tau : " << t << endl;
+		if (verbose_) cout << "Muon veto cut passed for tau" << endl;
 		if(!(       tau.leadChargedHadrCand()->pt() >= 5.0                      				)) continue;
-		if (verbose_) cout << "leadChargedHadrCand_pt cut passed for tau : " << t << endl;
+		if (verbose_) cout << "leadChargedHadrCand_pt cut passed for tau" << endl;
 		if(!(       (tau.tauID("decayModeFindingNewDMs") > 0.5) && (tau.signalChargedHadrCands().size() < 4)	)) continue;
-		if (verbose_) cout << "decayModeFindingNewDMs cut passed for tau : " << t << endl;
+
 		baselineObjectSelectionCollection.tau.push_back(&tau);
 
 		if( tau.tauID("byLooseCombinedIsolationDeltaBetaCorr3Hits")  > 0.5) {
