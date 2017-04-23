@@ -321,7 +321,7 @@ class VBFSUSYanalyzer : public edm::EDAnalyzer {
 		MyEventCollection TauAnyIsoVBFInvertedObjectSelectionCollection;
 
 		MyEventCollection TauAnyIsoPlusNonesObjectSelectionCollection;
-		MyEventCollection TauAnyIsoPlusNonesVBFInvertedObjectSelectionCollection
+		MyEventCollection TauAnyIsoPlusNonesVBFInvertedObjectSelectionCollection;
 
 		//---------------------------------
 		// ---------histograms
