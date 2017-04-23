@@ -398,8 +398,8 @@ VBFSUSYanalyzer::VBFSUSYanalyzer(const edm::ParameterSet& iConfig):
 	jetToken_(consumes<pat::JetCollection>(iConfig.getParameter<edm::InputTag>("jets"))),
 	fatjetToken_(consumes<pat::JetCollection>(iConfig.getParameter<edm::InputTag>("fatjets"))),
 	metToken_(consumes<pat::METCollection>(iConfig.getParameter<edm::InputTag>("mets"))),
-	verbose_(iConfig.getParameter<double>"verbose"),
-	taupt_(iConfig.getParameter<double>"taupt")
+	verbose_(iConfig.getParameter<bool>("verbose")),
+	taupt_(iConfig.getParameter<double>("taupt"))
 
 {
 
@@ -567,7 +567,6 @@ VBFSUSYanalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
 	std::vector<const pat::Tau*> nones;
 
 	//smart tau selection
-	if (verbose_) cout << "Tau vector size: " << tau.size() << endl;
 	for (const pat::Tau &tau : *taus) {
 		if (verbose_) cout << "Tau object"<< endl;
 		if(!(	fabs(tau.eta()) <= 2.1                              					)) continue;
@@ -812,22 +811,78 @@ VBFSUSYanalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
 
 	//Filling Histograms for baseline selection
 	myHistoColl_baselineSelection.h_count->Fill("NoCuts",1.);
-	//fillHistoCollection ( myHistoColl_baselineSelection, baselineObjectSelectionCollection,1.);
 
-	makeSelection (myHistoColl_baselineSelection, myHistoColl_baselineVBFInvertedSelection, baselineObjectSelectionCollection, baselineVBFInvertedObjectSelectionCollection, 1.);
-	makeSelection (myHistoColl_TauAnyIsoObjectSelection, myHistoColl_TauAnyIsoVBFInvertedObjectSelection, TauAnyIsoObjectSelectionCollection, TauAnyIsoVBFInvertedObjectSelectionCollection, 1.);
-	makeSelection (myHistoColl_TauAnyIsoPlusNonesObjectSelection, myHistoColl_TauAnyIsoPlusNonesVBFInvertedObjectSelection, TauAnyIsoPlusNonesObjectSelectionCollection, TauAnyIsoPlusNonesVBFInvertedObjectSelectionCollection, 1.);
-	makeSelection (myHistoColl_TauAntiMediumIsoObjectSelection, myHistoColl_TauAntiMediumIsoVBFInvertedObjectSelection, TauAntiMediumIsoObjectSelectionCollection, TauAntiMediumIsoVBFInvertedObjectSelectionCollection, 1.);
-	makeSelection (myHistoColl_Tau2LooseIsoExclusiveObjectSelection, myHistoColl_Tau2LooseIsoExclusiveVBFInvertedObjectSelection, Tau2LooseIsoExclusiveObjectSelectionCollection, Tau2LooseIsoExclusiveVBFInvertedObjectSelectionCollection, 1.);
-	makeSelection (myHistoColl_Tau2LooseIsoInclusiveObjectSelection, myHistoColl_Tau2LooseIsoInclusiveVBFInvertedObjectSelection, Tau2LooseIsoInclusiveObjectSelectionCollection, Tau2LooseIsoInclusiveVBFInvertedObjectSelectionCollection, 1.);
-	makeSelection (myHistoColl_TauAntiTightIsoObjectSelection, myHistoColl_TauAntiTightIsoVBFInvertedObjectSelection, TauAntiTightIsoObjectSelectionCollection, TauAntiTightIsoVBFInvertedObjectSelectionCollection, 1.);
-	makeSelection (myHistoColl_Tau2MediumIsoExclusiveObjectSelection, myHistoColl_Tau2MediumIsoExclusiveVBFInvertedObjectSelection, Tau2MediumIsoExclusiveObjectSelectionCollection, Tau2MediumIsoExclusiveVBFInvertedObjectSelectionCollection, 1.);
-	makeSelection (myHistoColl_Tau2MediumIsoInclusiveObjectSelection, myHistoColl_Tau2MediumIsoInclusiveVBFInvertedObjectSelection, Tau2MediumIsoInclusiveObjectSelectionCollection, Tau2MediumIsoInclusiveVBFInvertedObjectSelectionCollection, 1.);
-	makeSelection (myHistoColl_Tau1TightIsoObjectSelection, myHistoColl_Tau1TightIsoVBFInvertedObjectSelection, Tau1TightIsoObjectSelectionCollection, Tau1TightIsoVBFInvertedObjectSelectionCollection, 1.);
-	makeSelection (myHistoColl_Tau2TightIsoObjectSelection, myHistoColl_Tau2TightIsoVBFInvertedObjectSelection, Tau2TightIsoObjectSelectionCollection, Tau2TightIsoVBFInvertedObjectSelectionCollection, 1.);
+	makeSelection ( myHistoColl_baselineSelection,
+									myHistoColl_baselineVBFInvertedSelection,
+									baselineObjectSelectionCollection,
+									baselineVBFInvertedObjectSelectionCollection,
+									1.,
+									verbose_);
+	makeSelection ( myHistoColl_TauAnyIsoObjectSelection,
+									myHistoColl_TauAnyIsoVBFInvertedObjectSelection,
+									TauAnyIsoObjectSelectionCollection,
+									TauAnyIsoVBFInvertedObjectSelectionCollection,
+									1.,
+									verbose_);
+	makeSelection ( myHistoColl_TauAnyIsoPlusNonesObjectSelection,
+									myHistoColl_TauAnyIsoPlusNonesVBFInvertedObjectSelection,
+									TauAnyIsoPlusNonesObjectSelectionCollection,
+									TauAnyIsoPlusNonesVBFInvertedObjectSelectionCollection,
+									1.,
+									verbose_);
+	makeSelection ( myHistoColl_TauAntiMediumIsoObjectSelection,
+									myHistoColl_TauAntiMediumIsoVBFInvertedObjectSelection,
+									TauAntiMediumIsoObjectSelectionCollection,
+									TauAntiMediumIsoVBFInvertedObjectSelectionCollection,
+									1.,
+									verbose_);
+	makeSelection ( myHistoColl_Tau2LooseIsoExclusiveObjectSelection,
+									myHistoColl_Tau2LooseIsoExclusiveVBFInvertedObjectSelection,
+									Tau2LooseIsoExclusiveObjectSelectionCollection,
+									Tau2LooseIsoExclusiveVBFInvertedObjectSelectionCollection,
+									1.,
+									verbose_);
+	makeSelection ( myHistoColl_Tau2LooseIsoInclusiveObjectSelection,
+									myHistoColl_Tau2LooseIsoInclusiveVBFInvertedObjectSelection,
+									Tau2LooseIsoInclusiveObjectSelectionCollection,
+									Tau2LooseIsoInclusiveVBFInvertedObjectSelectionCollection,
+									1.,
+									verbose_);
+	makeSelection ( myHistoColl_TauAntiTightIsoObjectSelection,
+									myHistoColl_TauAntiTightIsoVBFInvertedObjectSelection,
+									TauAntiTightIsoObjectSelectionCollection,
+									TauAntiTightIsoVBFInvertedObjectSelectionCollection,
+									1.,
+									verbose_);
+	makeSelection ( myHistoColl_Tau2MediumIsoExclusiveObjectSelection,
+									myHistoColl_Tau2MediumIsoExclusiveVBFInvertedObjectSelection,
+									Tau2MediumIsoExclusiveObjectSelectionCollection,
+									Tau2MediumIsoExclusiveVBFInvertedObjectSelectionCollection,
+									1.,
+									verbose_);
+	makeSelection ( myHistoColl_Tau2MediumIsoInclusiveObjectSelection,
+									myHistoColl_Tau2MediumIsoInclusiveVBFInvertedObjectSelection,
+									Tau2MediumIsoInclusiveObjectSelectionCollection,
+									Tau2MediumIsoInclusiveVBFInvertedObjectSelectionCollection,
+									1.,
+									verbose_);
+	makeSelection ( myHistoColl_Tau1TightIsoObjectSelection,
+									myHistoColl_Tau1TightIsoVBFInvertedObjectSelection,
+									Tau1TightIsoObjectSelectionCollection,
+									Tau1TightIsoVBFInvertedObjectSelectionCollection,
+									1.,
+									verbose_);
+	makeSelection ( myHistoColl_Tau2TightIsoObjectSelection,
+									myHistoColl_Tau2TightIsoVBFInvertedObjectSelection,
+									Tau2TightIsoObjectSelectionCollection,
+									Tau2TightIsoVBFInvertedObjectSelectionCollection,
+									1.,
+									verbose_);
 
-
+	//------------------------------------------//
 	//clearing event collections
+	//------------------------------------------//
+	
 	baselineObjectSelectionCollection.clear();
 	baselineVBFInvertedObjectSelectionCollection.clear();
 	TauAnyIsoObjectSelectionCollection.clear();
@@ -1199,7 +1254,10 @@ void VBFSUSYanalyzer::makeSelection (MyHistoCollection &inputHistoCollection, My
 		inputHistoCollection.h_count->Fill("DiJetDeta",weight);
 
 	} else {
-		fillHistoCollection ( inputHistoCollectionVBFInverted, inputEventCollectionVBFInverted,weight);
+		fillHistoCollection ( inputHistoCollectionVBFInverted,
+													inputEventCollectionVBFInverted,
+													weight,
+													verbose_);
 		return;
 	}
 
@@ -1207,16 +1265,25 @@ void VBFSUSYanalyzer::makeSelection (MyHistoCollection &inputHistoCollection, My
 	if (Inv2j.signEta < 0.) {
 		inputHistoCollection.h_count->Fill("DiJetSignEta",weight);
 	} else {
-		fillHistoCollection ( inputHistoCollectionVBFInverted, inputEventCollectionVBFInverted,weight);
+		fillHistoCollection ( inputHistoCollectionVBFInverted,
+													inputEventCollectionVBFInverted,
+													weight,
+													verbose_);
 		return;
 	}
 
 	//if (Inv2j.Mass > 250.) {
 	if( true ){
 		inputHistoCollection.h_count->Fill("DiJetInvMass",weight);
-		fillHistoCollection ( inputHistoCollection, inputEventCollection,weight);
+		fillHistoCollection ( inputHistoCollection,
+													inputEventCollection,
+													weight,
+													verbose_);
 	} else {
-		fillHistoCollection ( inputHistoCollectionVBFInverted, inputEventCollectionVBFInverted,weight);
+		fillHistoCollection ( inputHistoCollectionVBFInverted,
+													inputEventCollectionVBFInverted,
+													weight,
+													verbose_);
 		return;
 	}
 

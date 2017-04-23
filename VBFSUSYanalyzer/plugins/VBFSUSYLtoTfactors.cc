@@ -345,8 +345,8 @@ VBFSUSYLtoTfactors::VBFSUSYLtoTfactors(const edm::ParameterSet& iConfig):
 	jetToken_(consumes<pat::JetCollection>(iConfig.getParameter<edm::InputTag>("jets"))),
 	fatjetToken_(consumes<pat::JetCollection>(iConfig.getParameter<edm::InputTag>("fatjets"))),
 	metToken_(consumes<pat::METCollection>(iConfig.getParameter<edm::InputTag>("mets"))),
-	verbose_(iConfig.getParameter<double>"verbose"),
-	taupt_(iConfig.getParameter<double>"taupt")
+	verbose_(iConfig.getParameter<bool>("verbose")),
+	taupt_(iConfig.getParameter<double>("taupt"))
 
 {
 	//---------------------------------
@@ -472,7 +472,6 @@ VBFSUSYLtoTfactors::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
 
 
 	//smart tau selection
-	if (verbose_) cout << "Tau vector size: " << tau.size() << endl;
 	std::vector<const pat::Tau*> anyiso;
 	std::vector<const pat::Tau*> anyisoplusnones;
 	std::vector<const pat::Tau*> nones;
@@ -560,10 +559,18 @@ VBFSUSYLtoTfactors::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
 
 	//Filling Histograms for baseline selection
 
-	makeSelection (myHistoColl_baselineSelection, baselineObjectSelectionCollection, 1.);
-	makeSelection (myHistoColl_TauAnyIsoObjectSelection, TauAnyIsoObjectSelectionCollection, 1.);
-	makeSelection (myHistoColl_TauAnyIsoPlusNonesObjectSelection, TauAnyIsoPlusNonesObjectSelectionCollection, 1.);
-
+	makeSelection ( myHistoColl_baselineSelection,
+									baselineObjectSelectionCollection,
+									1.,
+									verbose_);
+	makeSelection ( myHistoColl_TauAnyIsoObjectSelection,
+									TauAnyIsoObjectSelectionCollection,
+									1.,
+									verbose_);
+	makeSelection ( myHistoColl_TauAnyIsoPlusNonesObjectSelection,
+									TauAnyIsoPlusNonesObjectSelectionCollection,
+									1.,
+									verbose_);
 
 	//clearing event collections
 	baselineObjectSelectionCollection.clear();
@@ -619,7 +626,7 @@ VBFSUSYLtoTfactors::endJob()
    */
 
 void
-VBFSUSYLtoTfactors::fillHistoCollection (MyHistoCollection_LtoT &inputHistoCollection, MyEventCollection_LtoT inputEventCollection, double weight, bool verbose_) {
+VBFSUSYLtoTfactors::fillHistoCollection (MyHistoCollection_LtoT &inputHistoCollection, MyEventCollection_LtoT inputEventCollection, double weight, bool _verbose) {
 
 	// ---------------------
 	// -- fill histograms --
@@ -901,7 +908,7 @@ TauProperties VBFSUSYLtoTfactors::Inv2tMassIndex(MyEventCollection_LtoT collecti
 	return Inv2tMass;
 }
 
-void VBFSUSYLtoTfactors::makeSelection (MyHistoCollection_LtoT &inputHistoCollection, MyEventCollection_LtoT inputEventCollection, double weight, bool verbose) {
+void VBFSUSYLtoTfactors::makeSelection (MyHistoCollection_LtoT &inputHistoCollection, MyEventCollection_LtoT inputEventCollection, double weight, bool verbose_) {
 
 	inputHistoCollection.h_count->Fill("NoCuts",weight);
 
@@ -970,7 +977,11 @@ void VBFSUSYLtoTfactors::makeSelection (MyHistoCollection_LtoT &inputHistoCollec
 		inputHistoCollection.h_count->Fill("1 Fake also Tight",weight);
 	} else return;
 
-	fillHistoCollection ( inputHistoCollection, inputEventCollection,weight);
+	fillHistoCollection ( inputHistoCollection,
+												inputEventCollection,
+												weight,
+												verbose_
+											);
 
 	return;
 
