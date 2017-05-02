@@ -401,7 +401,7 @@ VBFSUSYanalyzer::VBFSUSYanalyzer(const edm::ParameterSet& iConfig):
 	metToken_(consumes<pat::METCollection>(iConfig.getParameter<edm::InputTag>("mets"))),
 
 	verbose_(iConfig.getParameter<bool>("verbose")),
-	weight_(iConfig.getParameter<bool>("eventweight")),
+	weight_(iConfig.getParameter<double>("eventweight")),
 	taupt_(iConfig.getParameter<double>("taupt"))
 
 {

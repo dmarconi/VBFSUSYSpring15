@@ -13,8 +13,8 @@ process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1) )
 process.source = cms.Source("PoolSource",
     # replace 'myfile.root' with the source file you want to use
     fileNames = cms.untracked.vstring(
-'file:///nfs/dust/cms/user/dmarconi/workdir/gridcontrol_makeSamples/miniaodv2.root'
-#'file:///nfs/dust/cms/user/dmarconi/workdir/samples/VBFC1pmN2_C1ToTau_N2ToTauTau_LSP000_Stau295_Chargino300_1M/MINIAODSIM/VBFC1pmN2_C1ToTau_N2ToTauTau_LSP000_Stau295_Chargino300_MINIAODSIM_5.root',
+#'file:///nfs/dust/cms/user/dmarconi/workdir/gridcontrol_makeSamples/miniaodv2.root'
+'file:///nfs/dust/cms/user/dmarconi/workdir/samples/VBFC1pmN2_C1ToTau_N2ToTauTau_LSP000_Stau295_Chargino300_1M/VBFC1pmN2_C1ToTau_N2ToTauTau_LSP000_Stau295_Chargino300_MINIAODSIM_5.root',
 #'file:///nfs/dust/cms/user/dmarconi/workdir/samples/VBFC1pmN2_C1ToTau_N2ToTauTau_LSP000_Stau295_Chargino300_1M/MINIAODSIM/VBFC1pmN2_C1ToTau_N2ToTauTau_LSP000_Stau295_Chargino300_MINIAODSIM_50.root',
 #'file:///nfs/dust/cms/user/dmarconi/workdir/samples/VBFC1pmN2_C1ToTau_N2ToTauTau_LSP000_Stau295_Chargino300_1M/MINIAODSIM/VBFC1pmN2_C1ToTau_N2ToTauTau_LSP000_Stau295_Chargino300_MINIAODSIM_51.root',
 #'file:///nfs/dust/cms/user/dmarconi/workdir/samples/VBFC1pmN2_C1ToTau_N2ToTauTau_LSP000_Stau295_Chargino300_1M/MINIAODSIM/VBFC1pmN2_C1ToTau_N2ToTauTau_LSP000_Stau295_Chargino300_MINIAODSIM_52.root',
@@ -78,8 +78,8 @@ process.demo = cms.EDAnalyzer('VBFSUSYanalyzer',
 		jets = cms.InputTag("slimmedJets"),
 		fatjets = cms.InputTag("slimmedJetsAK8"),
 		mets = cms.InputTag("slimmedMETs"),
-        taupt = cms.double(20.),
-        eventweight = cms.double(1.),
+        	taupt = cms.double(20.),
+        	eventweight = cms.double(1.),
 		verbose = cms.bool(True),
 		)
 
