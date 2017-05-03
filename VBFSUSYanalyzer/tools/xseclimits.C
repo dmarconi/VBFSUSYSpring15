@@ -418,9 +418,13 @@ void fullXsecLimScan(){
 	makeXsecLimPlots("chi100", "lsp000");
 	makeXsecLimPlots("chi200", "lsp000");
 	makeXsecLimPlots("chi300", "lsp000");
+	makeXsecLimPlots("chi400", "lsp000");
+	makeXsecLimPlots("chi500", "lsp000");
 	makeXsecLimPlots("chi100", "lsp050");
 	makeXsecLimPlots("chi200", "lsp050");
 	makeXsecLimPlots("chi300", "lsp050");
+	makeXsecLimPlots("chi400", "lsp050");
+	makeXsecLimPlots("chi500", "lsp050");
 
 }
 
