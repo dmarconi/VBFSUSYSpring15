@@ -79,9 +79,13 @@ TH2F* makeEffPlot(string taupt, string isoregion, string chi, string lsp) {
 	if ((chi == "chi100") && (lsp == "lsp000")){ inputfile = TFile::Open((taupt + "/VBFC1pmN2_C1ToTau_N2ToTauTau_LSP000_Stau095_Chargino100_1M.root").c_str());}
 	else if ((chi == "chi200") && (lsp == "lsp000")){ inputfile = TFile::Open((taupt + "/VBFC1pmN2_C1ToTau_N2ToTauTau_LSP000_Stau195_Chargino200_1M.root").c_str());}
 	else if ((chi == "chi300") && (lsp == "lsp000")){ inputfile = TFile::Open((taupt + "/VBFC1pmN2_C1ToTau_N2ToTauTau_LSP000_Stau295_Chargino300_1M.root").c_str());}
+	else if ((chi == "chi400") && (lsp == "lsp000")){ inputfile = TFile::Open((taupt + "/VBFC1pmN2_C1ToTau_N2ToTauTau_LSP000_Stau395_Chargino400_1M.root").c_str());}
+	else if ((chi == "chi500") && (lsp == "lsp000")){ inputfile = TFile::Open((taupt + "/VBFC1pmN2_C1ToTau_N2ToTauTau_LSP000_Stau495_Chargino500_1M.root").c_str());}
 	else if ((chi == "chi100") && (lsp == "lsp050")){ inputfile = TFile::Open((taupt + "/VBFC1pmN2_C1ToTau_N2ToTauTau_LSP050_Stau095_Chargino100_1M.root").c_str());}
 	else if ((chi == "chi200") && (lsp == "lsp050")){ inputfile = TFile::Open((taupt + "/VBFC1pmN2_C1ToTau_N2ToTauTau_LSP050_Stau195_Chargino200_1M.root").c_str());}
 	else if ((chi == "chi300") && (lsp == "lsp050")) inputfile = TFile::Open((taupt + "/VBFC1pmN2_C1ToTau_N2ToTauTau_LSP050_Stau295_Chargino300_1M.root").c_str());
+	else if ((chi == "chi400") && (lsp == "lsp050")) inputfile = TFile::Open((taupt + "/VBFC1pmN2_C1ToTau_N2ToTauTau_LSP050_Stau395_Chargino400_1M.root").c_str());
+	else if ((chi == "chi500") && (lsp == "lsp050")) inputfile = TFile::Open((taupt + "/VBFC1pmN2_C1ToTau_N2ToTauTau_LSP050_Stau495_Chargino500_1M.root").c_str());
 
 	TH2F* h2_DiJetInvMass_vs_MET;
 	TH1F* h_count;
@@ -279,7 +283,7 @@ void makeXSection(string taupt,string chi, string lsp) {
 	TH2F* h2_DiJetInvMass_vs_MET_xsec;
 	TH2F* h2_DiJetInvMass_vs_MET_xsec_zoom;
 	h2_DiJetInvMass_vs_MET_xsec = new TH2F (("JetInvMass_vs_MET_xsec_" + chi + "_" + lsp + "_" + taupt).c_str(),("JetInvMass_vs_MET_xsec_" + chi + "_" + lsp + "_" + taupt).c_str(), nbinsx, 0., 240., nbinsy , 0., 2500.);
-	h2_DiJetInvMass_vs_MET_xsec->SetTitle("CMS Work in Progress");
+	h2_DiJetInvMass_vs_MET_xsec->SetTitle("CMS Work");
 	h2_DiJetInvMass_vs_MET_xsec->GetYaxis()->SetTitle("M_{(jet,jet)} [GeV]");
 	h2_DiJetInvMass_vs_MET_xsec->GetZaxis()->SetTitle("#sigma_{lim} [pb]");
 	h2_DiJetInvMass_vs_MET_xsec->GetXaxis()->SetTitle("E_{T}^{miss} [GeV]");
@@ -295,6 +299,8 @@ void makeXSection(string taupt,string chi, string lsp) {
 	if (chi == "chi100") {chi_value = "m(#tilde{#chi}^{#pm}_{1}) = m(#tilde{#chi}^{0}_{2}) = 100 GeV";}
 	else if (chi == "chi200") {chi_value = "m(#tilde{#chi}^{#pm}_{1}) = m(#tilde{#chi}^{0}_{2}) = 200 GeV";}
 	else if (chi == "chi300") {chi_value = "m(#tilde{#chi}^{#pm}_{1}) = m(#tilde{#chi}^{0}_{2}) = 300 GeV";}
+	else if (chi == "chi400") {chi_value = "m(#tilde{#chi}^{#pm}_{1}) = m(#tilde{#chi}^{0}_{2}) = 400 GeV";}
+	else if (chi == "chi500") {chi_value = "m(#tilde{#chi}^{#pm}_{1}) = m(#tilde{#chi}^{0}_{2}) = 500 GeV";}
 
 	if (lsp == "lsp000") {lsp_value = "m(#tilde{#chi}^{0}_{1}) = 0 GeV";}
 	else if (lsp == "lsp050") {lsp_value = "m(#tilde{#chi}^{0}_{1}) = 50 GeV";}
@@ -430,102 +436,119 @@ void fullXsecLimScan(){
 
 void makeComparisonPlots() {
 
+	//Arrays declarations
+
 	Int_t n1 = 13;
-	Int_t n2 = 3;
-	Double_t x1[n1], y1[n1], x1_err[n1] ,y1_err[n1];
-	Double_t x2[n2], y2[n2], x2_err[n2] ,y2_err[n2];
+	Int_t n2 = 5;
+	Double_t cmsxsec_x[n1], cmsxsec_y[n1], cmsxsec_x_err[n1] ,cmsxsec_y_err[n1];
+	Double_t vbfxsec_x[n2], vbfxsec_y[n2], vbfxsec_x_err[n2] ,vbfxsec_y_err[n2];
 
-	x2[0] = 100;
-	x2[1] = 200;
-	x2[2] = 300;
+	//Filling arrays with VBF analysis and CMS cross section limits
 
-	x2_err[0] = 0.;
-	x2_err[1] = 0.;
-	x2_err[2] = 0.;
+	vbfxsec_x[0] = 100;
+	vbfxsec_x[1] = 200;
+	vbfxsec_x[2] = 300;
+	vbfxsec_x[3] = 400;
+	vbfxsec_x[4] = 500;
 
-	y2[0] = 0.0327396;
-	y2[1] = 0.0333074;
-	y2[2] = 0.0345751;
+	vbfxsec_x_err[0] = 0.;
+	vbfxsec_x_err[1] = 0.;
+	vbfxsec_x_err[2] = 0.;
+	vbfxsec_x_err[3] = 0.;
+	vbfxsec_x_err[4] = 0.;
 
-	y2_err[0] = 0.00680598 + sqrt(pow( 0.00368, 2.) + pow( 0.001193, 2.));
-	y2_err[1] = 0.0069229+ sqrt(pow(0.00375, 2.) + pow( 0.00121, 2.));
-	y2_err[2] =  0.00701739 + sqrt(pow(0.00382, 2.) + pow( 0.00123, 2.));
+	vbfxsec_y[0] = 0.0327396;
+	vbfxsec_y[1] = 0.0333074;
+	vbfxsec_y[2] = 0.0345751;
+	vbfxsec_y[3] = 0.0302742;
+	vbfxsec_y[4] = 0.0345751;
 
-	x1[0] = 100;
-	x1[1] = 125;
-	x1[2] = 150;
-	x1[3] = 175;
-	x1[4] = 200;
-	x1[5] = 225;
-	x1[6] = 250;
-	x1[7] = 275;
-	x1[8] = 300;
-	x1[9] = 325;
-	x1[10] = 350;
-	x1[11] = 375;
-	x1[12] = 400;
-
-	x1_err[0] = 0.;
-	x1_err[1] = 0.;
-	x1_err[2] = 0.;
-	x1_err[3] = 0.;
-	x1_err[4] = 0.;
-	x1_err[5] = 0.;
-	x1_err[6] = 0.;
-	x1_err[7] = 0.;
-	x1_err[8] = 0.;
-	x1_err[9] = 0.;
-	x1_err[10] = 0.;
-	x1_err[11] = 0.;
-	x1_err[12] = 0.;
+	vbfxsec_y_err[0] = 0.00680598 + sqrt(pow( 0.00368, 2.) + pow( 0.001193, 2.));
+	vbfxsec_y_err[1] = 0.0069229+ sqrt(pow(0.00375, 2.) + pow( 0.00121, 2.));
+	vbfxsec_y_err[2] =  0.00701739 + sqrt(pow(0.00382, 2.) + pow( 0.00123, 2.));
+	vbfxsec_y_err[3] =  0.00458659 + sqrt(pow(0.00271169, 2.) + pow( 0.000385888, 2.));
+	vbfxsec_y_err[4] =  0.00631726 + sqrt(pow(0.00342821, 2.) + pow( 0.000495253, 2.));
 
 
-	y1[0] = 22670.1;
-	y1[1] = 10034.8;
-	y1[2] = 5180.86;
-	y1[3] = 2953.28;
-	y1[4] = 1807.39;
-	y1[5] = 1165.09;
-	y1[6] = 782.487;
-	y1[7] = 543.03;
-	y1[8] = 386.936;
-	y1[9] = 281.911;
-	y1[10] = 209.439;
-	y1[11] = 158.06;
-	y1[12] = 121.013;
+	cmsxsec_x[0] = 100;
+	cmsxsec_x[1] = 125;
+	cmsxsec_x[2] = 150;
+	cmsxsec_x[3] = 175;
+	cmsxsec_x[4] = 200;
+	cmsxsec_x[5] = 225;
+	cmsxsec_x[6] = 250;
+	cmsxsec_x[7] = 275;
+	cmsxsec_x[8] = 300;
+	cmsxsec_x[9] = 325;
+	cmsxsec_x[10] = 350;
+	cmsxsec_x[11] = 375;
+	cmsxsec_x[12] = 400;
 
-	y1_err[0] = 973.967;
-	y1_err[1] = 457.604;
-	y1_err[2] = 253.223;
-	y1_err[3] = 154.386;
-	y1_err[4] = 101.316;
-	y1_err[5] = 68.8042;
-	y1_err[6] = 48.7463;
-	y1_err[7] = 35.4083;
-	y1_err[8] = 26.3602;
-	y1_err[9] = 20.0201;
-	y1_err[10] = 15.4539;
-	y1_err[11] = 12.0956;
-	y1_err[12] = 9.61659;
+	cmsxsec_x_err[0] = 0.;
+	cmsxsec_x_err[1] = 0.;
+	cmsxsec_x_err[2] = 0.;
+	cmsxsec_x_err[3] = 0.;
+	cmsxsec_x_err[4] = 0.;
+	cmsxsec_x_err[5] = 0.;
+	cmsxsec_x_err[6] = 0.;
+	cmsxsec_x_err[7] = 0.;
+	cmsxsec_x_err[8] = 0.;
+	cmsxsec_x_err[9] = 0.;
+	cmsxsec_x_err[10] = 0.;
+	cmsxsec_x_err[11] = 0.;
+	cmsxsec_x_err[12] = 0.;
 
-	for(Int_t i = 0; i < n1; i++) y1[i] *= 0.001;
-	for(Int_t i = 0; i < n1; i++) y1_err[i] *= 0.001;
 
-	double y_max = y1[0] * 1.5;
-	double y_min = y2[2] * 0.5;
-	double x_max = 450.;
+	cmsxsec_y[0] = 22670.1;
+	cmsxsec_y[1] = 10034.8;
+	cmsxsec_y[2] = 5180.86;
+	cmsxsec_y[3] = 2953.28;
+	cmsxsec_y[4] = 1807.39;
+	cmsxsec_y[5] = 1165.09;
+	cmsxsec_y[6] = 782.487;
+	cmsxsec_y[7] = 543.03;
+	cmsxsec_y[8] = 386.936;
+	cmsxsec_y[9] = 281.911;
+	cmsxsec_y[10] = 209.439;
+	cmsxsec_y[11] = 158.06;
+	cmsxsec_y[12] = 121.013;
+
+	cmsxsec_y_err[0] = 973.967;
+	cmsxsec_y_err[1] = 457.604;
+	cmsxsec_y_err[2] = 253.223;
+	cmsxsec_y_err[3] = 154.386;
+	cmsxsec_y_err[4] = 101.316;
+	cmsxsec_y_err[5] = 68.8042;
+	cmsxsec_y_err[6] = 48.7463;
+	cmsxsec_y_err[7] = 35.4083;
+	cmsxsec_y_err[8] = 26.3602;
+	cmsxsec_y_err[9] = 20.0201;
+	cmsxsec_y_err[10] = 15.4539;
+	cmsxsec_y_err[11] = 12.0956;
+	cmsxsec_y_err[12] = 9.61659;
+
+	for(Int_t i = 0; i < n1; i++) cmsxsec_y[i] *= 0.001;
+	for(Int_t i = 0; i < n1; i++) cmsxsec_y_err[i] *= 0.001;
+
+
+	//Set plot minimum
+	double y_max = cmsxsec_y[0] * 1.5;
+	double y_min = vbfxsec_y[2] * 0.5;
+	double x_max = 550.;
 	double x_min = 0.;
 
-	TGraph *gr1 = new TGraphErrors (n1, x1, y1, x1_err, y1_err);
+	//TGraph definition
+	TGraph *gr1 = new TGraphErrors (n1, cmsxsec_x, cmsxsec_y, cmsxsec_x_err, cmsxsec_y_err);
 	gr1->SetMarkerColor(4);
 	gr1->SetMarkerStyle(21);
 
-	TGraph *gr2 = new TGraphErrors (n2, x2, y2, x2_err, y2_err);
+	TGraph *gr2 = new TGraphErrors (n2, vbfxsec_x, vbfxsec_y, vbfxsec_x_err, vbfxsec_y_err);
 	gr2->SetMarkerColor(6);
 	gr2->SetMarkerStyle(21);
 
-	TH1F* lim_comparison_bkg = new TH1F ("lim_comparison","lim_comparison", 9, 0. , 450.);
-	lim_comparison_bkg->SetTitle("CMS Work in Progress");
+	//TH1F definition
+	TH1F* lim_comparison_bkg = new TH1F ("lim_comparison","lim_comparison", 13, 0. , 550.);
+	lim_comparison_bkg->SetTitle("CMS Work");
 	lim_comparison_bkg->GetYaxis()->SetTitle("#sigma [pb]");
 	lim_comparison_bkg->GetXaxis()->SetTitle("m(#tilde{#chi}^{#pm}_{1}) = m(#tilde{#chi}^{0}_{2}) [GeV]");
 	lim_comparison_bkg->GetYaxis()->SetTitleOffset(1.40);
@@ -533,16 +556,20 @@ void makeComparisonPlots() {
 	lim_comparison_bkg->GetXaxis()->SetRangeUser(0.,450.);
 	lim_comparison_bkg->SetStats(0);
 
-	TH1F* lim_comparison = new TH1F ("lim_comparison","lim_comparison", 9, x_min - 25. , x_max - 25.);
+	TH1F* lim_comparison = new TH1F ("lim_comparison","lim_comparison", 13, x_min - 25. , x_max - 25.);
 	lim_comparison->SetStats(0);
 	lim_comparison->SetMarkerStyle(21);
 	lim_comparison->SetMarkerColor(6);
-	lim_comparison->SetBinContent( 3, y2[0]);
-	lim_comparison->SetBinContent( 5, y2[1]);
-	lim_comparison->SetBinContent( 7, y2[2]);
-	lim_comparison->SetBinError( 3, y2_err[0]);
-	lim_comparison->SetBinError( 5, y2_err[1]);
-	lim_comparison->SetBinError( 7, y2_err[2]);
+	lim_comparison->SetBinContent( 3, vbfxsec_y[0]);
+	lim_comparison->SetBinContent( 5, vbfxsec_y[1]);
+	lim_comparison->SetBinContent( 7, vbfxsec_y[2]);
+	lim_comparison->SetBinContent( 9, vbfxsec_y[3]);
+	lim_comparison->SetBinContent( 11, vbfxsec_y[4]);
+	lim_comparison->SetBinError( 3, vbfxsec_y_err[0]);
+	lim_comparison->SetBinError( 5, vbfxsec_y_err[1]);
+	lim_comparison->SetBinError( 7, vbfxsec_y_err[2]);
+	lim_comparison->SetBinError( 9, vbfxsec_y_err[3]);
+	lim_comparison->SetBinError( 11, vbfxsec_y_err[4]);
 
 
 	// create a multigraph and draw it
@@ -558,10 +585,12 @@ void makeComparisonPlots() {
 	leg->AddEntry(gr1, "#sigma^{CMS} [pb]", "LP");
 	leg->AddEntry(lim_comparison, "#sigma_{lim}^{VBF} [pb]", "Pe");
 
+	//Canvas definition
 	TCanvas *my_canvas = new TCanvas("mycanvas","mycanvas",600.,600.);
 	my_canvas->cd();
 	gPad->SetLogy();
 
+	//Drawing workaround
 	lim_comparison_bkg->Draw();
 	lim_comparison->Draw("Pe+same");
   mg->Draw("LP");
