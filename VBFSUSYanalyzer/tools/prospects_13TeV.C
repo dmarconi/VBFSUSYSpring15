@@ -13,7 +13,8 @@
 #include <cmath>
 
 void var_plot(string variable, string label, int rebin) {
-	//loading input
+
+	//loading input files
 	TFile *inputfile_sig_1 = TFile::Open("prospects/VBFC1pmN2_C1ToTau_N2ToTauTau_LSP000_Stau295_Chargino300_1M.root");
 	TFile *inputfile_sig_2 = TFile::Open("prospects/VBFC1pmN2_C1ToTau_N2ToTauTau_LSP000_Stau195_Chargino200_1M.root");
 	TFile *inputfile_sig_3 = TFile::Open("prospects/VBFC1pmN2_C1ToTau_N2ToTauTau_LSP000_Stau095_Chargino100_1M.root");
@@ -21,14 +22,14 @@ void var_plot(string variable, string label, int rebin) {
 	TFile *inputfile_vv = TFile::Open("prospects/allVV.root");
 	TFile *inputfile_wjets = TFile::Open("prospects/WJetsToLNu_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8.root");
 
-	//loading needed variables
+	//variables init
 	Double_t norm = 1.;
 	Double_t maximum = 0.;
 	Double_t minimum = 10000.;
 	Double_t temp_maximum = 0.;
 	Double_t temp_minimum = 10000.;
 
-	//woring on plots
+	//definition and plot initialization
 	TH1F* h_dijetinvariantmass_sig_1 = ((TH1F*)(inputfile_sig_1->Get(("demo/baselineObjectSelection/" + variable).c_str())));
 	h_dijetinvariantmass_sig_1->Scale(norm/h_dijetinvariantmass_sig_1->Integral());
 	h_dijetinvariantmass_sig_1->SetTitle("CMS Simulation, 13 TeV");
@@ -100,7 +101,7 @@ void var_plot(string variable, string label, int rebin) {
 	if (temp_maximum > maximum) maximum = temp_maximum;
 	if ((temp_minimum < minimum) && (temp_minimum != 0.) && ((temp_minimum > 0.00001)) ) minimum = temp_minimum;
 
-	
+
 	TH1F* h_dijetinvariantmass_wjets = ((TH1F*)(inputfile_wjets->Get(("demo/baselineObjectSelection/" + variable).c_str())));
 	h_dijetinvariantmass_wjets->SetLineColor(kBlue);
 	h_dijetinvariantmass_wjets->SetLineWidth(3);
@@ -117,12 +118,12 @@ void var_plot(string variable, string label, int rebin) {
 
 	//Setting proper Y axis range
 	maximum = maximum + 0.3 * maximum;
-	h_dijetinvariantmass_sig_1->GetYaxis()->SetRangeUser(minimum,maximum);		
-	h_dijetinvariantmass_qcd->GetYaxis()->SetRangeUser(minimum,maximum);		
-	h_dijetinvariantmass_vv->GetYaxis()->SetRangeUser(minimum,maximum);		
-	h_dijetinvariantmass_wjets->GetYaxis()->SetRangeUser(minimum,maximum);		
+	h_dijetinvariantmass_sig_1->GetYaxis()->SetRangeUser(minimum,maximum);
+	h_dijetinvariantmass_qcd->GetYaxis()->SetRangeUser(minimum,maximum);
+	h_dijetinvariantmass_vv->GetYaxis()->SetRangeUser(minimum,maximum);
+	h_dijetinvariantmass_wjets->GetYaxis()->SetRangeUser(minimum,maximum);
 
-	//defining legend	
+	//defining legend
 	TLegend* leg = new TLegend(0.58,0.7,0.9,0.9);
 	leg->SetTextSize(0.02);
 	leg->AddEntry(h_dijetinvariantmass_sig_1,"#tilde{#chi}^{#pm}_{1}#tilde{#chi}^{0}_{2}jj, #tilde{#chi}^{#pm}_{1} = 300 GeV","f");
@@ -158,4 +159,3 @@ void prospects_13Tev (){
 	var_plot("h_jet1pt", "P_{t}(jet_{1}) [GeV]", 5);
 	var_plot("h_met", "#slash{E}_{T} [GeV]", 1);
 }
-
