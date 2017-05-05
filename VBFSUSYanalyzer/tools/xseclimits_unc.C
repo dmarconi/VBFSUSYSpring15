@@ -192,12 +192,14 @@ TH2F* makeEffPlot(string taupt, string isoregion, string chi, string lsp) {
 	else if ((chi == "chi300") && (lsp == "lsp050")) inputfile = TFile::Open((taupt + "/VBFC1pmN2_C1ToTau_N2ToTauTau_LSP050_Stau295_Chargino300_1M.root").c_str());
 	else if ((chi == "chi400") && (lsp == "lsp050")) inputfile = TFile::Open((taupt + "/VBFC1pmN2_C1ToTau_N2ToTauTau_LSP050_Stau395_Chargino400_1M.root").c_str());
 	else if ((chi == "chi500") && (lsp == "lsp050")) inputfile = TFile::Open((taupt + "/VBFC1pmN2_C1ToTau_N2ToTauTau_LSP050_Stau495_Chargino500_1M.root").c_str());
+	else cout << "ERROR: bechmark point not found" << endl;
+
+	if (inputfile->IsZombie()) cout << "ERROR: couldn't open file for chi" << chi << " lsp" << lsp << endl;
 
 	TH2F* h2_DiJetInvMass_vs_MET;
 	TH1F* h_count;
 
 	h2_DiJetInvMass_vs_MET = ((TH2F*)(inputfile->Get(("demo/" + isoregion +"ObjectSelection/h2_DiJetInvMass_vs_MET").c_str())));
-	//h_ditaucharge = ((TH1F*)(inputfile->Get(("demo/" + isoregion +"ObjectSelection/h_ditaucharge").c_str())));
 	h_count = ((TH1F*)(inputfile->Get(("demo/" + isoregion +"ObjectSelection/counts").c_str())));
 	int nbinsx = h2_DiJetInvMass_vs_MET->GetNbinsX();
 	int nbinsy = h2_DiJetInvMass_vs_MET->GetNbinsY();
@@ -233,6 +235,7 @@ TH2F* makeEffPlotStatUnc(string taupt, string isoregion, string chi, string lsp)
 	else if ((chi == "chi300") && (lsp == "lsp050")) inputfile = TFile::Open((taupt + "/VBFC1pmN2_C1ToTau_N2ToTauTau_LSP050_Stau295_Chargino300_1M.root").c_str());
 	else if ((chi == "chi400") && (lsp == "lsp050")) inputfile = TFile::Open((taupt + "/VBFC1pmN2_C1ToTau_N2ToTauTau_LSP050_Stau395_Chargino400_1M.root").c_str());
 	else if ((chi == "chi500") && (lsp == "lsp050")) inputfile = TFile::Open((taupt + "/VBFC1pmN2_C1ToTau_N2ToTauTau_LSP050_Stau495_Chargino500_1M.root").c_str());
+
 
 	TH2F* h2_DiJetInvMass_vs_MET;
 	TH1F* h_count;
@@ -516,9 +519,8 @@ double getXSectionStatUnc(double efficiency, double efficiency_statunc, double l
   return (  xsec_statunc  );
 }
 
-void makeXSection(string taupt,string chi, string lsp) {
+void makeXSectionUnc(string taupt, string chi, string stau, string lsp, double lumi, bool debug) {
 
-  double lumi = 85000.;
   TH2F* h2_DiJetInvMass_vs_MET_eff_signal;
 	TH2F* h2_DiJetInvMass_vs_MET_eff_signal_stat;
 	TH2F* h2_DiJetInvMass_vs_MET_eff_signal_mcsystup;
@@ -530,11 +532,14 @@ void makeXSection(string taupt,string chi, string lsp) {
 	TH2F* h2_DiJetInvMass_vs_MET_background_mcsystdown;
 	TH2F* h2_DiJetInvMass_vs_MET_background_vbfsystdown;
 
-
+	if (debug) cout << "Creating signal efficiency related plots..." <<endl;
   h2_DiJetInvMass_vs_MET_eff_signal = makeEffPlot(taupt, "Taui2TightIso", chi, lsp);
 	h2_DiJetInvMass_vs_MET_eff_signal_stat = makeEffPlotStatUnc(taupt, "Taui2TightIso", chi, lsp);
 	h2_DiJetInvMass_vs_MET_eff_signal_mcsystup = makeEffPlotSyst(taupt, "Taui2TightIso", chi, lsp, 0.5);
 	h2_DiJetInvMass_vs_MET_eff_signal_mcsystdown = makeEffPlotSyst(taupt, "Taui2TightIso", chi, lsp, -0.5);
+
+	if (debug) cout << "Creating background related plots..." <<endl;
+
 	h2_DiJetInvMass_vs_MET_background = makeBackgroundPlot_LtoT(taupt, "baseline");
 	h2_DiJetInvMass_vs_MET_background_stat = makeBackgroundPlot_LtoT_StatUnc(taupt, "baseline");
 	h2_DiJetInvMass_vs_MET_background_mcsystup = makeBackgroundPlot_LtoT_MCSyst(taupt, "baseline", 0.5);
@@ -555,11 +560,14 @@ void makeXSection(string taupt,string chi, string lsp) {
 	h2_DiJetInvMass_vs_MET_xsec->GetZaxis()->SetTitleOffset(1.13);
 	h2_DiJetInvMass_vs_MET_xsec->SetStats(0);
 
+	if (debug) cout << "Creating xsec related plots..." <<endl;
+
   TH2F* h2_DiJetInvMass_vs_MET_xsec_stat;
 	TH2F* h2_DiJetInvMass_vs_MET_xsec_mcsystup;
 	TH2F* h2_DiJetInvMass_vs_MET_xsec_mcsystdown;
 	TH2F* h2_DiJetInvMass_vs_MET_xsec_vbfsystup;
 	TH2F* h2_DiJetInvMass_vs_MET_xsec_vbfsystdown;
+
 	h2_DiJetInvMass_vs_MET_xsec_stat = new TH2F (("JetInvMass_vs_MET_xsec_" + chi + "_" + lsp + "_" + taupt + "_stat").c_str(),
 																							 ("JetInvMass_vs_MET_xsec_" + chi + "_" + lsp + "_" + taupt + "_stat").c_str(),
 																							 nbinsx, 0., 240., nbinsy , 0., 2500.);
@@ -573,7 +581,7 @@ void makeXSection(string taupt,string chi, string lsp) {
 																										("JetInvMass_vs_MET_xsec_" + chi + "_" + lsp + "_" + taupt + "_vbfsystup").c_str(),
 																										nbinsx, 0., 240., nbinsy , 0., 2500.);
 	h2_DiJetInvMass_vs_MET_xsec_vbfsystdown = new TH2F (("JetInvMass_vs_MET_xsec_" + chi + "_" + lsp + "_" + taupt + "_vbfsystdown").c_str(),
-																										  ("JetInvMass_vs_MET_xsec_" + chi + "_" + lsp + "_" + taupt + "_vbfsystdown").c_str(), 
+																										  ("JetInvMass_vs_MET_xsec_" + chi + "_" + lsp + "_" + taupt + "_vbfsystdown").c_str(),
 																											nbinsx, 0., 240., nbinsy , 0., 2500.);
 
 
@@ -635,6 +643,8 @@ void makeXSection(string taupt,string chi, string lsp) {
 		}
 	}
 
+	if (debug) cout << "Searching for the Xsec minimum..." <<endl;
+
 	//Cross section minimum
 	int binmin = h2_DiJetInvMass_vs_MET_xsec->GetMinimumBin();
 	double minimum = FLT_MAX;
@@ -676,28 +686,51 @@ void makeXSection(string taupt,string chi, string lsp) {
 
 }
 
-void makeXsecLimPlots(string chi, string lsp){
+void makeXsecLimPlots(string chi, string stau, string lsp, double lumi, bool debug){
 
-	makeXSection("taupt20",chi,lsp);
-	makeXSection("taupt25",chi,lsp);
-	makeXSection("taupt30",chi,lsp);
-	makeXSection("taupt35",chi,lsp);
-	makeXSection("taupt40",chi,lsp);
-	makeXSection("taupt45",chi,lsp);
+		if (debug) cout << "taupt20" << endl;
+		makeXSectionUnc("taupt20",chi,stau,lsp,lumi,debug);
+		if (debug) cout << "taupt25" << endl;
+		makeXSectionUnc("taupt25",chi,stau,lsp,lumi,debug);
+		if (debug) cout << "taupt30" << endl;
+		makeXSectionUnc("taupt30",chi,stau,lsp,lumi,debug);
+		if (debug) cout << "taupt35" << endl;
+		makeXSectionUnc("taupt35",chi,stau,lsp,lumi,debug);
+		if (debug) cout << "taupt40" << endl;
+		makeXSectionUnc("taupt40",chi,stau,lsp,lumi,debug);
+		if (debug) cout << "taupt45" << endl;
+		makeXSectionUnc("taupt45",chi,stau,lsp,lumi,debug);
+
 
 }
 
 void fullXsecLimScan(){
 
-	makeXsecLimPlots("chi100", "lsp000");
-	makeXsecLimPlots("chi200", "lsp000");
-	makeXsecLimPlots("chi300", "lsp000");
-	makeXsecLimPlots("chi400", "lsp000");
-	makeXsecLimPlots("chi500", "lsp000");
-	makeXsecLimPlots("chi100", "lsp050");
-	makeXsecLimPlots("chi200", "lsp050");
-	makeXsecLimPlots("chi300", "lsp050");
-	makeXsecLimPlots("chi400", "lsp050");
-	makeXsecLimPlots("chi500", "lsp050");
+	double luminosity =  85000.;
+	bool debug = true;
+
+	if (debug) cout << "Processing xsec limit for luminosity =" << luminosity <<endl;
+
+	if (debug) cout << "Signal scenario: chi100 stau095 lsp000" <<endl;
+	makeXsecLimPlots("chi100", "stau095", "lsp000", luminosity, debug);
+	if (debug) cout << "Signal scenario: chi200 stau195 lsp000" <<endl;
+	//makeXsecLimPlots("chi200", "stau195", "lsp000", luminosity, debug);
+	//if (debug) cout << "Signal scenario: chi300 stau295 lsp000" <<endl;
+	//makeXsecLimPlots("chi300", "stau295", "lsp000", luminosity, debug);
+	//if (debug) cout << "Signal scenario: chi500 stau395 lsp000" <<endl;
+	//makeXsecLimPlots("chi400", "stau395", "lsp000", luminosity, debug);
+	//if (debug) cout << "Signal scenario: chi500 stau495 lsp000" <<endl;
+	//makeXsecLimPlots("chi500", "stau495", "lsp000", luminosity, debug);
+
+	//if (debug) cout << "Signal scenario: chi100 stau095 lsp050" <<endl;
+	//makeXsecLimPlots("chi100", "stau095", "lsp050", luminosity, debug);
+	//if (debug) cout << "Signal scenario: chi200 stau195 lsp050" <<endl;
+	//makeXsecLimPlots("chi200", "stau195", "lsp050", luminosity, debug);
+	//if (debug) cout << "Signal scenario: chi300 stau295 lsp050" <<endl;
+	//makeXsecLimPlots("chi300", "stau295", "lsp050", luminosity, debug);
+	//if (debug) cout << "Signal scenario: chi500 stau395 lsp050" <<endl;
+	//makeXsecLimPlots("chi400", "stau395", "lsp050", luminosity, debug);
+	//if (debug) cout << "Signal scenario: chi500 stau495 lsp050" <<endl;
+	//makeXsecLimPlots("chi500", "stau495", "lsp050", luminosity, debug);
 
 }
