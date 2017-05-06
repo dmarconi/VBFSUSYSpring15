@@ -178,23 +178,9 @@ double LtoTfactorSyst(string taupt, double variation) {
 
 }
 
-TH2F* makeEffPlot(string taupt, string isoregion, string chi, string lsp) {
+TH2F* makeEffPlot(string taupt, string isoregion, string chi, string stau, string lsp, TFile *inputfile) {
 	//TFile *inputfile = TFile::Open("VBFC1pmN2_C1ToTau_N2ToTauTau_LSP000_Stau295_Chargino300_1M.root");
 	//TFile *inputfile = TFile::Open("VBFC1pmN2_C1ToTau_N2ToTauTau_LSP000_Stau195_Chargino200_1M.root");
-	TFile *inputfile;
-	if ((chi == "chi100") && (lsp == "lsp000")){ inputfile = TFile::Open((taupt + "/VBFC1pmN2_C1ToTau_N2ToTauTau_LSP000_Stau095_Chargino100_1M.root").c_str());}
-	else if ((chi == "chi200") && (lsp == "lsp000")){ inputfile = TFile::Open((taupt + "/VBFC1pmN2_C1ToTau_N2ToTauTau_LSP000_Stau195_Chargino200_1M.root").c_str());}
-	else if ((chi == "chi300") && (lsp == "lsp000")){ inputfile = TFile::Open((taupt + "/VBFC1pmN2_C1ToTau_N2ToTauTau_LSP000_Stau295_Chargino300_1M.root").c_str());}
-	else if ((chi == "chi400") && (lsp == "lsp000")){ inputfile = TFile::Open((taupt + "/VBFC1pmN2_C1ToTau_N2ToTauTau_LSP000_Stau395_Chargino400_1M.root").c_str());}
-	else if ((chi == "chi500") && (lsp == "lsp000")){ inputfile = TFile::Open((taupt + "/VBFC1pmN2_C1ToTau_N2ToTauTau_LSP000_Stau495_Chargino500_1M.root").c_str());}
-	else if ((chi == "chi100") && (lsp == "lsp050")){ inputfile = TFile::Open((taupt + "/VBFC1pmN2_C1ToTau_N2ToTauTau_LSP050_Stau095_Chargino100_1M.root").c_str());}
-	else if ((chi == "chi200") && (lsp == "lsp050")){ inputfile = TFile::Open((taupt + "/VBFC1pmN2_C1ToTau_N2ToTauTau_LSP050_Stau195_Chargino200_1M.root").c_str());}
-	else if ((chi == "chi300") && (lsp == "lsp050")) inputfile = TFile::Open((taupt + "/VBFC1pmN2_C1ToTau_N2ToTauTau_LSP050_Stau295_Chargino300_1M.root").c_str());
-	else if ((chi == "chi400") && (lsp == "lsp050")) inputfile = TFile::Open((taupt + "/VBFC1pmN2_C1ToTau_N2ToTauTau_LSP050_Stau395_Chargino400_1M.root").c_str());
-	else if ((chi == "chi500") && (lsp == "lsp050")) inputfile = TFile::Open((taupt + "/VBFC1pmN2_C1ToTau_N2ToTauTau_LSP050_Stau495_Chargino500_1M.root").c_str());
-	else cout << "ERROR: bechmark point not found" << endl;
-
-	if (inputfile->IsZombie()) cout << "ERROR: couldn't open file for chi" << chi << " lsp" << lsp << endl;
 
 	TH2F* h2_DiJetInvMass_vs_MET;
 	TH1F* h_count;
@@ -207,7 +193,9 @@ TH2F* makeEffPlot(string taupt, string isoregion, string chi, string lsp) {
 	//double ntotalevents = h_ditaucharge->GetBinContent(3);
 
 	TH2F* h2_DiJetInvMass_vs_MET_eff;
-	h2_DiJetInvMass_vs_MET_eff = new TH2F ("h2_DiJetInvMass_vs_MET_eff","h2_DiJetInvMass_vs_MET_eff", nbinsx, 0., 240., nbinsy , 0., 2500.);
+	h2_DiJetInvMass_vs_MET_eff = new TH2F (("h2_DiJetInvMass_vs_MET_eff" + chi + "_" + stau + "_" + lsp + "_" + taupt + "_stat").c_str(),
+																				 ("h2_DiJetInvMass_vs_MET_eff" + chi + "_" + stau + "_" + lsp + "_" + taupt + "_stat").c_str(),
+																				 nbinsx, 0., 240., nbinsy , 0., 2500.);
 	h2_DiJetInvMass_vs_MET_eff->GetYaxis()->SetTitle("M^{(jet,jet)} [GeV]");
 	h2_DiJetInvMass_vs_MET_eff->GetXaxis()->SetTitle("E_{T}^{miss} [GeV]");
 	h2_DiJetInvMass_vs_MET_eff->SetStats(0);
@@ -223,19 +211,7 @@ TH2F* makeEffPlot(string taupt, string isoregion, string chi, string lsp) {
 	return h2_DiJetInvMass_vs_MET_eff;
 }
 
-TH2F* makeEffPlotStatUnc(string taupt, string isoregion, string chi, string lsp) {
-	TFile *inputfile;
-	if ((chi == "chi100") && (lsp == "lsp000")){ inputfile = TFile::Open((taupt + "/VBFC1pmN2_C1ToTau_N2ToTauTau_LSP000_Stau095_Chargino100_1M.root").c_str());}
-	else if ((chi == "chi200") && (lsp == "lsp000")){ inputfile = TFile::Open((taupt + "/VBFC1pmN2_C1ToTau_N2ToTauTau_LSP000_Stau195_Chargino200_1M.root").c_str());}
-	else if ((chi == "chi300") && (lsp == "lsp000")){ inputfile = TFile::Open((taupt + "/VBFC1pmN2_C1ToTau_N2ToTauTau_LSP000_Stau295_Chargino300_1M.root").c_str());}
-	else if ((chi == "chi400") && (lsp == "lsp000")){ inputfile = TFile::Open((taupt + "/VBFC1pmN2_C1ToTau_N2ToTauTau_LSP000_Stau395_Chargino400_1M.root").c_str());}
-	else if ((chi == "chi500") && (lsp == "lsp000")){ inputfile = TFile::Open((taupt + "/VBFC1pmN2_C1ToTau_N2ToTauTau_LSP000_Stau495_Chargino500_1M.root").c_str());}
-	else if ((chi == "chi100") && (lsp == "lsp050")){ inputfile = TFile::Open((taupt + "/VBFC1pmN2_C1ToTau_N2ToTauTau_LSP050_Stau095_Chargino100_1M.root").c_str());}
-	else if ((chi == "chi200") && (lsp == "lsp050")){ inputfile = TFile::Open((taupt + "/VBFC1pmN2_C1ToTau_N2ToTauTau_LSP050_Stau195_Chargino200_1M.root").c_str());}
-	else if ((chi == "chi300") && (lsp == "lsp050")) inputfile = TFile::Open((taupt + "/VBFC1pmN2_C1ToTau_N2ToTauTau_LSP050_Stau295_Chargino300_1M.root").c_str());
-	else if ((chi == "chi400") && (lsp == "lsp050")) inputfile = TFile::Open((taupt + "/VBFC1pmN2_C1ToTau_N2ToTauTau_LSP050_Stau395_Chargino400_1M.root").c_str());
-	else if ((chi == "chi500") && (lsp == "lsp050")) inputfile = TFile::Open((taupt + "/VBFC1pmN2_C1ToTau_N2ToTauTau_LSP050_Stau495_Chargino500_1M.root").c_str());
-
+TH2F* makeEffPlotStatUnc(string taupt, string isoregion, string chi, string stau, string lsp, TFile *inputfile) {
 
 	TH2F* h2_DiJetInvMass_vs_MET;
 	TH1F* h_count;
@@ -250,7 +226,9 @@ TH2F* makeEffPlotStatUnc(string taupt, string isoregion, string chi, string lsp)
 		//double ntotalevents = h_ditaucharge->GetBinContent(3);
 
 	TH2F* h2_DiJetInvMass_vs_MET_eff_statunc;
-	h2_DiJetInvMass_vs_MET_eff_statunc = new TH2F ("h2_DiJetInvMass_vs_MET_eff_statunc","h2_DiJetInvMass_vs_MET_eff_statunc", nbinsx, 0., 240., nbinsy , 0., 2500.);
+	h2_DiJetInvMass_vs_MET_eff_statunc = new TH2F (("h2_DiJetInvMass_vs_MET_eff_statunc_" + chi + "_" + stau + "_" + lsp + "_" + taupt + "_stat").c_str(),
+																				 				 ("h2_DiJetInvMass_vs_MET_eff_statunc_" + chi + "_" + stau + "_" + lsp + "_" + taupt + "_stat").c_str(),
+																				 			 	 nbinsx, 0., 240., nbinsy , 0., 2500.);
 	h2_DiJetInvMass_vs_MET_eff_statunc->GetYaxis()->SetTitle("M^{(jet,jet)} [GeV]");
 	h2_DiJetInvMass_vs_MET_eff_statunc->GetXaxis()->SetTitle("E_{T}^{miss} [GeV]");
 	h2_DiJetInvMass_vs_MET_eff_statunc->SetStats(0);
@@ -269,20 +247,14 @@ TH2F* makeEffPlotStatUnc(string taupt, string isoregion, string chi, string lsp)
 	return h2_DiJetInvMass_vs_MET_eff_statunc;
 }
 
-TH2F* makeEffPlotSyst(string taupt, string isoregion, string chi, string lsp, double variation) {
+TH2F* makeEffPlotSyst(string taupt, string isoregion, string chi, string stau, string lsp, double variation, TFile *inputfile) {
 	//TFile *inputfile = TFile::Open("VBFC1pmN2_C1ToTau_N2ToTauTau_LSP000_Stau295_Chargino300_1M.root");
 	//TFile *inputfile = TFile::Open("VBFC1pmN2_C1ToTau_N2ToTauTau_LSP000_Stau195_Chargino200_1M.root");
-	TFile *inputfile;
-	if ((chi == "chi100") && (lsp == "lsp000")){ inputfile = TFile::Open((taupt + "/VBFC1pmN2_C1ToTau_N2ToTauTau_LSP000_Stau095_Chargino100_1M.root").c_str());}
-	else if ((chi == "chi200") && (lsp == "lsp000")){ inputfile = TFile::Open((taupt + "/VBFC1pmN2_C1ToTau_N2ToTauTau_LSP000_Stau195_Chargino200_1M.root").c_str());}
-	else if ((chi == "chi300") && (lsp == "lsp000")){ inputfile = TFile::Open((taupt + "/VBFC1pmN2_C1ToTau_N2ToTauTau_LSP000_Stau295_Chargino300_1M.root").c_str());}
-	else if ((chi == "chi400") && (lsp == "lsp000")){ inputfile = TFile::Open((taupt + "/VBFC1pmN2_C1ToTau_N2ToTauTau_LSP000_Stau395_Chargino400_1M.root").c_str());}
-	else if ((chi == "chi500") && (lsp == "lsp000")){ inputfile = TFile::Open((taupt + "/VBFC1pmN2_C1ToTau_N2ToTauTau_LSP000_Stau495_Chargino500_1M.root").c_str());}
-	else if ((chi == "chi100") && (lsp == "lsp050")){ inputfile = TFile::Open((taupt + "/VBFC1pmN2_C1ToTau_N2ToTauTau_LSP050_Stau095_Chargino100_1M.root").c_str());}
-	else if ((chi == "chi200") && (lsp == "lsp050")){ inputfile = TFile::Open((taupt + "/VBFC1pmN2_C1ToTau_N2ToTauTau_LSP050_Stau195_Chargino200_1M.root").c_str());}
-	else if ((chi == "chi300") && (lsp == "lsp050")) inputfile = TFile::Open((taupt + "/VBFC1pmN2_C1ToTau_N2ToTauTau_LSP050_Stau295_Chargino300_1M.root").c_str());
-	else if ((chi == "chi400") && (lsp == "lsp050")) inputfile = TFile::Open((taupt + "/VBFC1pmN2_C1ToTau_N2ToTauTau_LSP050_Stau395_Chargino400_1M.root").c_str());
-	else if ((chi == "chi500") && (lsp == "lsp050")) inputfile = TFile::Open((taupt + "/VBFC1pmN2_C1ToTau_N2ToTauTau_LSP050_Stau495_Chargino500_1M.root").c_str());
+
+	string var_label;
+	if (variation > 00) var_label = "mcsystup";
+	else if (variation < 00) var_label = "mcsystdown";
+	else if (variation == 0.) cout << "ERROR: something's wrong with the syst uncertainty variation" << endl;
 
 	TH2F* h2_DiJetInvMass_vs_MET;
 	TH1F* h_count;
@@ -295,20 +267,23 @@ TH2F* makeEffPlotSyst(string taupt, string isoregion, string chi, string lsp, do
 	double ntotalevents = h_count->GetBinContent(1) + (variation * h_count->GetBinContent(1));
 	//double ntotalevents = h_ditaucharge->GetBinContent(3);
 
-	TH2F* h2_DiJetInvMass_vs_MET_eff;
-	h2_DiJetInvMass_vs_MET_eff = new TH2F ("h2_DiJetInvMass_vs_MET_eff","h2_DiJetInvMass_vs_MET_eff", nbinsx, 0., 240., nbinsy , 0., 2500.);
-	h2_DiJetInvMass_vs_MET_eff->GetYaxis()->SetTitle("M^{(jet,jet)} [GeV]");
-	h2_DiJetInvMass_vs_MET_eff->GetXaxis()->SetTitle("E_{T}^{miss} [GeV]");
-	h2_DiJetInvMass_vs_MET_eff->SetStats(0);
+
+	TH2F* h2_DiJetInvMass_vs_MET_eff_syst;
+	h2_DiJetInvMass_vs_MET_eff_syst = new TH2F (("h2_DiJetInvMass_vs_MET_eff_" + var_label + "_" + chi + "_" + stau + "_" + lsp + "_" + taupt + "_stat").c_str(),
+																				 			("h2_DiJetInvMass_vs_MET_eff_" + var_label + "_" + chi + "_" + stau + "_" + lsp + "_" + taupt + "_stat").c_str(),
+																				 			nbinsx, 0., 240., nbinsy , 0., 2500.);
+	h2_DiJetInvMass_vs_MET_eff_syst->GetYaxis()->SetTitle("M^{(jet,jet)} [GeV]");
+	h2_DiJetInvMass_vs_MET_eff_syst->GetXaxis()->SetTitle("E_{T}^{miss} [GeV]");
+	h2_DiJetInvMass_vs_MET_eff_syst->SetStats(0);
 
 	for (int i = 0; i < nbinsx; i++) {
 
 		for (int j = 0; j < nbinsy; j++) {
 			double integral = h2_DiJetInvMass_vs_MET->Integral( i, nbinsx, j, nbinsy ) + (variation * h2_DiJetInvMass_vs_MET->Integral( i, nbinsx, j, nbinsy ));
-			h2_DiJetInvMass_vs_MET_eff->SetBinContent(i,j, (integral/ntotalevents));
+			h2_DiJetInvMass_vs_MET_eff_syst->SetBinContent(i,j, (integral/ntotalevents));
 		}
 	}
-	return h2_DiJetInvMass_vs_MET_eff;
+	return h2_DiJetInvMass_vs_MET_eff_syst;
 }
 
 TH2F* makeBackgroundPlot_LtoT(string taupt, string isoregion){
@@ -521,6 +496,47 @@ double getXSectionStatUnc(double efficiency, double efficiency_statunc, double l
 
 void makeXSectionUnc(string taupt, string chi, string stau, string lsp, double lumi, bool debug) {
 
+	if (debug) cout << "INPUT(makeXSectionUnc)"
+									<< " taupt = " << taupt
+									<< " chi = " << chi
+									<< " stau = " << stau
+									<< " lsp = " << lsp
+									<< " lumi = " << lumi
+									<< " debug = " << debug
+									<< endl;
+
+	//open input file
+	if (debug) cout << "Opening input files..." << endl;
+
+	TFile *inputfile;
+	if ((chi == "chi100") && (stau == "stau095") && (lsp == "lsp000")) inputfile = TFile::Open((taupt + "/VBFC1pmN2_C1ToTau_N2ToTauTau_LSP000_Stau095_Chargino100_1M.root").c_str());
+	else if ((chi == "chi200") && (stau == "stau195") && (lsp == "lsp000")) inputfile = TFile::Open((taupt + "/VBFC1pmN2_C1ToTau_N2ToTauTau_LSP000_Stau195_Chargino200_1M.root").c_str());
+	else if ((chi == "chi300") && (stau == "stau295") && (lsp == "lsp000")) inputfile = TFile::Open((taupt + "/VBFC1pmN2_C1ToTau_N2ToTauTau_LSP000_Stau295_Chargino300_1M.root").c_str());
+	else if ((chi == "chi400") && (stau == "stau395") && (lsp == "lsp000")) inputfile = TFile::Open((taupt + "/VBFC1pmN2_C1ToTau_N2ToTauTau_LSP000_Stau395_Chargino400_1M.root").c_str());
+	else if ((chi == "chi500") && (stau == "stau495") && (lsp == "lsp000")) inputfile = TFile::Open((taupt + "/VBFC1pmN2_C1ToTau_N2ToTauTau_LSP000_Stau495_Chargino500_1M.root").c_str());
+
+	else if ((chi == "chi100") && (stau == "stau195") && (lsp == "lsp050")) inputfile = TFile::Open((taupt + "/VBFC1pmN2_C1ToTau_N2ToTauTau_LSP050_Stau095_Chargino100_1M.root").c_str());
+	else if ((chi == "chi200") && (stau == "stau195") && (lsp == "lsp050")) inputfile = TFile::Open((taupt + "/VBFC1pmN2_C1ToTau_N2ToTauTau_LSP050_Stau195_Chargino200_1M.root").c_str());
+	else if ((chi == "chi300") && (stau == "stau295") && (lsp == "lsp050")) inputfile = TFile::Open((taupt + "/VBFC1pmN2_C1ToTau_N2ToTauTau_LSP050_Stau295_Chargino300_1M.root").c_str());
+	else if ((chi == "chi400") && (stau == "stau395") && (lsp == "lsp050")) inputfile = TFile::Open((taupt + "/VBFC1pmN2_C1ToTau_N2ToTauTau_LSP050_Stau395_Chargino400_1M.root").c_str());
+	else if ((chi == "chi500") && (stau == "stau495") && (lsp == "lsp050")) inputfile = TFile::Open((taupt + "/VBFC1pmN2_C1ToTau_N2ToTauTau_LSP050_Stau495_Chargino500_1M.root").c_str());
+
+	else if ((chi == "chi100") && (stau == "stau050") && (lsp == "lsp000")) inputfile = TFile::Open((taupt + "/VBFC1pmN2_C1ToTau_N2ToTauTau_LSP000_Stau050_Chargino100_1M.root").c_str());
+	else if ((chi == "chi200") && (stau == "stau100") && (lsp == "lsp000")) inputfile = TFile::Open((taupt + "/VBFC1pmN2_C1ToTau_N2ToTauTau_LSP000_Stau100_Chargino200_1M.root").c_str());
+	else if ((chi == "chi300") && (stau == "stau150") && (lsp == "lsp000")) inputfile = TFile::Open((taupt + "/VBFC1pmN2_C1ToTau_N2ToTauTau_LSP000_Stau150_Chargino300_1M.root").c_str());
+	else if ((chi == "chi400") && (stau == "stau200") && (lsp == "lsp000")) inputfile = TFile::Open((taupt + "/VBFC1pmN2_C1ToTau_N2ToTauTau_LSP000_Stau200_Chargino400_1M.root").c_str());
+	else if ((chi == "chi500") && (stau == "stau250") && (lsp == "lsp000")) inputfile = TFile::Open((taupt + "/VBFC1pmN2_C1ToTau_N2ToTauTau_LSP000_Stau250_Chargino500_1M.root").c_str());
+
+	else if ((chi == "chi100") && (stau == "stau075") && (lsp == "lsp050")) inputfile = TFile::Open((taupt + "/VBFC1pmN2_C1ToTau_N2ToTauTau_LSP050_Stau075_Chargino100_1M.root").c_str());
+	else if ((chi == "chi200") && (stau == "stau125") && (lsp == "lsp050")) inputfile = TFile::Open((taupt + "/VBFC1pmN2_C1ToTau_N2ToTauTau_LSP050_Stau125_Chargino200_1M.root").c_str());
+	else if ((chi == "chi300") && (stau == "stau175") && (lsp == "lsp050")) inputfile = TFile::Open((taupt + "/VBFC1pmN2_C1ToTau_N2ToTauTau_LSP050_Stau175_Chargino300_1M.root").c_str());
+	else if ((chi == "chi400") && (stau == "stau225") && (lsp == "lsp050")) inputfile = TFile::Open((taupt + "/VBFC1pmN2_C1ToTau_N2ToTauTau_LSP050_Stau225_Chargino400_1M.root").c_str());
+	else if ((chi == "chi500") && (stau == "stau275") && (lsp == "lsp050")) inputfile = TFile::Open((taupt + "/VBFC1pmN2_C1ToTau_N2ToTauTau_LSP050_Stau275_Chargino500_1M.root").c_str());
+	else if (debug) cout << "ERROR: bechmark point not found" << endl;
+
+
+	if ( (debug) && (inputfile->IsZombie())) cout << "ERROR: couldn't open file for chi" << chi << " stau" << stau << " lsp" << lsp << endl;
+
   TH2F* h2_DiJetInvMass_vs_MET_eff_signal;
 	TH2F* h2_DiJetInvMass_vs_MET_eff_signal_stat;
 	TH2F* h2_DiJetInvMass_vs_MET_eff_signal_mcsystup;
@@ -533,10 +549,10 @@ void makeXSectionUnc(string taupt, string chi, string stau, string lsp, double l
 	TH2F* h2_DiJetInvMass_vs_MET_background_vbfsystdown;
 
 	if (debug) cout << "Creating signal efficiency related plots..." <<endl;
-  h2_DiJetInvMass_vs_MET_eff_signal = makeEffPlot(taupt, "Taui2TightIso", chi, lsp);
-	h2_DiJetInvMass_vs_MET_eff_signal_stat = makeEffPlotStatUnc(taupt, "Taui2TightIso", chi, lsp);
-	h2_DiJetInvMass_vs_MET_eff_signal_mcsystup = makeEffPlotSyst(taupt, "Taui2TightIso", chi, lsp, 0.5);
-	h2_DiJetInvMass_vs_MET_eff_signal_mcsystdown = makeEffPlotSyst(taupt, "Taui2TightIso", chi, lsp, -0.5);
+  h2_DiJetInvMass_vs_MET_eff_signal = makeEffPlot(taupt, "Taui2TightIso", chi, stau, lsp, inputfile);
+	h2_DiJetInvMass_vs_MET_eff_signal_stat = makeEffPlotStatUnc(taupt, "Taui2TightIso", chi, stau, lsp, inputfile);
+	h2_DiJetInvMass_vs_MET_eff_signal_mcsystup = makeEffPlotSyst(taupt, "Taui2TightIso", chi, stau, lsp, 0.5, inputfile);
+	h2_DiJetInvMass_vs_MET_eff_signal_mcsystdown = makeEffPlotSyst(taupt, "Taui2TightIso", chi, stau, lsp, -0.5, inputfile);
 
 	if (debug) cout << "Creating background related plots..." <<endl;
 
@@ -551,8 +567,10 @@ void makeXSectionUnc(string taupt, string chi, string stau, string lsp, double l
 	int nbinsy = h2_DiJetInvMass_vs_MET_background->GetNbinsY();
 
   TH2F* h2_DiJetInvMass_vs_MET_xsec;
-  h2_DiJetInvMass_vs_MET_xsec = new TH2F (("JetInvMass_vs_MET_xsec_" + chi + "_" + lsp + "_" + taupt).c_str(),("JetInvMass_vs_MET_xsec_" + chi + "_" + lsp + "_" + taupt).c_str(), nbinsx, 0., 240., nbinsy , 0., 2500.);
-	h2_DiJetInvMass_vs_MET_xsec->SetTitle("CMS Work in Progress");
+  h2_DiJetInvMass_vs_MET_xsec = new TH2F (("JetInvMass_vs_MET_xsec_" + chi + "_" + stau + "_" + lsp + "_" + taupt).c_str(),
+																					("JetInvMass_vs_MET_xsec_" + chi + "_" + stau + "_" + lsp + "_" + taupt).c_str(),
+																					nbinsx, 0., 240., nbinsy , 0., 2500.);
+	h2_DiJetInvMass_vs_MET_xsec->SetTitle("CMS Work");
 	h2_DiJetInvMass_vs_MET_xsec->GetYaxis()->SetTitle("M_{(jet,jet)} [GeV]");
 	h2_DiJetInvMass_vs_MET_xsec->GetZaxis()->SetTitle("#sigma_{lim} pb");
 	h2_DiJetInvMass_vs_MET_xsec->GetXaxis()->SetTitle("E_{T}^{miss} [GeV]");
@@ -568,20 +586,20 @@ void makeXSectionUnc(string taupt, string chi, string stau, string lsp, double l
 	TH2F* h2_DiJetInvMass_vs_MET_xsec_vbfsystup;
 	TH2F* h2_DiJetInvMass_vs_MET_xsec_vbfsystdown;
 
-	h2_DiJetInvMass_vs_MET_xsec_stat = new TH2F (("JetInvMass_vs_MET_xsec_" + chi + "_" + lsp + "_" + taupt + "_stat").c_str(),
-																							 ("JetInvMass_vs_MET_xsec_" + chi + "_" + lsp + "_" + taupt + "_stat").c_str(),
+	h2_DiJetInvMass_vs_MET_xsec_stat = new TH2F (("JetInvMass_vs_MET_xsec_stat_" + chi + "_" + stau + "_" + lsp + "_" + taupt).c_str(),
+																							 ("JetInvMass_vs_MET_xsec_stat_" + chi + "_" + stau + "_" + lsp + "_" + taupt).c_str(),
 																							 nbinsx, 0., 240., nbinsy , 0., 2500.);
-	h2_DiJetInvMass_vs_MET_xsec_mcsystup = new TH2F (("JetInvMass_vs_MET_xsec_" + chi + "_" + lsp + "_" + taupt + "_mcsystup").c_str(),
-																									 ("JetInvMass_vs_MET_xsec_" + chi + "_" + lsp + "_" + taupt + "_mcsystup").c_str(),
+	h2_DiJetInvMass_vs_MET_xsec_mcsystup = new TH2F (("JetInvMass_vs_MET_xsec_mcsystup_" + chi + "_" + stau + "_" + lsp + "_" + taupt).c_str(),
+																									 ("JetInvMass_vs_MET_xsec_mcsystup_" + chi + "_" + stau + "_" + lsp + "_" + taupt).c_str(),
 																									 nbinsx, 0., 240., nbinsy , 0., 2500.);
-	h2_DiJetInvMass_vs_MET_xsec_mcsystdown = new TH2F (("JetInvMass_vs_MET_xsec_" + chi + "_" + lsp + "_" + taupt + "_mcsystdown").c_str(),
-																										 ("JetInvMass_vs_MET_xsec_" + chi + "_" + lsp + "_" + taupt + "_mcsystdown").c_str(),
+	h2_DiJetInvMass_vs_MET_xsec_mcsystdown = new TH2F (("JetInvMass_vs_MET_xsec_mcsystdown_" + chi + "_" + stau + "_" + lsp + "_" + taupt).c_str(),
+																										 ("JetInvMass_vs_MET_xsec_mcsystdown_" + chi + "_" + stau + "_" + lsp + "_" + taupt).c_str(),
 																										 nbinsx, 0., 240., nbinsy , 0., 2500.);
-	h2_DiJetInvMass_vs_MET_xsec_vbfsystup = new TH2F (("JetInvMass_vs_MET_xsec_" + chi + "_" + lsp + "_" + taupt + "_vbfsystup").c_str(),
-																										("JetInvMass_vs_MET_xsec_" + chi + "_" + lsp + "_" + taupt + "_vbfsystup").c_str(),
+	h2_DiJetInvMass_vs_MET_xsec_vbfsystup = new TH2F (("JetInvMass_vs_MET_xsec_vbfsystup_" + chi + "_" + stau + "_" + lsp + "_" + taupt).c_str(),
+																										("JetInvMass_vs_MET_xsec_vbfsystup_" + chi + "_" + stau + "_" + lsp + "_" + taupt).c_str(),
 																										nbinsx, 0., 240., nbinsy , 0., 2500.);
-	h2_DiJetInvMass_vs_MET_xsec_vbfsystdown = new TH2F (("JetInvMass_vs_MET_xsec_" + chi + "_" + lsp + "_" + taupt + "_vbfsystdown").c_str(),
-																										  ("JetInvMass_vs_MET_xsec_" + chi + "_" + lsp + "_" + taupt + "_vbfsystdown").c_str(),
+	h2_DiJetInvMass_vs_MET_xsec_vbfsystdown = new TH2F (("JetInvMass_vs_MET_xsec_vbfsystdown_" + chi + "_" + stau + "_" + lsp + "_" + taupt).c_str(),
+																										  ("JetInvMass_vs_MET_xsec_vbfsystdown_" + chi + "_" + stau + "_" + lsp + "_" + taupt).c_str(),
 																											nbinsx, 0., 240., nbinsy , 0., 2500.);
 
 
