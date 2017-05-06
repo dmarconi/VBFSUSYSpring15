@@ -598,7 +598,7 @@ TH2F* makeBackgroundPlot_LtoT_VBFSyst(string isoregion, TFile* &inputfile_qcd, T
 //signal sample and selection and creates a LaTex output
 void makeXSectionUnc(string taupt, string chi, string stau, string lsp, double lumi, bool debug) {
 
-	if (debug == true) cout << "INPUT(makeXSectionUnc)"
+	if (debug == kTRUE) cout << "INPUT(makeXSectionUnc)"
 	<< " taupt = " << taupt
 	<< " chi = " << chi
 	<< " stau = " << stau
@@ -607,10 +607,15 @@ void makeXSectionUnc(string taupt, string chi, string stau, string lsp, double l
 	<< " debug = " << debug
 	<< endl;
 
-	//open input file
-	if (debug == true) cout << "Opening signal input file..." << endl;
+	//open input files
+	if (debug == kTRUE) cout << "Opening inputs file..." << endl;
 
+	TFile* inputfile_qcd = TFile::Open((taupt + "/allQCD_"+ taupt +".root").c_str());
+	if (inputfile_qcd->IsZombie()) cout << "ERROR: couldn't open allQCD file for taupt" << taupt << endl;
+	TFile* inputfile_ltot = TFile::Open(( taupt + "/allQCD_"+ taupt +"_LtoT.root").c_str());
+	if (inputfile_ltot->IsZombie()) cout << "ERROR: couldn't open allQCD_LtoT file for taupt" << taupt << endl;
 	TFile *inputfile_signal;
+
 	if ((chi == "chi100") && (stau == "stau095") && (lsp == "lsp000")) inputfile_signal = TFile::Open((taupt + "/VBFC1pmN2_C1ToTau_N2ToTauTau_LSP000_Stau095_Chargino100_1M.root").c_str());
 	else if ((chi == "chi200") && (stau == "stau195") && (lsp == "lsp000")) inputfile_signal = TFile::Open((taupt + "/VBFC1pmN2_C1ToTau_N2ToTauTau_LSP000_Stau195_Chargino200_1M.root").c_str());
 	else if ((chi == "chi300") && (stau == "stau295") && (lsp == "lsp000")) inputfile_signal = TFile::Open((taupt + "/VBFC1pmN2_C1ToTau_N2ToTauTau_LSP000_Stau295_Chargino300_1M.root").c_str());
@@ -634,8 +639,7 @@ void makeXSectionUnc(string taupt, string chi, string stau, string lsp, double l
 	else if ((chi == "chi300") && (stau == "stau175") && (lsp == "lsp050")) inputfile_signal = TFile::Open((taupt + "/VBFC1pmN2_C1ToTau_N2ToTauTau_LSP050_Stau175_Chargino300_1M.root").c_str());
 	else if ((chi == "chi400") && (stau == "stau225") && (lsp == "lsp050")) inputfile_signal = TFile::Open((taupt + "/VBFC1pmN2_C1ToTau_N2ToTauTau_LSP050_Stau225_Chargino400_1M.root").c_str());
 	else if ((chi == "chi500") && (stau == "stau275") && (lsp == "lsp050")) inputfile_signal = TFile::Open((taupt + "/VBFC1pmN2_C1ToTau_N2ToTauTau_LSP050_Stau275_Chargino500_1M.root").c_str());
-	else if (debug == true) cout << "ERROR: bechmark point not found" << endl;
-
+	else if (debug == kTRUE) cout << "ERROR: bechmark point not found" << endl;
 	if (inputfile_signal->IsZombie()) cout << "ERROR: couldn't open file for chi" << chi << " stau" << stau << " lsp" << lsp << endl;
 
 	//definition and filling of necessary input plots
@@ -651,51 +655,43 @@ void makeXSectionUnc(string taupt, string chi, string stau, string lsp, double l
 	TH2F* h2_DiJetInvMass_vs_MET_background_mcsystdown;
 	TH2F* h2_DiJetInvMass_vs_MET_background_vbfsystdown;
 
-	if (debug == true) cout << "Creating signal efficiency related plots..." <<endl;
-	if (debug == true) cout << "...h2_DiJetInvMass_vs_MET_eff_signal" <<endl;
+	if (debug == kTRUE) cout << "Creating signal efficiency related plots..." <<endl;
+	if (debug == kTRUE) cout << "...h2_DiJetInvMass_vs_MET_eff_signal" <<endl;
 	h2_DiJetInvMass_vs_MET_eff_signal = makeEffPlot(taupt, "Taui2TightIso", chi, stau, lsp, inputfile_signal);
-	if (debug == true) th2fDebugReader(h2_DiJetInvMass_vs_MET_eff_signal);
-	if (debug == true) cout << "...h2_DiJetInvMass_vs_MET_eff_signal_stat" <<endl;
+	if (debug == kTRUE) th2fDebugReader(h2_DiJetInvMass_vs_MET_eff_signal);
+	if (debug == kTRUE) cout << "...h2_DiJetInvMass_vs_MET_eff_signal_stat" <<endl;
 	h2_DiJetInvMass_vs_MET_eff_signal_stat = makeEffPlotStatUnc(taupt, "Taui2TightIso", chi, stau, lsp, inputfile_signal);
-	if (debug == true) th2fDebugReader(h2_DiJetInvMass_vs_MET_eff_signal_stat);
-	if (debug == true) cout << "...h2_DiJetInvMass_vs_MET_eff_signal_mcsystup" <<endl;
+	if (debug == kTRUE) th2fDebugReader(h2_DiJetInvMass_vs_MET_eff_signal_stat);
+	if (debug == kTRUE) cout << "...h2_DiJetInvMass_vs_MET_eff_signal_mcsystup" <<endl;
 	h2_DiJetInvMass_vs_MET_eff_signal_mcsystup = makeEffPlotSyst(taupt, "Taui2TightIso", chi, stau, lsp, 0.5, inputfile_signal);
-	if (debug == true) th2fDebugReader(h2_DiJetInvMass_vs_MET_eff_signal_mcsystup);
-	if (debug == true) cout << "...h2_DiJetInvMass_vs_MET_eff_signal_mcsystdown" <<endl;
+	if (debug == kTRUE) th2fDebugReader(h2_DiJetInvMass_vs_MET_eff_signal_mcsystup);
+	if (debug == kTRUE) cout << "...h2_DiJetInvMass_vs_MET_eff_signal_mcsystdown" <<endl;
 	h2_DiJetInvMass_vs_MET_eff_signal_mcsystdown = makeEffPlotSyst(taupt, "Taui2TightIso", chi, stau, lsp, -0.5, inputfile_signal);
-	if (debug == true) th2fDebugReader(h2_DiJetInvMass_vs_MET_eff_signal_mcsystdown);
+	if (debug == kTRUE) th2fDebugReader(h2_DiJetInvMass_vs_MET_eff_signal_mcsystdown);
 
-	if (debug == true) cout << "Creating background related plots..." <<endl;
-
-	if (debug == true) cout << "Opening signal input files..." << endl;
-	TFile* inputfile_qcd = TFile::Open((taupt + "/allQCD_"+ taupt +".root").c_str());
-	if (inputfile_qcd->IsZombie()) cout << "ERROR: couldn't open allQCD file for taupt" << taupt << endl;
-
-	TFile* inputfile_ltot = TFile::Open(( taupt + "/allQCD_"+ taupt +"_LtoT.root").c_str());
-	if (inputfile_ltot->IsZombie()) cout << "ERROR: couldn't open allQCD_LtoT file for taupt" << taupt << endl;
-
-	if (debug == true) cout << "...h2_DiJetInvMass_vs_MET_background" <<endl;
+	if (debug == kTRUE) cout << "Creating background related plots..." <<endl;
+	if (debug == kTRUE) cout << "...h2_DiJetInvMass_vs_MET_background" <<endl;
 	h2_DiJetInvMass_vs_MET_background = makeBackgroundPlot_LtoT("baseline", inputfile_qcd, inputfile_ltot);
-	if (debug == true) th2fDebugReader(h2_DiJetInvMass_vs_MET_background);
-	if (debug == true) cout << "...h2_DiJetInvMass_vs_MET_background_stat" <<endl;
+	if (debug == kTRUE) th2fDebugReader(h2_DiJetInvMass_vs_MET_background);
+	if (debug == kTRUE) cout << "...h2_DiJetInvMass_vs_MET_background_stat" <<endl;
 	h2_DiJetInvMass_vs_MET_background_stat = makeBackgroundPlot_LtoT_StatUnc("baseline", inputfile_qcd, inputfile_ltot);
-	if (debug == true) th2fDebugReader(h2_DiJetInvMass_vs_MET_background_stat);
-	if (debug == true) cout << "...h2_DiJetInvMass_vs_MET_background_mcsystup" <<endl;
+	if (debug == kTRUE) th2fDebugReader(h2_DiJetInvMass_vs_MET_background_stat);
+	if (debug == kTRUE) cout << "...h2_DiJetInvMass_vs_MET_background_mcsystup" <<endl;
 	h2_DiJetInvMass_vs_MET_background_mcsystup = makeBackgroundPlot_LtoT_MCSyst("baseline", inputfile_qcd, inputfile_ltot, 0.5);
-	if (debug == true) th2fDebugReader(h2_DiJetInvMass_vs_MET_background_mcsystup);
-	if (debug == true) cout << "...h2_DiJetInvMass_vs_MET_background_mcsystdown" <<endl;
+	if (debug == kTRUE) th2fDebugReader(h2_DiJetInvMass_vs_MET_background_mcsystup);
+	if (debug == kTRUE) cout << "...h2_DiJetInvMass_vs_MET_background_mcsystdown" <<endl;
 	h2_DiJetInvMass_vs_MET_background_mcsystdown = makeBackgroundPlot_LtoT_MCSyst("baseline", inputfile_qcd, inputfile_ltot, -0.5);
-	if (debug == true) th2fDebugReader(h2_DiJetInvMass_vs_MET_background_mcsystdown);
-	if (debug == true) cout << "...h2_DiJetInvMass_vs_MET_background_vbfsystup" <<endl;
+	if (debug == kTRUE) th2fDebugReader(h2_DiJetInvMass_vs_MET_background_mcsystdown);
+	if (debug == kTRUE) cout << "...h2_DiJetInvMass_vs_MET_background_vbfsystup" <<endl;
 	h2_DiJetInvMass_vs_MET_background_vbfsystup = makeBackgroundPlot_LtoT_VBFSyst("baseline", inputfile_qcd, inputfile_ltot, 0.175);
-	if (debug == true) th2fDebugReader(h2_DiJetInvMass_vs_MET_background_vbfsystup);
-	if (debug == true) cout << "...h2_DiJetInvMass_vs_MET_background_vbfsystdown" <<endl;
+	if (debug == kTRUE) th2fDebugReader(h2_DiJetInvMass_vs_MET_background_vbfsystup);
+	if (debug == kTRUE) cout << "...h2_DiJetInvMass_vs_MET_background_vbfsystdown" <<endl;
 	h2_DiJetInvMass_vs_MET_background_vbfsystdown = makeBackgroundPlot_LtoT_VBFSyst("baseline", inputfile_qcd, inputfile_ltot, -0.076);
-	if (debug == true) th2fDebugReader(h2_DiJetInvMass_vs_MET_background_vbfsystdown);
+	if (debug == kTRUE) th2fDebugReader(h2_DiJetInvMass_vs_MET_background_vbfsystdown);
 
-	if (debug == true) cout << "Creating xsec related plots..." <<endl;
+	if (debug == kTRUE) cout << "Creating xsec related plots..." <<endl;
 
-	if (debug == true) th2fDebugReader(h2_DiJetInvMass_vs_MET_background);
+	if (debug == kTRUE) th2fDebugReader(h2_DiJetInvMass_vs_MET_background);
 
 	int nbinsx = h2_DiJetInvMass_vs_MET_background->GetNbinsX();
 	int nbinsy = h2_DiJetInvMass_vs_MET_background->GetNbinsY();
@@ -802,7 +798,7 @@ void makeXSectionUnc(string taupt, string chi, string stau, string lsp, double l
 		}
 	}
 
-	if (debug == true) cout << "Searching for the Xsec minimum..." <<endl;
+	if (debug == kTRUE) cout << "Searching for the Xsec minimum..." <<endl;
 
 	//Searchin the cross section minimum
 	int binmin = h2_DiJetInvMass_vs_MET_xsec->GetMinimumBin();
@@ -877,17 +873,17 @@ void makeXSectionUnc(string taupt, string chi, string stau, string lsp, double l
 //a given signal sample
 void makeXsecLimPlots(string chi, string stau, string lsp, double lumi, bool debug){
 
-	if (debug == true) cout << "taupt20" << endl;
+	if (debug == kTRUE) cout << "taupt20" << endl;
 	makeXSectionUnc("taupt20",chi,stau,lsp,lumi,debug);
-	if (debug == true) cout << "taupt25" << endl;
+	if (debug == kTRUE) cout << "taupt25" << endl;
 	makeXSectionUnc("taupt25",chi,stau,lsp,lumi,debug);
-	if (debug == true) cout << "taupt30" << endl;
+	if (debug == kTRUE) cout << "taupt30" << endl;
 	makeXSectionUnc("taupt30",chi,stau,lsp,lumi,debug);
-	if (debug == true) cout << "taupt35" << endl;
+	if (debug == kTRUE) cout << "taupt35" << endl;
 	makeXSectionUnc("taupt35",chi,stau,lsp,lumi,debug);
-	if (debug == true) cout << "taupt40" << endl;
+	if (debug == kTRUE) cout << "taupt40" << endl;
 	makeXSectionUnc("taupt40",chi,stau,lsp,lumi,debug);
-	if (debug == true) cout << "taupt45" << endl;
+	if (debug == kTRUE) cout << "taupt45" << endl;
 	makeXSectionUnc("taupt45",chi,stau,lsp,lumi,debug);
 
 
@@ -898,30 +894,30 @@ void makeXsecLimPlots(string chi, string stau, string lsp, double lumi, bool deb
 void fullXsecLimScan(){
 
 	double luminosity =  85000.;
-	bool debug = false;
+	Bool_t debug = kFALSE;
 
-	if (debug == true) cout << "Processing xsec limit for luminosity =" << luminosity <<endl;
+	if (debug == kTRUE) cout << "Processing xsec limit for luminosity =" << luminosity <<endl;
 
-	if (debug == true) cout << "Signal scenario: chi100 stau095 lsp000" <<endl;
+	if (debug == kTRUE) cout << "Signal scenario: chi100 stau095 lsp000" <<endl;
 	makeXsecLimPlots("chi100", "stau095", "lsp000", luminosity, debug);
-	if (debug == true) cout << "Signal scenario: chi200 stau195 lsp000" <<endl;
+	if (debug == kTRUE) cout << "Signal scenario: chi200 stau195 lsp000" <<endl;
 	makeXsecLimPlots("chi200", "stau195", "lsp000", luminosity, debug);
-	if (debug == true) cout << "Signal scenario: chi300 stau295 lsp000" <<endl;
+	if (debug == kTRUE) cout << "Signal scenario: chi300 stau295 lsp000" <<endl;
 	makeXsecLimPlots("chi300", "stau295", "lsp000", luminosity, debug);
-	if (debug == true) cout << "Signal scenario: chi500 stau395 lsp000" <<endl;
+	if (debug == kTRUE) cout << "Signal scenario: chi500 stau395 lsp000" <<endl;
 	makeXsecLimPlots("chi400", "stau395", "lsp000", luminosity, debug);
-	if (debug == true) cout << "Signal scenario: chi500 stau495 lsp000" <<endl;
+	if (debug == kTRUE) cout << "Signal scenario: chi500 stau495 lsp000" <<endl;
 	makeXsecLimPlots("chi500", "stau495", "lsp000", luminosity, debug);
 
-	if (debug == true) cout << "Signal scenario: chi100 stau095 lsp050" <<endl;
+	if (debug == kTRUE) cout << "Signal scenario: chi100 stau095 lsp050" <<endl;
 	makeXsecLimPlots("chi100", "stau095", "lsp050", luminosity, debug);
-	if (debug == true) cout << "Signal scenario: chi200 stau195 lsp050" <<endl;
+	if (debug == kTRUE) cout << "Signal scenario: chi200 stau195 lsp050" <<endl;
 	makeXsecLimPlots("chi200", "stau195", "lsp050", luminosity, debug);
-	if (debug == true) cout << "Signal scenario: chi300 stau295 lsp050" <<endl;
+	if (debug == kTRUE) cout << "Signal scenario: chi300 stau295 lsp050" <<endl;
 	makeXsecLimPlots("chi300", "stau295", "lsp050", luminosity, debug);
-	if (debug == true) cout << "Signal scenario: chi500 stau395 lsp050" <<endl;
+	if (debug == kTRUE) cout << "Signal scenario: chi500 stau395 lsp050" <<endl;
 	makeXsecLimPlots("chi400", "stau395", "lsp050", luminosity, debug);
-	if (debug == true) cout << "Signal scenario: chi500 stau495 lsp050" <<endl;
+	if (debug == kTRUE) cout << "Signal scenario: chi500 stau495 lsp050" <<endl;
 	makeXsecLimPlots("chi500", "stau495", "lsp050", luminosity, debug);
 
 }
