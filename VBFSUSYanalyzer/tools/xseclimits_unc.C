@@ -11,6 +11,7 @@
 #include <TH2F.h>
 #include <TH2D.h>
 #include <TProfile.h>
+#include <fstream>
 #include <iostream>
 #include <fstream>
 #include <cmath>
@@ -836,7 +837,8 @@ void makeXSectionUnc(string taupt, string chi, string stau, string lsp, double l
 	double minimum_vbfsystdown_var = minimum - h2_DiJetInvMass_vs_MET_xsec_vbfsystdown->GetBinContent(i_min,j_min);
 
 	//minimum output in LaTex format
-	cout << " for " << chi << ", " << lsp << " and " << taupt << endl;
+	if (debug == kTRUE) cout << "Writing LaTex output to file..." <<endl;
+	cout << " for " << chi << ", " << stau << ", " << lsp << " and " << taupt << endl;
 	cout << "$"<<minimum << "\\pm"<< minimum_statunc << "^{+" << minimum_mcsystup_var << " + " << minimum_vbfsystup_var << "}_{-" << minimum_mcsystdown_var << "-" << minimum_vbfsystdown_var << "}$ & $<$ " << taupt_value << " & $<$ " << y_min << "  & $<$ " << x_min << " \\\\ " << endl;
 
 	//clearing memory
@@ -894,7 +896,7 @@ void makeXsecLimPlots(string chi, string stau, string lsp, double lumi, bool deb
 void fullXsecLimScan(){
 
 	double luminosity =  85000.;
-	Bool_t debug = kFALSE;
+	Bool_t debug = kTRUE;
 
 	if (debug == kTRUE) cout << "Processing xsec limit for luminosity =" << luminosity <<endl;
 
