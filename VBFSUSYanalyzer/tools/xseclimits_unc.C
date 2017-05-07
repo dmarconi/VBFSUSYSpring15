@@ -648,34 +648,11 @@ xsecLim findXsecLim(string taupt, string chi, string stau, string lsp, std::ofst
 
 	TFile* inputfile_qcd = TFile::Open((taupt + "/allQCD_"+ taupt +".root").c_str());
 	if (inputfile_qcd->IsZombie()) cout << "ERROR: couldn't open allQCD file for taupt" << taupt << endl;
+
 	TFile* inputfile_ltot = TFile::Open(( taupt + "/allQCD_"+ taupt +"_LtoT.root").c_str());
 	if (inputfile_ltot->IsZombie()) cout << "ERROR: couldn't open allQCD_LtoT file for taupt" << taupt << endl;
-	TFile *inputfile_signal;
 
-	if ((chi == "chi100") && (stau == "stau095") && (lsp == "lsp000")) inputfile_signal = TFile::Open((taupt + "/VBFC1pmN2_C1ToTau_N2ToTauTau_LSP000_Stau095_Chargino100_1M.root").c_str());
-	else if ((chi == "chi200") && (stau == "stau195") && (lsp == "lsp000")) inputfile_signal = TFile::Open((taupt + "/VBFC1pmN2_C1ToTau_N2ToTauTau_LSP000_Stau195_Chargino200_1M.root").c_str());
-	else if ((chi == "chi300") && (stau == "stau295") && (lsp == "lsp000")) inputfile_signal = TFile::Open((taupt + "/VBFC1pmN2_C1ToTau_N2ToTauTau_LSP000_Stau295_Chargino300_1M.root").c_str());
-	else if ((chi == "chi400") && (stau == "stau395") && (lsp == "lsp000")) inputfile_signal = TFile::Open((taupt + "/VBFC1pmN2_C1ToTau_N2ToTauTau_LSP000_Stau395_Chargino400_1M.root").c_str());
-	else if ((chi == "chi500") && (stau == "stau495") && (lsp == "lsp000")) inputfile_signal = TFile::Open((taupt + "/VBFC1pmN2_C1ToTau_N2ToTauTau_LSP000_Stau495_Chargino500_1M.root").c_str());
-
-	else if ((chi == "chi100") && (stau == "stau095") && (lsp == "lsp050")) inputfile_signal = TFile::Open((taupt + "/VBFC1pmN2_C1ToTau_N2ToTauTau_LSP050_Stau095_Chargino100_1M.root").c_str());
-	else if ((chi == "chi200") && (stau == "stau195") && (lsp == "lsp050")) inputfile_signal = TFile::Open((taupt + "/VBFC1pmN2_C1ToTau_N2ToTauTau_LSP050_Stau195_Chargino200_1M.root").c_str());
-	else if ((chi == "chi300") && (stau == "stau295") && (lsp == "lsp050")) inputfile_signal = TFile::Open((taupt + "/VBFC1pmN2_C1ToTau_N2ToTauTau_LSP050_Stau295_Chargino300_1M.root").c_str());
-	else if ((chi == "chi400") && (stau == "stau395") && (lsp == "lsp050")) inputfile_signal = TFile::Open((taupt + "/VBFC1pmN2_C1ToTau_N2ToTauTau_LSP050_Stau395_Chargino400_1M.root").c_str());
-	else if ((chi == "chi500") && (stau == "stau495") && (lsp == "lsp050")) inputfile_signal = TFile::Open((taupt + "/VBFC1pmN2_C1ToTau_N2ToTauTau_LSP050_Stau495_Chargino500_1M.root").c_str());
-
-	else if ((chi == "chi100") && (stau == "stau050") && (lsp == "lsp000")) inputfile_signal = TFile::Open((taupt + "/VBFC1pmN2_C1ToTau_N2ToTauTau_LSP000_Stau050_Chargino100_1M.root").c_str());
-	else if ((chi == "chi200") && (stau == "stau100") && (lsp == "lsp000")) inputfile_signal = TFile::Open((taupt + "/VBFC1pmN2_C1ToTau_N2ToTauTau_LSP000_Stau100_Chargino200_1M.root").c_str());
-	else if ((chi == "chi300") && (stau == "stau150") && (lsp == "lsp000")) inputfile_signal = TFile::Open((taupt + "/VBFC1pmN2_C1ToTau_N2ToTauTau_LSP000_Stau150_Chargino300_1M.root").c_str());
-	else if ((chi == "chi400") && (stau == "stau200") && (lsp == "lsp000")) inputfile_signal = TFile::Open((taupt + "/VBFC1pmN2_C1ToTau_N2ToTauTau_LSP000_Stau200_Chargino400_1M.root").c_str());
-	else if ((chi == "chi500") && (stau == "stau250") && (lsp == "lsp000")) inputfile_signal = TFile::Open((taupt + "/VBFC1pmN2_C1ToTau_N2ToTauTau_LSP000_Stau250_Chargino500_1M.root").c_str());
-
-	else if ((chi == "chi100") && (stau == "stau075") && (lsp == "lsp050")) inputfile_signal = TFile::Open((taupt + "/VBFC1pmN2_C1ToTau_N2ToTauTau_LSP050_Stau075_Chargino100_1M.root").c_str());
-	else if ((chi == "chi200") && (stau == "stau125") && (lsp == "lsp050")) inputfile_signal = TFile::Open((taupt + "/VBFC1pmN2_C1ToTau_N2ToTauTau_LSP050_Stau125_Chargino200_1M.root").c_str());
-	else if ((chi == "chi300") && (stau == "stau175") && (lsp == "lsp050")) inputfile_signal = TFile::Open((taupt + "/VBFC1pmN2_C1ToTau_N2ToTauTau_LSP050_Stau175_Chargino300_1M.root").c_str());
-	else if ((chi == "chi400") && (stau == "stau225") && (lsp == "lsp050")) inputfile_signal = TFile::Open((taupt + "/VBFC1pmN2_C1ToTau_N2ToTauTau_LSP050_Stau225_Chargino400_1M.root").c_str());
-	else if ((chi == "chi500") && (stau == "stau275") && (lsp == "lsp050")) inputfile_signal = TFile::Open((taupt + "/VBFC1pmN2_C1ToTau_N2ToTauTau_LSP050_Stau275_Chargino500_1M.root").c_str());
-	else if (debug == kTRUE) cout << "ERROR: bechmark point not found" << endl;
+	TFile *inputfile_signal = TFile::Open((taupt + "/VBFC1pmN2_C1ToTau_N2ToTauTau_" + lsp +"_" + stau + "_" + chi + "_1M.root").c_str());
 	if (inputfile_signal->IsZombie()) cout << "ERROR: couldn't open file for chi" << chi << " stau" << stau << " lsp" << lsp << endl;
 
 	//definition and filling of necessary input plots
@@ -966,49 +943,49 @@ void fullXsecLimScan(){
 
 	if (debug == kTRUE) cout << "Processing xsec limit for luminosity =" << luminosity <<endl;
 
-	if (debug == kTRUE) cout << "Signal scenario: chi100 stau095 lsp000" <<endl;
-	out_xsecmin_lsp000_stauclose << xsecLim_to_string(findXsecLimMin("chi100", "stau095", "lsp000", out_latex, luminosity, debug)) <<endl;
-	if (debug == kTRUE) cout << "Signal scenario: chi200 stau195 lsp000" <<endl;
-	out_xsecmin_lsp000_stauclose << xsecLim_to_string(findXsecLimMin("chi200", "stau195", "lsp000", out_latex, luminosity, debug)) <<endl;
-	if (debug == kTRUE) cout << "Signal scenario: chi300 stau295 lsp000" <<endl;
-	out_xsecmin_lsp000_stauclose << xsecLim_to_string(findXsecLimMin("chi300", "stau295", "lsp000", out_latex, luminosity, debug)) <<endl;
-	if (debug == kTRUE) cout << "Signal scenario: chi500 stau395 lsp000" <<endl;
-	out_xsecmin_lsp000_stauclose << xsecLim_to_string(findXsecLimMin("chi400", "stau395", "lsp000", out_latex, luminosity, debug)) <<endl;
-	if (debug == kTRUE) cout << "Signal scenario: chi500 stau495 lsp000" <<endl;
-	out_xsecmin_lsp000_stauclose << xsecLim_to_string(findXsecLimMin("chi500", "stau495", "lsp000", out_latex, luminosity, debug)) <<endl;
+	if (debug == kTRUE) cout << "Signal scenario: Chargino100 Stau095 LSP000" <<endl;
+	out_xsecmin_lsp000_stauclose << xsecLim_to_string(findXsecLimMin("Chargino100", "Stau095", "LSP000", out_latex, luminosity, debug)) <<endl;
+	if (debug == kTRUE) cout << "Signal scenario: Chargino200 Stau195 LSP000" <<endl;
+	out_xsecmin_lsp000_stauclose << xsecLim_to_string(findXsecLimMin("Chargino200", "Stau195", "LSP000", out_latex, luminosity, debug)) <<endl;
+	if (debug == kTRUE) cout << "Signal scenario: Chargino300 Stau295 LSP000" <<endl;
+	out_xsecmin_lsp000_stauclose << xsecLim_to_string(findXsecLimMin("Chargino300", "Stau295", "LSP000", out_latex, luminosity, debug)) <<endl;
+	if (debug == kTRUE) cout << "Signal scenario: Chargino500 Stau395 LSP000" <<endl;
+	out_xsecmin_lsp000_stauclose << xsecLim_to_string(findXsecLimMin("Chargino400", "Stau395", "LSP000", out_latex, luminosity, debug)) <<endl;
+	if (debug == kTRUE) cout << "Signal scenario: Chargino500 Stau495 LSP000" <<endl;
+	out_xsecmin_lsp000_stauclose << xsecLim_to_string(findXsecLimMin("Chargino500", "Stau495", "LSP000", out_latex, luminosity, debug)) <<endl;
 
-	if (debug == kTRUE) cout << "Signal scenario: chi100 stau095 lsp050" <<endl;
-	out_xsecmin_lsp050_stauclose << xsecLim_to_string(findXsecLimMin("chi100", "stau095", "lsp050", out_latex, luminosity, debug)) <<endl;
-	if (debug == kTRUE) cout << "Signal scenario: chi200 stau195 lsp050" <<endl;
-	out_xsecmin_lsp050_stauclose << xsecLim_to_string(findXsecLimMin("chi200", "stau195", "lsp050", out_latex, luminosity, debug)) <<endl;
-	if (debug == kTRUE) cout << "Signal scenario: chi300 stau295 lsp050" <<endl;
-	out_xsecmin_lsp050_stauclose << xsecLim_to_string(findXsecLimMin("chi300", "stau295", "lsp050", out_latex, luminosity, debug)) <<endl;
-	if (debug == kTRUE) cout << "Signal scenario: chi500 stau395 lsp050" <<endl;
-	out_xsecmin_lsp050_stauclose << xsecLim_to_string(findXsecLimMin("chi400", "stau395", "lsp050", out_latex, luminosity, debug)) <<endl;
-	if (debug == kTRUE) cout << "Signal scenario: chi500 stau495 lsp050" <<endl;
-	out_xsecmin_lsp050_stauclose << xsecLim_to_string(findXsecLimMin("chi500", "stau495", "lsp050", out_latex, luminosity, debug)) <<endl;
+	if (debug == kTRUE) cout << "Signal scenario: Chargino100 Stau095 LSP050" <<endl;
+	out_xsecmin_lsp050_stauclose << xsecLim_to_string(findXsecLimMin("Chargino100", "Stau095", "LSP050", out_latex, luminosity, debug)) <<endl;
+	if (debug == kTRUE) cout << "Signal scenario: Chargino200 Stau195 LSP050" <<endl;
+	out_xsecmin_lsp050_stauclose << xsecLim_to_string(findXsecLimMin("Chargino200", "Stau195", "LSP050", out_latex, luminosity, debug)) <<endl;
+	if (debug == kTRUE) cout << "Signal scenario: Chargino300 Stau295 LSP050" <<endl;
+	out_xsecmin_lsp050_stauclose << xsecLim_to_string(findXsecLimMin("Chargino300", "Stau295", "LSP050", out_latex, luminosity, debug)) <<endl;
+	if (debug == kTRUE) cout << "Signal scenario: Chargino500 Stau395 LSP050" <<endl;
+	out_xsecmin_lsp050_stauclose << xsecLim_to_string(findXsecLimMin("Chargino400", "Stau395", "LSP050", out_latex, luminosity, debug)) <<endl;
+	if (debug == kTRUE) cout << "Signal scenario: Chargino500 Stau495 LSP050" <<endl;
+	out_xsecmin_lsp050_stauclose << xsecLim_to_string(findXsecLimMin("Chargino500", "Stau495", "LSP050", out_latex, luminosity, debug)) <<endl;
 
-	if (debug == kTRUE) cout << "Signal scenario: chi100 stau050 lsp000" <<endl;
-	out_xsecmin_lsp000_staufar << xsecLim_to_string(findXsecLimMin("chi100", "stau050", "lsp000", out_latex, luminosity, debug)) <<endl;
-	if (debug == kTRUE) cout << "Signal scenario: chi200 stau100 lsp000" <<endl;
-	out_xsecmin_lsp000_staufar << xsecLim_to_string(findXsecLimMin("chi200", "stau100", "lsp000", out_latex, luminosity, debug)) <<endl;
-	if (debug == kTRUE) cout << "Signal scenario: chi300 stau150 lsp000" <<endl;
-	out_xsecmin_lsp000_staufar << xsecLim_to_string(findXsecLimMin("chi300", "stau150", "lsp000", out_latex, luminosity, debug)) <<endl;
-	if (debug == kTRUE) cout << "Signal scenario: chi500 stau200 lsp000" <<endl;
-	out_xsecmin_lsp000_staufar << xsecLim_to_string(findXsecLimMin("chi400", "stau200", "lsp000", out_latex, luminosity, debug)) <<endl;
-	if (debug == kTRUE) cout << "Signal scenario: chi500 stau250 lsp000" <<endl;
-	out_xsecmin_lsp000_staufar << xsecLim_to_string(findXsecLimMin("chi500", "stau250", "lsp000", out_latex, luminosity, debug)) <<endl;
+	if (debug == kTRUE) cout << "Signal scenario: Chargino100 Stau050 LSP000" <<endl;
+	out_xsecmin_lsp000_staufar << xsecLim_to_string(findXsecLimMin("Chargino100", "Stau050", "LSP000", out_latex, luminosity, debug)) <<endl;
+	if (debug == kTRUE) cout << "Signal scenario: Chargino200 Stau100 LSP000" <<endl;
+	out_xsecmin_lsp000_staufar << xsecLim_to_string(findXsecLimMin("Chargino200", "Stau100", "LSP000", out_latex, luminosity, debug)) <<endl;
+	if (debug == kTRUE) cout << "Signal scenario: Chargino300 Stau150 LSP000" <<endl;
+	out_xsecmin_lsp000_staufar << xsecLim_to_string(findXsecLimMin("Chargino300", "Stau150", "LSP000", out_latex, luminosity, debug)) <<endl;
+	if (debug == kTRUE) cout << "Signal scenario: Chargino500 Stau200 LSP000" <<endl;
+	out_xsecmin_lsp000_staufar << xsecLim_to_string(findXsecLimMin("Chargino400", "Stau200", "LSP000", out_latex, luminosity, debug)) <<endl;
+	if (debug == kTRUE) cout << "Signal scenario: Chargino500 Stau250 LSP000" <<endl;
+	out_xsecmin_lsp000_staufar << xsecLim_to_string(findXsecLimMin("Chargino500", "Stau250", "LSP000", out_latex, luminosity, debug)) <<endl;
 
-	if (debug == kTRUE) cout << "Signal scenario: chi100 stau075 lsp050" <<endl;
-	out_xsecmin_lsp050_staufar << xsecLim_to_string(findXsecLimMin("chi100", "stau075", "lsp050", out_latex, luminosity, debug)) <<endl;
-	if (debug == kTRUE) cout << "Signal scenario: chi200 stau125 lsp050" <<endl;
-	out_xsecmin_lsp050_staufar << xsecLim_to_string(findXsecLimMin("chi200", "stau125", "lsp050", out_latex, luminosity, debug)) <<endl;
-	if (debug == kTRUE) cout << "Signal scenario: chi300 stau175 lsp050" <<endl;
-	out_xsecmin_lsp050_staufar << xsecLim_to_string(findXsecLimMin("chi300", "stau175", "lsp050", out_latex, luminosity, debug)) <<endl;
-	if (debug == kTRUE) cout << "Signal scenario: chi500 stau225 lsp050" <<endl;
-	out_xsecmin_lsp050_staufar << xsecLim_to_string(findXsecLimMin("chi400", "stau225", "lsp050", out_latex, luminosity, debug)) <<endl;
-	if (debug == kTRUE) cout << "Signal scenario: chi500 stau275 lsp050" <<endl;
-	out_xsecmin_lsp050_staufar << xsecLim_to_string(findXsecLimMin("chi500", "stau275", "lsp050", out_latex, luminosity, debug)) <<endl;
+	if (debug == kTRUE) cout << "Signal scenario: Chargino100 Stau075 LSP050" <<endl;
+	out_xsecmin_lsp050_staufar << xsecLim_to_string(findXsecLimMin("Chargino100", "Stau075", "LSP050", out_latex, luminosity, debug)) <<endl;
+	if (debug == kTRUE) cout << "Signal scenario: Chargino200 Stau125 LSP050" <<endl;
+	out_xsecmin_lsp050_staufar << xsecLim_to_string(findXsecLimMin("Chargino200", "Stau125", "LSP050", out_latex, luminosity, debug)) <<endl;
+	if (debug == kTRUE) cout << "Signal scenario: Chargino300 Stau175 LSP050" <<endl;
+	out_xsecmin_lsp050_staufar << xsecLim_to_string(findXsecLimMin("Chargino300", "Stau175", "LSP050", out_latex, luminosity, debug)) <<endl;
+	if (debug == kTRUE) cout << "Signal scenario: Chargino500 Stau225 LSP050" <<endl;
+	out_xsecmin_lsp050_staufar << xsecLim_to_string(findXsecLimMin("Chargino400", "Stau225", "LSP050", out_latex, luminosity, debug)) <<endl;
+	if (debug == kTRUE) cout << "Signal scenario: Chargino500 Stau275 LSP050" <<endl;
+	out_xsecmin_lsp050_staufar << xsecLim_to_string(findXsecLimMin("Chargino500", "Stau275", "LSP050", out_latex, luminosity, debug)) <<endl;
 
 	out_latex.close();
 	out_xsecmin_lsp000_stauclose.close();
