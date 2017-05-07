@@ -2,7 +2,7 @@
 
 ## Introduction
 
-This analysis tool is compatible with CMSSW_7_4_14 framework release and does the following things:
+This analysis tool was developed to fulfil a search for Supersymmetry particles at the LHC. It is compatible with CMSSW_7_4_14 framework release and does the following things:
 
 1) Run over 10 millions events stored in the miniaodv2 format within 10 minutes;
 2) Applies 8 different event selections and creates for each one of then a collection of plots of the most important physical quantities;
