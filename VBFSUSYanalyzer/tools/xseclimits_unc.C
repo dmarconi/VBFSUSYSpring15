@@ -597,7 +597,7 @@ TH2F* makeBackgroundPlot_LtoT_VBFSyst(string isoregion, TFile* &inputfile_qcd, T
 
 //calculates the cross section limit minimum for a given
 //signal sample and selection and creates a LaTex output
-void makeXSectionUnc(string taupt, string chi, string stau, string lsp, double lumi, bool debug) {
+void makeXSectionUnc(string taupt, string chi, string stau, string lsp, std::ofstream& out_latex, double lumi, bool debug) {
 
 	if (debug == kTRUE) cout << "INPUT(makeXSectionUnc)"
 	<< " taupt = " << taupt
@@ -838,8 +838,8 @@ void makeXSectionUnc(string taupt, string chi, string stau, string lsp, double l
 
 	//minimum output in LaTex format
 	if (debug == kTRUE) cout << "Writing LaTex output to file..." <<endl;
-	cout << " for " << chi << ", " << stau << ", " << lsp << " and " << taupt << endl;
-	cout << "$"<<minimum << "\\pm"<< minimum_statunc << "^{+" << minimum_mcsystup_var << " + " << minimum_vbfsystup_var << "}_{-" << minimum_mcsystdown_var << "-" << minimum_vbfsystdown_var << "}$ & $<$ " << taupt_value << " & $<$ " << y_min << "  & $<$ " << x_min << " \\\\ " << endl;
+	out_latex << " for " << chi << ", " << stau << ", " << lsp << " and " << taupt << endl;
+	out_latex << "$"<<minimum << "\\pm"<< minimum_statunc << "^{+" << minimum_mcsystup_var << " + " << minimum_vbfsystup_var << "}_{-" << minimum_mcsystdown_var << "-" << minimum_vbfsystdown_var << "}$ & $<$ " << taupt_value << " & $<$ " << y_min << "  & $<$ " << x_min << " \\\\ " << endl;
 
 	//clearing memory
 
@@ -873,20 +873,22 @@ void makeXSectionUnc(string taupt, string chi, string stau, string lsp, double l
 
 //repeats the cross section study for
 //a given signal sample
-void makeXsecLimPlots(string chi, string stau, string lsp, double lumi, bool debug){
+void findXsecLimMin(string chi, string stau, string lsp, std::ofstream& out_latex, double lumi, bool debug){
+
+	//ofstream out_xsecmin(("results/txt/out_xsecmin" + "_" + chi + "_" + stau + "_" + lsp + ".txt").c_str());
 
 	if (debug == kTRUE) cout << "taupt20" << endl;
-	makeXSectionUnc("taupt20",chi,stau,lsp,lumi,debug);
+	makeXSectionUnc("taupt20",chi,stau,lsp,out_latex,lumi,debug);
 	if (debug == kTRUE) cout << "taupt25" << endl;
-	makeXSectionUnc("taupt25",chi,stau,lsp,lumi,debug);
+	makeXSectionUnc("taupt25",chi,stau,lsp,out_latex,lumi,debug);
 	if (debug == kTRUE) cout << "taupt30" << endl;
-	makeXSectionUnc("taupt30",chi,stau,lsp,lumi,debug);
+	makeXSectionUnc("taupt30",chi,stau,lsp,out_latex,lumi,debug);
 	if (debug == kTRUE) cout << "taupt35" << endl;
-	makeXSectionUnc("taupt35",chi,stau,lsp,lumi,debug);
+	makeXSectionUnc("taupt35",chi,stau,lsp,out_latex,lumi,debug);
 	if (debug == kTRUE) cout << "taupt40" << endl;
-	makeXSectionUnc("taupt40",chi,stau,lsp,lumi,debug);
+	makeXSectionUnc("taupt40",chi,stau,lsp,out_latex,lumi,debug);
 	if (debug == kTRUE) cout << "taupt45" << endl;
-	makeXSectionUnc("taupt45",chi,stau,lsp,lumi,debug);
+	makeXSectionUnc("taupt45",chi,stau,lsp,out_latex,lumi,debug);
 
 
 }
@@ -896,30 +898,56 @@ void makeXsecLimPlots(string chi, string stau, string lsp, double lumi, bool deb
 void fullXsecLimScan(){
 
 	double luminosity =  85000.;
-	Bool_t debug = kTRUE;
+	Bool_t debug = kFALSE;
+
+	ofstream out_latex("results/txt/out_latex.txt");
 
 	if (debug == kTRUE) cout << "Processing xsec limit for luminosity =" << luminosity <<endl;
 
 	if (debug == kTRUE) cout << "Signal scenario: chi100 stau095 lsp000" <<endl;
-	makeXsecLimPlots("chi100", "stau095", "lsp000", luminosity, debug);
-	if (debug == kTRUE) cout << "Signal scenario: chi200 stau195 lsp000" <<endl;
-	makeXsecLimPlots("chi200", "stau195", "lsp000", luminosity, debug);
-	if (debug == kTRUE) cout << "Signal scenario: chi300 stau295 lsp000" <<endl;
-	makeXsecLimPlots("chi300", "stau295", "lsp000", luminosity, debug);
-	if (debug == kTRUE) cout << "Signal scenario: chi500 stau395 lsp000" <<endl;
-	makeXsecLimPlots("chi400", "stau395", "lsp000", luminosity, debug);
-	if (debug == kTRUE) cout << "Signal scenario: chi500 stau495 lsp000" <<endl;
-	makeXsecLimPlots("chi500", "stau495", "lsp000", luminosity, debug);
+	findXsecLimMin("chi100", "stau095", "lsp000", out_latex, luminosity, debug);
+	// if (debug == kTRUE) cout << "Signal scenario: chi200 stau195 lsp000" <<endl;
+	// findXsecLimMin("chi200", "stau195", "lsp000", out_latex, luminosity, debug);
+	// if (debug == kTRUE) cout << "Signal scenario: chi300 stau295 lsp000" <<endl;
+	// findXsecLimMin("chi300", "stau295", "lsp000", out_latex, luminosity, debug);
+	// if (debug == kTRUE) cout << "Signal scenario: chi500 stau395 lsp000" <<endl;
+	// findXsecLimMin("chi400", "stau395", "lsp000", out_latex, luminosity, debug);
+	// if (debug == kTRUE) cout << "Signal scenario: chi500 stau495 lsp000" <<endl;
+	// findXsecLimMin("chi500", "stau495", "lsp000", out_latex, luminosity, debug);
+//
+	// if (debug == kTRUE) cout << "Signal scenario: chi100 stau095 lsp050" <<endl;
+	// findXsecLimMin("chi100", "stau095", "lsp050", out_latex, luminosity, debug);
+	// if (debug == kTRUE) cout << "Signal scenario: chi200 stau195 lsp050" <<endl;
+	// findXsecLimMin("chi200", "stau195", "lsp050", out_latex, luminosity, debug);
+	// if (debug == kTRUE) cout << "Signal scenario: chi300 stau295 lsp050" <<endl;
+	// findXsecLimMin("chi300", "stau295", "lsp050", out_latex, luminosity, debug);
+	// if (debug == kTRUE) cout << "Signal scenario: chi500 stau395 lsp050" <<endl;
+	// findXsecLimMin("chi400", "stau395", "lsp050", out_latex, luminosity, debug);
+	// if (debug == kTRUE) cout << "Signal scenario: chi500 stau495 lsp050" <<endl;
+	// findXsecLimMin("chi500", "stau495", "lsp050", out_latex, luminosity, debug);
+//
+	// if (debug == kTRUE) cout << "Signal scenario: chi100 stau050 lsp000" <<endl;
+	// findXsecLimMin("chi100", "stau050", "lsp000", out_latex, luminosity, debug);
+	// if (debug == kTRUE) cout << "Signal scenario: chi200 stau100 lsp000" <<endl;
+	// findXsecLimMin("chi200", "stau100", "lsp000", out_latex, luminosity, debug);
+	// if (debug == kTRUE) cout << "Signal scenario: chi300 stau150 lsp000" <<endl;
+	// findXsecLimMin("chi300", "stau150", "lsp000", out_latex, luminosity, debug);
+	// if (debug == kTRUE) cout << "Signal scenario: chi500 stau200 lsp000" <<endl;
+	// findXsecLimMin("chi400", "stau200", "lsp000", out_latex, luminosity, debug);
+	// if (debug == kTRUE) cout << "Signal scenario: chi500 stau250 lsp000" <<endl;
+	// findXsecLimMin("chi500", "stau250", "lsp000", out_latex, luminosity, debug);
+//
+	// if (debug == kTRUE) cout << "Signal scenario: chi100 stau075 lsp050" <<endl;
+	// findXsecLimMin("chi100", "stau075", "lsp050", out_latex, luminosity, debug);
+	// if (debug == kTRUE) cout << "Signal scenario: chi200 stau125 lsp050" <<endl;
+	// findXsecLimMin("chi200", "stau125", "lsp050", out_latex, luminosity, debug);
+	// if (debug == kTRUE) cout << "Signal scenario: chi300 stau175 lsp050" <<endl;
+	// findXsecLimMin("chi300", "stau175", "lsp050", out_latex, luminosity, debug);
+	// if (debug == kTRUE) cout << "Signal scenario: chi500 stau225 lsp050" <<endl;
+	// findXsecLimMin("chi400", "stau225", "lsp050", out_latex, luminosity, debug);
+	// if (debug == kTRUE) cout << "Signal scenario: chi500 stau275 lsp050" <<endl;
+	// findXsecLimMin("chi500", "stau275", "lsp050", out_latex, luminosity, debug);
 
-	if (debug == kTRUE) cout << "Signal scenario: chi100 stau095 lsp050" <<endl;
-	makeXsecLimPlots("chi100", "stau095", "lsp050", luminosity, debug);
-	if (debug == kTRUE) cout << "Signal scenario: chi200 stau195 lsp050" <<endl;
-	makeXsecLimPlots("chi200", "stau195", "lsp050", luminosity, debug);
-	if (debug == kTRUE) cout << "Signal scenario: chi300 stau295 lsp050" <<endl;
-	makeXsecLimPlots("chi300", "stau295", "lsp050", luminosity, debug);
-	if (debug == kTRUE) cout << "Signal scenario: chi500 stau395 lsp050" <<endl;
-	makeXsecLimPlots("chi400", "stau395", "lsp050", luminosity, debug);
-	if (debug == kTRUE) cout << "Signal scenario: chi500 stau495 lsp050" <<endl;
-	makeXsecLimPlots("chi500", "stau495", "lsp050", luminosity, debug);
+	out_latex.close();
 
 }
