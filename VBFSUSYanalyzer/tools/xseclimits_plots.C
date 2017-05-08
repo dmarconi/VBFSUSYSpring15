@@ -434,7 +434,22 @@ void fullXsecLimScan(){
 
 }
 
-void makeComparisonPlots() {
+void xsec_reader_values(string ifile, Int_t lines, vector<double> & vbfxsec_y, vector<double> & vbfxsec_y_err) {
+
+	ifstream infile;
+	infile.open(("results/txt/out_xsecmin_" + ifile + ".txt").c_str());
+
+	double value;
+	double error;
+
+	for (int i = 1; i <= lines; i++){
+		infile >> value >> error;
+		vbfxsec_y.push_back(value);
+		vbfxsec_y_err.push_back(error);
+	}
+}
+
+void makeComparisonPlot(string scenario) {
 
 	//Arrays declarations
 
@@ -457,18 +472,15 @@ void makeComparisonPlots() {
 	vbfxsec_x_err[3] = 0.;
 	vbfxsec_x_err[4] = 0.;
 
-	vbfxsec_y[0] = 0.0327396;
-	vbfxsec_y[1] = 0.0333074;
-	vbfxsec_y[2] = 0.0345751;
-	vbfxsec_y[3] = 0.0302742;
-	vbfxsec_y[4] = 0.0345751;
+	vector<double> v_value;
+	vector<double> v_error;
 
-	vbfxsec_y_err[0] = 0.00680598 + sqrt(pow( 0.00368, 2.) + pow( 0.001193, 2.));
-	vbfxsec_y_err[1] = 0.0069229+ sqrt(pow(0.00375, 2.) + pow( 0.00121, 2.));
-	vbfxsec_y_err[2] =  0.00701739 + sqrt(pow(0.00382, 2.) + pow( 0.00123, 2.));
-	vbfxsec_y_err[3] =  0.00458659 + sqrt(pow(0.00271169, 2.) + pow( 0.000385888, 2.));
-	vbfxsec_y_err[4] =  0.00631726 + sqrt(pow(0.00342821, 2.) + pow( 0.000495253, 2.));
+	xsec_reader_values(scenario, n2, v_value, v_error);
 
+	for (int i = 0; i < n2; i++) {
+		vbfxsec_y[i] = v_value[i];
+		vbfxsec_y_err[i] = v_error[i];
+	}
 
 	cmsxsec_x[0] = 100;
 	cmsxsec_x[1] = 125;
@@ -575,9 +587,6 @@ void makeComparisonPlots() {
 	// create a multigraph and draw it
 	TMultiGraph  *mg  = new TMultiGraph();
 	mg->Add(gr1);
-  //mg->Add(gr2);
-	//mg->GetXaxis()->SetTitle("E_{#gamma} (GeV)");
-  //mg->GetYaxis()->SetTitle("Coefficients");
 
 	//defining legend
 	TLegend* leg = new TLegend(0.63,0.68,0.86,0.9);
@@ -596,6 +605,13 @@ void makeComparisonPlots() {
   mg->Draw("LP");
 	leg->Draw("same");
 	my_canvas->Update();
-	my_canvas->Print("results/xsec_confront.pdf");
+	my_canvas->Print(("results/out_xsecmin_" + scenario + ".pdf").c_str());
 
+}
+
+void fullPlotComparison() {
+	makeComparisonPlot("lsp000_stauclose");
+	makeComparisonPlot("lsp050_stauclose");
+	makeComparisonPlot("lsp000_staufar");
+	makeComparisonPlot("lsp050_staufar");
 }

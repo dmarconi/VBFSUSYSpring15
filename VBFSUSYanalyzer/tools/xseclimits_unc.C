@@ -653,7 +653,7 @@ xsecLim findXsecLim(string taupt, string chi, string stau, string lsp, std::ofst
 	if (inputfile_ltot->IsZombie()) cout << "ERROR: couldn't open allQCD_LtoT file for taupt" << taupt << endl;
 
 	TFile *inputfile_signal = TFile::Open((taupt + "/VBFC1pmN2_C1ToTau_N2ToTauTau_" + lsp +"_" + stau + "_" + chi + "_1M.root").c_str());
-	if (inputfile_signal->IsZombie()) cout << "ERROR: couldn't open file for chi" << chi << " stau" << stau << " lsp" << lsp << endl;
+	if (inputfile_signal->IsZombie()) cout << "ERROR: couldn't open file for " << chi << " " << stau << " " << lsp << endl;
 
 	//definition and filling of necessary input plots
 
