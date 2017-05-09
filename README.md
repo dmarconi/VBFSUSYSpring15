@@ -2,7 +2,7 @@
 
 ## Introduction
 
-This analysis tool was developed to fulfil a search for Supersymmetry particles at the LHC. It is compatible with CMSSW_7_4_14 framework release and does the following things:
+This analysis tool was developed to fulfill a search for Supersymmetry particles at the LHC. It is compatible with CMSSW_7_4_14 framework release and does the following things:
 
 1) Run over 10 millions events stored in the miniaodv2 format within 10 minutes;
 2) Applies 8 different event selections and creates for each one of then a collection of plots of the most important physical quantities;
@@ -29,4 +29,10 @@ Stores the bash scripts necessary to interface the python config files with the 
 
 ### tools
 
-Stores all the necessary ROOT macros. Each one of the macros take one or multiple .root files produced by the analyzers (stored in the subfolders) and creates variables distribution plots, cross section limits and "signal distributions vs selection cut" predictions.
+Stores all the following ROOT macros:
+
+- crvalidation: creates stacked histograms of the main background distributions of the main physical distributions for the most important control regions.
+
+- prospects_13TeV: creates signal and background distribution predictions;
+
+- xseclimits: is the core of the PhD thesis study. Takes all the .root files produced by the analyzers as input and searches for the cross section limit minimum versus 3 of the main analysis variables for each of the signal scenarios considered in the analysis. Furthermore creates 2-D histograms of the cross section limit distribution and makes comparison between the cross section prediction of the CMS experiment at LHC and the results coming from this analysis.
