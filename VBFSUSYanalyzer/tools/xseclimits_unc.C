@@ -27,7 +27,7 @@ struct xsecLim {
 	double err_systMCdown;
 } ;
 
-//transates the xsec limit results into string
+//transates the xsec limit result into string
 string xsecLim_to_string(xsecLim xsecLim_min){
 
 	string filestream;

@@ -19,12 +19,13 @@
 #include <cmath>
 #include <array>
 
-
+//calculates the VBF efficiency
 double vbfefficiency(double evenCRcounts, double oddCRcounts){
 
 	return ( (oddCRcounts) / ( (oddCRcounts) + (evenCRcounts) ));
 }
 
+//calculates the VBF conversion factor
 double vbfConversionFactor(string taupt, string isoregion) {
 
 	TFile *inputfile = TFile::Open((taupt + "/allQCD_"+ taupt +".root").c_str());
@@ -47,6 +48,7 @@ double vbfConversionFactor(string taupt, string isoregion) {
 
 }
 
+//calculates the LtoT conversion factor
 double LtoTfactor(string taupt) {
 
 	TFile *inputfile = TFile::Open(( taupt + "/allQCD_"+ taupt +"_LtoT.root").c_str());
@@ -71,7 +73,8 @@ double LtoTfactor(string taupt) {
 
 }
 
-
+//creates the signal efficiency plot for
+//a given signal sample and selection
 TH2F* makeEffPlot(string taupt, string isoregion, string chi, string lsp) {
 	//TFile *inputfile = TFile::Open("VBFC1pmN2_C1ToTau_N2ToTauTau_LSP000_Stau295_Chargino300_1M.root");
 	//TFile *inputfile = TFile::Open("VBFC1pmN2_C1ToTau_N2ToTauTau_LSP000_Stau195_Chargino200_1M.root");
@@ -124,6 +127,8 @@ TH2F* makeEffPlot(string taupt, string isoregion, string chi, string lsp) {
 	return h2_DiJetInvMass_vs_MET_eff;
 }
 
+//creates a histogram storing the LtoT
+//conversion factor for a given selection
 TH2F* makeBackgroundPlot_LtoT(string taupt, string isoregion){
 
 
@@ -266,6 +271,8 @@ void makeSignificance(string chi, string lsp) {
 	my_canvas->Close();
 }
 
+//calculates the cross section limit in a 2D phase-space for a given
+//signal sample and selection and creates a LaTex output
 void makeXSection(string taupt,string chi, string lsp) {
 
 	double lumi = 85000.;
