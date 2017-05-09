@@ -10,6 +10,9 @@
 #include <TH1F.h>
 #include <TH2F.h>
 #include <TH2D.h>
+#include <TGraph.h>
+#include <TMultiGraph.h>
+#include <TGraphErrors.h>
 #include <TProfile.h>
 #include <fstream>
 #include <iostream>
@@ -47,6 +50,23 @@ string xsecLim_to_string(xsecLim xsecLim_min){
 	return filestream;
 }
 
+//read cross section values and error
+//from txt file
+void xsec_reader_values(string ifile, Int_t lines, vector<double> & vbfxsec_y, vector<double> & vbfxsec_y_err) {
+
+	ifstream infile;
+	infile.open(("results/txt/out_xsecmin_" + ifile + ".txt").c_str());
+
+	double value;
+	double error;
+
+	for (int i = 1; i <= lines; i++){
+		infile >> value >> error;
+		vbfxsec_y.push_back(value);
+		vbfxsec_y_err.push_back(error);
+	}
+}
+
 //handmade TH2F reader
 void th2fDebugReader(TH2F* &inputplot) {
 
@@ -65,6 +85,86 @@ void th2fDebugReader(TH2F* &inputplot) {
 	}
 
 	cout << "--------------------------------------------(TH2FDEBUGREADER) END-------------------------------------------" << endl;
+
+}
+
+void plotXsecLim(string taupt, string chi, string stau, string lsp, TH2F* & h2_xsec_lim, bool debug) {
+
+	TH2F* h2_xsec_lim_zoom;
+
+	//Converting model point into doubles
+
+	string chi_label;
+	string stau_label;
+	string lsp_label;
+	string taupt_label;
+
+	if (chi == "Chargino100") {chi_label = "m(#tilde{#chi}^{#pm}_{1}) = m(#tilde{#chi}^{0}_{2}) = 100 GeV";}
+	else if (chi == "Chargino200") {chi_label = "m(#tilde{#chi}^{#pm}_{1}) = m(#tilde{#chi}^{0}_{2}) = 200 GeV";}
+	else if (chi == "Chargino300") {chi_label = "m(#tilde{#chi}^{#pm}_{1}) = m(#tilde{#chi}^{0}_{2}) = 300 GeV";}
+	else if (chi == "Chargino400") {chi_label = "m(#tilde{#chi}^{#pm}_{1}) = m(#tilde{#chi}^{0}_{2}) = 400 GeV";}
+	else if (chi == "Chargino500") {chi_label = "m(#tilde{#chi}^{#pm}_{1}) = m(#tilde{#chi}^{0}_{2}) = 500 GeV";}
+
+	if ((stau == "Stau095") || (stau == "Stau195") || (stau == "Stau295") ||
+			(stau == "Stau395") || (stau == "Stau495")
+		) {stau_label = "m(#tilde{#chi}^{#pm}_{1}) - m(#tilde{#tau}^{#pm}) = 5 GeV";}
+	else {stau_label = "m(#tilde{#tau}^{#pm}) = [m(#tilde{#chi}^{#pm}_{1}) + m(#tilde{#chi}^{0}_{1})]/2";}
+
+	if (lsp == "LSP000") {lsp_label = "m(#tilde{#chi}^{0}_{1}) = 0 GeV";}
+	else if (lsp == "LSP050") {lsp_label = "m(#tilde{#chi}^{0}_{1}) = 50 GeV";}
+	else if (lsp == "LSP150") {lsp_label = "m(#tilde{#chi}^{0}_{1}) = 150 GeV";}
+	else if (lsp == "LSP250") {lsp_label = "m(#tilde{#chi}^{0}_{1}) = 250 GeV";}
+	else if (lsp == "LSP350") {lsp_label = "m(#tilde{#chi}^{0}_{1}) = 350 GeV";}
+	else if (lsp == "LSP450") {lsp_label = "m(#tilde{#chi}^{0}_{1}) = 450 GeV";}
+
+	if (taupt == "taupt20") {taupt_label = "#tau_{Pt} = 20 GeV";}
+	else if (taupt == "taupt25") {taupt_label = "#tau_{pt} = 25 GeV";}
+	else if (taupt == "taupt30") {taupt_label = "#tau_{pt} = 30 GeV";}
+	else if (taupt == "taupt35") {taupt_label = "#tau_{pt} = 35 GeV";}
+	else if (taupt == "taupt40") {taupt_label = "#tau_{pt} = 40 GeV";}
+	else if (taupt == "taupt45") {taupt_label = "#tau_{pt} = 45 GeV";}
+
+	//defining legend
+	TLegend* leg = new TLegend(0.63,0.68,0.86,0.9);
+	leg->SetTextSize(0.02);
+	leg->AddEntry((TObject*)0, (chi_label).c_str(), "");
+	leg->AddEntry((TObject*)0, (stau_label).c_str(), "");
+	leg->AddEntry((TObject*)0, (lsp_label).c_str(), "");
+	leg->AddEntry((TObject*)0, (taupt_label).c_str(), "");
+
+	TCanvas *my_canvas_zoom = new TCanvas("mycanvas_zoom","mycanvas_zoom",1024.,768.);
+	my_canvas_zoom->cd();
+	gPad->SetLogz();
+	h2_xsec_lim_zoom = (TH2F*) h2_xsec_lim->Clone();
+	h2_xsec_lim_zoom->GetXaxis()->SetRangeUser(30.,200.);
+	h2_xsec_lim_zoom->GetYaxis()->SetRangeUser(0.,1000.);
+	double maximum_zoom = h2_xsec_lim_zoom->GetMaximum();
+	double minimum_zoom = h2_xsec_lim_zoom->GetMinimum();
+	h2_xsec_lim_zoom ->GetZaxis()->SetRangeUser(minimum_zoom,maximum_zoom);
+	h2_xsec_lim_zoom->Draw("colz");
+	leg->Draw();
+	gPad->SetRightMargin(0.14);
+	gPad->SetLogz();
+	gPad->Update();
+	my_canvas_zoom->Print(("results/JetInvMass_vs_MET_xseclim_" + chi + "_" + stau + "_" + lsp + "_" + taupt + "_zoom.pdf").c_str());
+
+	TCanvas *my_canvas = new TCanvas("mycanvas","mycanvas",1024.,768.);
+	my_canvas->cd();
+
+	h2_xsec_lim->GetZaxis()->SetRangeUser(0.001,1000);
+	h2_xsec_lim->Draw("colz");
+	leg->Draw();
+
+	gPad->SetRightMargin(0.14);
+	gPad->SetLogz();
+	gPad->Update();
+
+	my_canvas->SetRightMargin(0.14);
+	my_canvas->Print(("results/JetInvMass_vs_MET_xseclim_" + chi + "_" + stau + "_" + lsp + "_" + taupt + ".pdf").c_str());
+
+	my_canvas_zoom->Close();
+	my_canvas->Close();
+	h2_xsec_lim_zoom->Delete();
 
 }
 
@@ -99,8 +199,8 @@ double vbfefficiency_statunc(double evenCRcounts,double evenCRcounts_statunc,
 
 		return (vbfeff / (1. - vbfeff));
 
-		//h_ditaucharge->Delete();
-		//h_ditauchargeVBFinverted->Delete();
+		h_ditaucharge->Delete();
+		h_ditauchargeVBFinverted->Delete();
 
 	}
 
@@ -864,17 +964,16 @@ xsecLim findXsecLim(string taupt, string chi, string stau, string lsp, std::ofst
 	xsecLim_min.err_systMCup = minimum_mcsystup_var;
 	xsecLim_min.err_systMCdown = minimum_mcsystdown_var;
 
+	//Generating xsec lim plots
+	plotXsecLim(taupt, chi, stau, lsp, h2_DiJetInvMass_vs_MET_xsec,debug);
+
 	return (xsecLim_min);
 
 	//clearing memory
 
-	// inputfile_signal->Close();
-	// inputfile_qcd->Close();
-	// inputfile_ltot->Close();
-
-	// inputfile_signal->Delete();
-	// inputfile_qcd->Delete();
-	// inputfile_ltot->Delete();
+	inputfile_signal->Close();
+	inputfile_qcd->Close();
+	inputfile_ltot->Close();
 
 	h2_DiJetInvMass_vs_MET_eff_signal->Delete();
 	h2_DiJetInvMass_vs_MET_eff_signal_stat->Delete();
@@ -926,6 +1025,166 @@ xsecLim findXsecLimMin(string chi, string stau, string lsp, std::ofstream& out_l
 		}
 	}
 	return (v_xsecLim[min_index]);
+}
+
+void makeComparisonPlot(string scenario) {
+
+	//Arrays declarations
+
+	Int_t n1 = 13;
+	Int_t n2 = 5;
+	Double_t cmsxsec_x[n1], cmsxsec_y[n1], cmsxsec_x_err[n1] ,cmsxsec_y_err[n1];
+	Double_t vbfxsec_x[n2], vbfxsec_y[n2], vbfxsec_x_err[n2] ,vbfxsec_y_err[n2];
+
+	//Filling arrays with VBF analysis and CMS cross section limits
+
+	vbfxsec_x[0] = 100;
+	vbfxsec_x[1] = 200;
+	vbfxsec_x[2] = 300;
+	vbfxsec_x[3] = 400;
+	vbfxsec_x[4] = 500;
+
+	vbfxsec_x_err[0] = 0.;
+	vbfxsec_x_err[1] = 0.;
+	vbfxsec_x_err[2] = 0.;
+	vbfxsec_x_err[3] = 0.;
+	vbfxsec_x_err[4] = 0.;
+
+	vector<double> v_value;
+	vector<double> v_error;
+
+	xsec_reader_values(scenario, n2, v_value, v_error);
+
+	for (int i = 0; i < n2; i++) {
+		vbfxsec_y[i] = v_value[i];
+		vbfxsec_y_err[i] = v_error[i];
+	}
+
+	cmsxsec_x[0] = 100;
+	cmsxsec_x[1] = 125;
+	cmsxsec_x[2] = 150;
+	cmsxsec_x[3] = 175;
+	cmsxsec_x[4] = 200;
+	cmsxsec_x[5] = 225;
+	cmsxsec_x[6] = 250;
+	cmsxsec_x[7] = 275;
+	cmsxsec_x[8] = 300;
+	cmsxsec_x[9] = 325;
+	cmsxsec_x[10] = 350;
+	cmsxsec_x[11] = 375;
+	cmsxsec_x[12] = 400;
+
+	cmsxsec_x_err[0] = 0.;
+	cmsxsec_x_err[1] = 0.;
+	cmsxsec_x_err[2] = 0.;
+	cmsxsec_x_err[3] = 0.;
+	cmsxsec_x_err[4] = 0.;
+	cmsxsec_x_err[5] = 0.;
+	cmsxsec_x_err[6] = 0.;
+	cmsxsec_x_err[7] = 0.;
+	cmsxsec_x_err[8] = 0.;
+	cmsxsec_x_err[9] = 0.;
+	cmsxsec_x_err[10] = 0.;
+	cmsxsec_x_err[11] = 0.;
+	cmsxsec_x_err[12] = 0.;
+
+
+	cmsxsec_y[0] = 22670.1;
+	cmsxsec_y[1] = 10034.8;
+	cmsxsec_y[2] = 5180.86;
+	cmsxsec_y[3] = 2953.28;
+	cmsxsec_y[4] = 1807.39;
+	cmsxsec_y[5] = 1165.09;
+	cmsxsec_y[6] = 782.487;
+	cmsxsec_y[7] = 543.03;
+	cmsxsec_y[8] = 386.936;
+	cmsxsec_y[9] = 281.911;
+	cmsxsec_y[10] = 209.439;
+	cmsxsec_y[11] = 158.06;
+	cmsxsec_y[12] = 121.013;
+
+	cmsxsec_y_err[0] = 973.967;
+	cmsxsec_y_err[1] = 457.604;
+	cmsxsec_y_err[2] = 253.223;
+	cmsxsec_y_err[3] = 154.386;
+	cmsxsec_y_err[4] = 101.316;
+	cmsxsec_y_err[5] = 68.8042;
+	cmsxsec_y_err[6] = 48.7463;
+	cmsxsec_y_err[7] = 35.4083;
+	cmsxsec_y_err[8] = 26.3602;
+	cmsxsec_y_err[9] = 20.0201;
+	cmsxsec_y_err[10] = 15.4539;
+	cmsxsec_y_err[11] = 12.0956;
+	cmsxsec_y_err[12] = 9.61659;
+
+	for(Int_t i = 0; i < n1; i++) cmsxsec_y[i] *= 0.001;
+	for(Int_t i = 0; i < n1; i++) cmsxsec_y_err[i] *= 0.001;
+
+
+	//Set plot minimum
+	double y_max = cmsxsec_y[0] * 1.5;
+	double y_min = vbfxsec_y[2] * 0.5;
+	double x_max = 550.;
+	double x_min = 0.;
+
+	//TGraph definition
+	TGraph *gr1 = new TGraphErrors (n1, cmsxsec_x, cmsxsec_y, cmsxsec_x_err, cmsxsec_y_err);
+	gr1->SetMarkerColor(4);
+	gr1->SetMarkerStyle(21);
+
+	TGraph *gr2 = new TGraphErrors (n2, vbfxsec_x, vbfxsec_y, vbfxsec_x_err, vbfxsec_y_err);
+	gr2->SetMarkerColor(6);
+	gr2->SetMarkerStyle(21);
+
+	//TH1F definition
+	TH1F* lim_comparison_bkg = new TH1F ("lim_comparison","lim_comparison", 13, 0. , 550.);
+	lim_comparison_bkg->SetTitle("CMS Work");
+	lim_comparison_bkg->GetYaxis()->SetTitle("#sigma [pb]");
+	lim_comparison_bkg->GetXaxis()->SetTitle("m(#tilde{#chi}^{#pm}_{1}) = m(#tilde{#chi}^{0}_{2}) [GeV]");
+	lim_comparison_bkg->GetYaxis()->SetTitleOffset(1.40);
+	lim_comparison_bkg->GetYaxis()->SetRangeUser(y_min,y_max);
+	lim_comparison_bkg->GetXaxis()->SetRangeUser(0.,450.);
+	lim_comparison_bkg->SetStats(0);
+
+	TH1F* lim_comparison = new TH1F ("lim_comparison","lim_comparison", 13, x_min - 25. , x_max - 25.);
+	lim_comparison->SetStats(0);
+	lim_comparison->SetMarkerStyle(21);
+	lim_comparison->SetMarkerColor(6);
+	lim_comparison->SetBinContent( 3, vbfxsec_y[0]);
+	lim_comparison->SetBinContent( 5, vbfxsec_y[1]);
+	lim_comparison->SetBinContent( 7, vbfxsec_y[2]);
+	lim_comparison->SetBinContent( 9, vbfxsec_y[3]);
+	lim_comparison->SetBinContent( 11, vbfxsec_y[4]);
+	lim_comparison->SetBinError( 3, vbfxsec_y_err[0]);
+	lim_comparison->SetBinError( 5, vbfxsec_y_err[1]);
+	lim_comparison->SetBinError( 7, vbfxsec_y_err[2]);
+	lim_comparison->SetBinError( 9, vbfxsec_y_err[3]);
+	lim_comparison->SetBinError( 11, vbfxsec_y_err[4]);
+
+
+	// create a multigraph and draw it
+	TMultiGraph  *mg  = new TMultiGraph();
+	mg->Add(gr1);
+
+	//defining legend
+	TLegend* leg = new TLegend(0.63,0.68,0.86,0.9);
+	leg->SetTextSize(0.04);
+	leg->AddEntry(gr1, "#sigma^{CMS} [pb]", "LP");
+	leg->AddEntry(lim_comparison, "#sigma_{lim}^{VBF} [pb]", "Pe");
+
+	//Canvas definition
+	TCanvas *my_canvas = new TCanvas("mycanvas","mycanvas",600.,600.);
+	my_canvas->cd();
+	gPad->SetLogy();
+
+	//Drawing workaround
+	lim_comparison_bkg->Draw();
+	lim_comparison->Draw("Pe+same");
+  mg->Draw("LP");
+	leg->Draw("same");
+	my_canvas->Update();
+	my_canvas->Print(("results/out_xsecmin_" + scenario + ".pdf").c_str());
+
 }
 
 //main function. Runs the cross section
@@ -993,4 +1252,11 @@ void fullXsecLimScan(){
 	out_xsecmin_lsp000_staufar.close();
 	out_xsecmin_lsp050_staufar.close();
 
+}
+
+void fullPlotComparison() {
+	makeComparisonPlot("lsp000_stauclose");
+	makeComparisonPlot("lsp050_stauclose");
+	makeComparisonPlot("lsp000_staufar");
+	makeComparisonPlot("lsp050_staufar");
 }
