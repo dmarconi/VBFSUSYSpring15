@@ -108,7 +108,7 @@ void plotXsecLim(string taupt, string chi, string stau, string lsp, TH2F* & h2_x
 	if ((stau == "Stau095") || (stau == "Stau195") || (stau == "Stau295") ||
 			(stau == "Stau395") || (stau == "Stau495")
 		) {stau_label = "m(#tilde{#chi}^{#pm}_{1}) - m(#tilde{#tau}^{#pm}) = 5 GeV";}
-	else {stau_label = "m(#tilde{#tau}^{#pm}) = [m(#tilde{#chi}^{#pm}_{1}) + m(#tilde{#chi}^{0}_{1})]/2";}
+	else {stau_label = "m(#tilde{#tau}^{#pm}) = m(#tilde{#chi}^{#pm}_{1})/2 + m(#tilde{#chi}^{0}_{1}/2";}
 
 	if (lsp == "LSP000") {lsp_label = "m(#tilde{#chi}^{0}_{1}) = 0 GeV";}
 	else if (lsp == "LSP050") {lsp_label = "m(#tilde{#chi}^{0}_{1}) = 50 GeV";}
@@ -1031,7 +1031,7 @@ void makeComparisonPlot(string scenario) {
 
 	//Arrays declarations
 
-	Int_t n1 = 13;
+	Int_t n1 = 17;
 	Int_t n2 = 5;
 	Double_t cmsxsec_x[n1], cmsxsec_y[n1], cmsxsec_x_err[n1] ,cmsxsec_y_err[n1];
 	Double_t vbfxsec_x[n2], vbfxsec_y[n2], vbfxsec_x_err[n2] ,vbfxsec_y_err[n2];
@@ -1055,6 +1055,7 @@ void makeComparisonPlot(string scenario) {
 
 	xsec_reader_values(scenario, n2, v_value, v_error);
 
+	//converter from vector<double> to Double_t array
 	for (int i = 0; i < n2; i++) {
 		vbfxsec_y[i] = v_value[i];
 		vbfxsec_y_err[i] = v_error[i];
@@ -1073,6 +1074,12 @@ void makeComparisonPlot(string scenario) {
 	cmsxsec_x[10] = 350;
 	cmsxsec_x[11] = 375;
 	cmsxsec_x[12] = 400;
+	cmsxsec_x[13] = 425;
+	cmsxsec_x[14] = 450;
+	cmsxsec_x[15] = 475;
+	cmsxsec_x[16] = 500;
+	// cmsxsec_x[17] = 525;
+	// cmsxsec_x[18] = 550;
 
 	cmsxsec_x_err[0] = 0.;
 	cmsxsec_x_err[1] = 0.;
@@ -1087,7 +1094,12 @@ void makeComparisonPlot(string scenario) {
 	cmsxsec_x_err[10] = 0.;
 	cmsxsec_x_err[11] = 0.;
 	cmsxsec_x_err[12] = 0.;
-
+	cmsxsec_x_err[13] = 0.;
+	cmsxsec_x_err[14] = 0.;
+	cmsxsec_x_err[15] = 0.;
+	cmsxsec_x_err[16] = 0.;
+	// cmsxsec_x_err[17] = 0.;
+	// cmsxsec_x_err[18] = 0.;
 
 	cmsxsec_y[0] = 22670.1;
 	cmsxsec_y[1] = 10034.8;
@@ -1102,6 +1114,12 @@ void makeComparisonPlot(string scenario) {
 	cmsxsec_y[10] = 209.439;
 	cmsxsec_y[11] = 158.06;
 	cmsxsec_y[12] = 121.013;
+	cmsxsec_y[13] = 93.771;
+	cmsxsec_y[14] = 73.4361;
+	cmsxsec_y[15] = 58.0811;
+	cmsxsec_y[16] = 46.3533;
+	// cmsxsec_y[17] = 37.2636;
+	// cmsxsec_y[18] = 30.1656;
 
 	cmsxsec_y_err[0] = 973.967;
 	cmsxsec_y_err[1] = 457.604;
@@ -1116,14 +1134,35 @@ void makeComparisonPlot(string scenario) {
 	cmsxsec_y_err[10] = 15.4539;
 	cmsxsec_y_err[11] = 12.0956;
 	cmsxsec_y_err[12] = 9.61659;
+	cmsxsec_y_err[13] = 7.73547;
+	cmsxsec_y_err[14] = 6.2389;
+	cmsxsec_y_err[15] = 5.05005;
+	cmsxsec_y_err[16] = 4.16461;
+	// cmsxsec_y_err[17] = 3.46763;
+	// cmsxsec_y_err[18] = 2.88065;
 
+	//converting from
 	for(Int_t i = 0; i < n1; i++) cmsxsec_y[i] *= 0.001;
 	for(Int_t i = 0; i < n1; i++) cmsxsec_y_err[i] *= 0.001;
 
 
-	//Set plot minimum
-	double y_max = cmsxsec_y[0] * 1.5;
-	double y_min = vbfxsec_y[2] * 0.5;
+	//Set plot boundaries
+
+	double y_max_temp = -FLT_MAX;
+	double y_min_temp = FLT_MAX;
+
+	for(Int_t i = 0; i < n1; i++) {
+		if (cmsxsec_y[i] > y_max_temp) y_max_temp = cmsxsec_y[i];
+		if (cmsxsec_y[i] < y_min_temp) y_min_temp = cmsxsec_y[i];
+	}
+
+	for(Int_t i = 0; i < n2; i++) {
+		if (vbfxsec_y[i] > y_max_temp) y_max_temp = vbfxsec_y[i];
+		if (vbfxsec_y[i] < y_min_temp) y_min_temp = vbfxsec_y[i];
+	}
+
+	double y_max = y_max_temp * 1.5;
+	double y_min =  y_min_temp * 0.5;
 	double x_max = 550.;
 	double x_min = 0.;
 
@@ -1137,40 +1176,62 @@ void makeComparisonPlot(string scenario) {
 	gr2->SetMarkerStyle(21);
 
 	//TH1F definition
-	TH1F* lim_comparison_bkg = new TH1F ("lim_comparison","lim_comparison", 13, 0. , 550.);
+	TH1F* lim_comparison_bkg = new TH1F ("lim_comparison","lim_comparison", 22, 0. , 550.);
 	lim_comparison_bkg->SetTitle("CMS Work");
 	lim_comparison_bkg->GetYaxis()->SetTitle("#sigma [pb]");
 	lim_comparison_bkg->GetXaxis()->SetTitle("m(#tilde{#chi}^{#pm}_{1}) = m(#tilde{#chi}^{0}_{2}) [GeV]");
 	lim_comparison_bkg->GetYaxis()->SetTitleOffset(1.40);
 	lim_comparison_bkg->GetYaxis()->SetRangeUser(y_min,y_max);
-	lim_comparison_bkg->GetXaxis()->SetRangeUser(0.,450.);
+	lim_comparison_bkg->GetXaxis()->SetRangeUser(0.,550.);
 	lim_comparison_bkg->SetStats(0);
 
-	TH1F* lim_comparison = new TH1F ("lim_comparison","lim_comparison", 13, x_min - 25. , x_max - 25.);
+	TH1F* lim_comparison = new TH1F ("lim_comparison","lim_comparison", 22, x_min , x_max );
 	lim_comparison->SetStats(0);
 	lim_comparison->SetMarkerStyle(21);
 	lim_comparison->SetMarkerColor(6);
-	lim_comparison->SetBinContent( 3, vbfxsec_y[0]);
-	lim_comparison->SetBinContent( 5, vbfxsec_y[1]);
-	lim_comparison->SetBinContent( 7, vbfxsec_y[2]);
-	lim_comparison->SetBinContent( 9, vbfxsec_y[3]);
-	lim_comparison->SetBinContent( 11, vbfxsec_y[4]);
-	lim_comparison->SetBinError( 3, vbfxsec_y_err[0]);
-	lim_comparison->SetBinError( 5, vbfxsec_y_err[1]);
-	lim_comparison->SetBinError( 7, vbfxsec_y_err[2]);
-	lim_comparison->SetBinError( 9, vbfxsec_y_err[3]);
-	lim_comparison->SetBinError( 11, vbfxsec_y_err[4]);
 
 
 	// create a multigraph and draw it
 	TMultiGraph  *mg  = new TMultiGraph();
 	mg->Add(gr1);
+	mg->Add(gr2);
+
+	//Converting scenario into legend
+	string stau_label;
+	string lsp_label;
+
+	if (scenario == "lsp000_stauclose"){
+		lsp_label = "m(#tilde{#chi}^{0}_{1}) = 0 GeV";
+		stau_label = "m(#tilde{#chi}^{#pm}_{1}) - m(#tilde{#tau}^{#pm}) = 5 GeV";
+	}
+	if (scenario == "lsp050_stauclose"){
+		lsp_label = "m(#tilde{#chi}^{0}_{1}) = 50 GeV";
+		stau_label = "m(#tilde{#chi}^{#pm}_{1}) - m(#tilde{#tau}^{#pm}) = 5 GeV";
+	}
+	if (scenario == "lsp000_staufar"){
+		lsp_label = "m(#tilde{#chi}^{0}_{1}) = 0 GeV";
+		stau_label = "m(#tilde{#tau}^{#pm}) = m(#tilde{#chi}^{#pm}_{1})/2 + m(#tilde{#chi}^{0}_{1})/2";
+	}
+	if (scenario == "lsp050_staufar"){
+		lsp_label = "m(#tilde{#chi}^{0}_{1}) = 50 GeV";
+		stau_label = "m(#tilde{#tau}^{#pm}) = m(#tilde{#chi}^{#pm}_{1})/2 + m(#tilde{#chi}^{0}_{1})/2";
+	}
+	if (scenario == "lspcomp_stauclose"){
+		lsp_label = "m(#tilde{#chi}^{0}_{1}) = m(#tilde{#chi}^{#pm}_{1}) - 50 GeV";
+		stau_label = "m(#tilde{#tau}^{#pm}) = m(#tilde{#chi}^{#pm}_{1})/2 + m(#tilde{#chi}^{0}_{1})/2";
+	}
 
 	//defining legend
-	TLegend* leg = new TLegend(0.63,0.68,0.86,0.9);
-	leg->SetTextSize(0.04);
-	leg->AddEntry(gr1, "#sigma^{CMS} [pb]", "LP");
-	leg->AddEntry(lim_comparison, "#sigma_{lim}^{VBF} [pb]", "Pe");
+	TLegend* leg_1 = new TLegend(0.63,0.68,0.86,0.9);
+	leg_1->SetTextSize(0.04);
+	leg_1->AddEntry(gr1, "#sigma^{CMS} [pb]", "LP");
+	leg_1->AddEntry(gr2, "#sigma_{lim}^{VBF} [pb]", "Pe");
+
+	//defining legend
+	TLegend* leg_2 = new TLegend(0.63,0.58,0.86,0.68);
+	leg_2->SetTextSize(0.015);
+	leg_2->AddEntry((TObject*)0, (stau_label).c_str(), "");
+	leg_2->AddEntry((TObject*)0, (lsp_label).c_str(), "");
 
 	//Canvas definition
 	TCanvas *my_canvas = new TCanvas("mycanvas","mycanvas",600.,600.);
@@ -1181,7 +1242,8 @@ void makeComparisonPlot(string scenario) {
 	lim_comparison_bkg->Draw();
 	lim_comparison->Draw("Pe+same");
   mg->Draw("LP");
-	leg->Draw("same");
+	leg_1->Draw("same");
+	leg_2->Draw("same");
 	my_canvas->Update();
 	my_canvas->Print(("results/out_xsecmin_" + scenario + ".pdf").c_str());
 
@@ -1199,6 +1261,7 @@ void fullXsecLimScan(){
 	ofstream out_xsecmin_lsp050_stauclose("results/txt/out_xsecmin_lsp050_stauclose.txt");
 	ofstream out_xsecmin_lsp000_staufar("results/txt/out_xsecmin_lsp000_staufar.txt");
 	ofstream out_xsecmin_lsp050_staufar("results/txt/out_xsecmin_lsp050_staufar.txt");
+	ofstream out_xsecmin_lspcomp_stauclose("results/txt/out_xsecmin_lspcomp_stauclose.txt");
 
 	if (debug == kTRUE) cout << "Processing xsec limit for luminosity =" << luminosity <<endl;
 
@@ -1246,11 +1309,23 @@ void fullXsecLimScan(){
 	if (debug == kTRUE) cout << "Signal scenario: Chargino500 Stau275 LSP050" <<endl;
 	out_xsecmin_lsp050_staufar << xsecLim_to_string(findXsecLimMin("Chargino500", "Stau275", "LSP050", out_latex, luminosity, debug)) <<endl;
 
+	if (debug == kTRUE) cout << "Signal scenario: Chargino100 Stau075 LSP050" <<endl;
+	out_xsecmin_lspcomp_stauclose << xsecLim_to_string(findXsecLimMin("Chargino100", "Stau075", "LSP050", out_latex, luminosity, debug)) <<endl;
+	if (debug == kTRUE) cout << "Signal scenario: Chargino200 Stau175 LSP150" <<endl;
+	out_xsecmin_lspcomp_stauclose << xsecLim_to_string(findXsecLimMin("Chargino200", "Stau175", "LSP150", out_latex, luminosity, debug)) <<endl;
+	if (debug == kTRUE) cout << "Signal scenario: Chargino300 Stau275 LSP250" <<endl;
+	out_xsecmin_lspcomp_stauclose << xsecLim_to_string(findXsecLimMin("Chargino300", "Stau275", "LSP250", out_latex, luminosity, debug)) <<endl;
+	if (debug == kTRUE) cout << "Signal scenario: Chargino500 Stau375 LSP350" <<endl;
+	out_xsecmin_lspcomp_stauclose << xsecLim_to_string(findXsecLimMin("Chargino400", "Stau375", "LSP350", out_latex, luminosity, debug)) <<endl;
+	if (debug == kTRUE) cout << "Signal scenario: Chargino500 Stau475 LSP450" <<endl;
+	out_xsecmin_lspcomp_stauclose << xsecLim_to_string(findXsecLimMin("Chargino500", "Stau475", "LSP450", out_latex, luminosity, debug)) <<endl;
+
 	out_latex.close();
 	out_xsecmin_lsp000_stauclose.close();
 	out_xsecmin_lsp050_stauclose.close();
 	out_xsecmin_lsp000_staufar.close();
 	out_xsecmin_lsp050_staufar.close();
+	out_xsecmin_lspcomp_stauclose.close();
 
 }
 
@@ -1259,4 +1334,5 @@ void fullPlotComparison() {
 	makeComparisonPlot("lsp050_stauclose");
 	makeComparisonPlot("lsp000_staufar");
 	makeComparisonPlot("lsp050_staufar");
+	makeComparisonPlot("lspcomp_stauclose");
 }
