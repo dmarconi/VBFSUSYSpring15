@@ -15,12 +15,12 @@
 void var_plot(string variable, string label, int rebin) {
 
 	//loading input files
-	TFile *inputfile_sig_1 = TFile::Open("prospects/VBFC1pmN2_C1ToTau_N2ToTauTau_LSP000_Stau295_Chargino300_1M.root");
-	TFile *inputfile_sig_2 = TFile::Open("prospects/VBFC1pmN2_C1ToTau_N2ToTauTau_LSP000_Stau195_Chargino200_1M.root");
-	TFile *inputfile_sig_3 = TFile::Open("prospects/VBFC1pmN2_C1ToTau_N2ToTauTau_LSP000_Stau095_Chargino100_1M.root");
-	TFile *inputfile_qcd = TFile::Open("prospects/allQCD.root");
-	TFile *inputfile_vv = TFile::Open("prospects/allVV.root");
-	TFile *inputfile_wjets = TFile::Open("prospects/WJetsToLNu_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8.root");
+	TFile *inputfile_sig_1 = TFile::Open("crvalidation/VBFC1pmN2_C1ToTau_N2ToTauTau_LSP000_Stau295_Chargino300_1M.root");
+	TFile *inputfile_sig_2 = TFile::Open("crvalidation/VBFC1pmN2_C1ToTau_N2ToTauTau_LSP000_Stau195_Chargino200_1M.root");
+	TFile *inputfile_sig_3 = TFile::Open("crvalidation/VBFC1pmN2_C1ToTau_N2ToTauTau_LSP000_Stau095_Chargino100_1M.root");
+	TFile *inputfile_qcd = TFile::Open("crvalidation/allQCD.root");
+	TFile *inputfile_vv = TFile::Open("crvalidation/allVV.root");
+	TFile *inputfile_wjets = TFile::Open("crvalidation/allWJets.root");
 
 	//variables init
 	Double_t norm = 1.;
@@ -32,7 +32,7 @@ void var_plot(string variable, string label, int rebin) {
 	//definition and plot initialization
 	TH1F* h_dijetinvariantmass_sig_1 = ((TH1F*)(inputfile_sig_1->Get(("demo/baselineObjectSelection/" + variable).c_str())));
 	h_dijetinvariantmass_sig_1->Scale(norm/h_dijetinvariantmass_sig_1->Integral());
-	h_dijetinvariantmass_sig_1->SetTitle("CMS Simulation, 13 TeV");
+	h_dijetinvariantmass_sig_1->SetTitle("Simulation, 13 TeV");
 	h_dijetinvariantmass_sig_1->GetXaxis()->SetTitle((label).c_str());
 	h_dijetinvariantmass_sig_1->GetYaxis()->SetTitle("a.u.");
 	h_dijetinvariantmass_sig_1->SetFillColor(7);
@@ -146,16 +146,16 @@ void var_plot(string variable, string label, int rebin) {
 	h_dijetinvariantmass_wjets->Draw("HIST same");
 	leg->Draw();
 
-	my_canvas->Print((variable + "_prospects13tev.pdf").c_str());
+	my_canvas->Print(("results/" + variable + "_prospects13tev.pdf").c_str());
 	my_canvas->Close();
 
 }
 
 //main function
 void prospects_13Tev (){
-	var_plot("h_dijetinvariantmass", "M_{(jet,jet)} [GeV]", 1);
-	var_plot("h_tau1pt", "P_{t}(#tau_{1}) [GeV]", 5);
-	var_plot("h_tau2pt", "P_{t}(#tau_{2}) [GeV]", 5);
-	var_plot("h_jet1pt", "P_{t}(jet_{1}) [GeV]", 5);
+	var_plot("h_dijetinvariantmass", "m_{j_{1}j_{2}} [GeV]", 1);
+	var_plot("h_tau1pt", "p_{t}(#tau_{1}) [GeV]", 5);
+	var_plot("h_tau2pt", "p_{t}(#tau_{2}) [GeV]", 5);
+	var_plot("h_jet1pt", "p_{t}(jet_{1}) [GeV]", 5);
 	var_plot("h_met", "#slash{E}_{T} [GeV]", 1);
 }
