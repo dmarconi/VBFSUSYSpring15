@@ -374,6 +374,7 @@ class VBFSUSYanalyzer : public edm::EDAnalyzer {
 		bool verbose_;
 		double weight_;
 		double taupt_;
+		double met_;
 
 };
 
@@ -402,7 +403,8 @@ VBFSUSYanalyzer::VBFSUSYanalyzer(const edm::ParameterSet& iConfig):
 
 	verbose_(iConfig.getParameter<bool>("verbose")),
 	weight_(iConfig.getParameter<double>("eventweight")),
-	taupt_(iConfig.getParameter<double>("taupt"))
+	taupt_(iConfig.getParameter<double>("taupt")),
+	met_(iConfig.getParameter<double>("met"))
 
 {
 
@@ -1244,8 +1246,8 @@ void VBFSUSYanalyzer::makeSelection (MyHistoCollection &inputHistoCollection, My
 	} else return;
 
 	//MET cut
-	//if( inputEventCollection.met[0]->pt() > 30. ){
-	if( true ){
+	if( inputEventCollection.met[0]->pt() > met_ ){
+	//if( true ){
 		inputHistoCollection.h_count->Fill("METcut",weight_);
 	} else return;
 

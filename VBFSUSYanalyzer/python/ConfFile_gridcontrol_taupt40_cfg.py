@@ -27,6 +27,7 @@ process.demo = cms.EDAnalyzer('VBFSUSYanalyzer',
 		fatjets = cms.InputTag("slimmedJetsAK8"),
 		mets = cms.InputTag("slimmedMETs"),
 		taupt = cms.double(40.),
+		met = cms.double(0.),
 		eventweight = cms.double(1.),
 		verbose = cms.bool(False),
 )
