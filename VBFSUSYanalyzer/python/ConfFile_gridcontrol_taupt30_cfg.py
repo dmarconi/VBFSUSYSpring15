@@ -28,6 +28,8 @@ process.demo = cms.EDAnalyzer('VBFSUSYanalyzer',
 		mets = cms.InputTag("slimmedMETs"),
 		taupt = cms.double(30.),
 		met = cms.double(0.),
+		mjj = cms.double(0.),
+		jetpt = cms.double(30.),
 		eventweight = cms.double(1.),
 		verbose = cms.bool(False),
 )

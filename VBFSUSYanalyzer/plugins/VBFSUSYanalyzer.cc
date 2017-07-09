@@ -404,8 +404,10 @@ VBFSUSYanalyzer::VBFSUSYanalyzer(const edm::ParameterSet& iConfig):
 	verbose_(iConfig.getParameter<bool>("verbose")),
 	weight_(iConfig.getParameter<double>("eventweight")),
 	taupt_(iConfig.getParameter<double>("taupt")),
-	met_(iConfig.getParameter<double>("met"))
-
+	met_(iConfig.getParameter<double>("met")),
+	mjj_(iConfig.getParameter<double>("mjj")),
+	jetpt_(iConfig.getParameter<double>("jetpt"))
+	
 {
 
 	//--------------------------
@@ -681,7 +683,7 @@ VBFSUSYanalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
 	}
 
 	for(const pat::Jet &jet : *jets){
-		if(!(      jet.pt() >= 30.                                                	)) continue;  // Original value 20
+		if(!(      jet.pt() >= jetpt_                                               	)) continue;  // Original value 20
 		if(!(      fabs(jet.eta()) <= 5.0                                          )) continue;
 
 		double baseDistance = TauJetMinDistance(baselineObjectSelectionCollection, jet);
@@ -1277,8 +1279,8 @@ void VBFSUSYanalyzer::makeSelection (MyHistoCollection &inputHistoCollection, My
 		return;
 	}
 
-	//if (Inv2j.Mass > 250.) {
-	if( true ){
+	if (Inv2j.Mass > mjj_) {
+	//if( true ){
 		inputHistoCollection.h_count->Fill("DiJetInvMass",weight_);
 		fillHistoCollection ( inputHistoCollection,
 													inputEventCollection,
