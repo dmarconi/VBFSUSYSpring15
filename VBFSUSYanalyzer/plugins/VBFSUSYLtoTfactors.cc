@@ -321,6 +321,9 @@ class VBFSUSYLtoTfactors : public edm::EDAnalyzer {
 		bool verbose_;
 		double weight_;
 		double taupt_;
+		double met_;
+		double mjj_;
+		double jetpt_;
 
 };
 

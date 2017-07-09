@@ -375,6 +375,8 @@ class VBFSUSYanalyzer : public edm::EDAnalyzer {
 		double weight_;
 		double taupt_;
 		double met_;
+		double mjj_;
+		double jetpt_;
 
 };
 
