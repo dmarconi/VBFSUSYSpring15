@@ -99,7 +99,7 @@ void makeplot (string isoregion, string plotname) {
 
   //creating and Yaxis rescaling the bkg sum and sig plots
   crplot_allSum = (TH1F*) crplot_allDY->Clone();
-  crplot_allSum->SetTitle("CMS Work in Progress");
+  crplot_allSum->SetTitle("Simulation 13 TeV");
   crplot_allSum->Add(crplot_allQCD);
   crplot_allSum->Add(crplot_allTT);
   crplot_allSum->Add(crplot_allVV);
@@ -182,10 +182,17 @@ void printplots() {
   makeplot("Tau2TightIsoVBFInverted","h_met");
   makeplot("Tau2TightIsoVBFInverted","h_tau2pt");
   makeplot("Tau2TightIsoVBFInverted","h_jet1pt");
+
   makeplot("Taui2TightIso","h_dijetinvariantmass");
+  makeplot("Taui2TightIso","h_dijetdeltaeta");
+  makeplot("Taui2TightIso","h_ditauinvariantmass");
+  makeplot("Taui2TightIso","h_ditaudeltaeta");
   makeplot("Taui2TightIso","h_met");
+  makeplot("Taui2TightIso","h_tau1pt");
   makeplot("Taui2TightIso","h_tau2pt");
   makeplot("Taui2TightIso","h_jet1pt");
+  makeplot("Taui2TightIso","h_jet2pt");
+
   makeplot("Tau2LooseIsoInclusive","h_dijetinvariantmass");
   makeplot("Tau2LooseIsoInclusive","h_met");
   makeplot("Tau2LooseIsoInclusive","h_tau2pt");

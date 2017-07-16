@@ -1301,12 +1301,12 @@ void makeComparisonPlot() {
 	//defining legend
 	TLegend* leg_1 = new TLegend(0.53,0.63,0.86,0.9);
 	leg_1->SetTextSize(0.03);
-	leg_1->AddEntry(gr1, "#sigma^{CMS} [pb]", "LP");
-  leg_1->AddEntry(gr2, "#sigma_{lim}^{VBF} [pb]", "Pe");
-  leg_1->AddEntry(gr3, "#sigma_{lim}^{VBF}(cut set 1) [pb]", "Pe");
-  leg_1->AddEntry(gr4, "#sigma_{lim}^{VBF}(cut set 2) [pb]", "Pe");
-  leg_1->AddEntry(gr5, "#sigma_{lim}^{VBF}(cut set 3) [pb]", "Pe");
-  leg_1->AddEntry(gr6, "#sigma_{lim}^{VBF}(cut set 4) [pb]", "Pe");
+	leg_1->AddEntry(gr1, "#sigma^{CMS}", "LP");
+  leg_1->AddEntry(gr2, "#sigma_{lim}^{VBF}", "Pe");
+  leg_1->AddEntry(gr3, "#sigma_{lim}^{VBF}(cut set 1)", "Pe");
+  leg_1->AddEntry(gr4, "#sigma_{lim}^{VBF}(cut set 2)", "Pe");
+  leg_1->AddEntry(gr5, "#sigma_{lim}^{VBF}(cut set 3)", "Pe");
+  leg_1->AddEntry(gr6, "#sigma_{lim}^{VBF}(cut set 4)", "Pe");
 
 
 	//defining legend
