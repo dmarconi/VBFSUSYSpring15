@@ -813,7 +813,7 @@ xsecLim findXsecLim(string cutcfg, string chi, string stau, string lsp, std::ofs
 	h2_DiJetInvMass_vs_MET_xsec = new TH2F (("JetInvMass_vs_MET_xsec_" + chi + "_" + stau + "_" + lsp + "_" + cutcfg).c_str(),
 	("JetInvMass_vs_MET_xsec_" + chi + "_" + stau + "_" + lsp + "_" + cutcfg).c_str(),
 	nbinsx, 0., 240., nbinsy , 0., 2500.);
-	h2_DiJetInvMass_vs_MET_xsec->SetTitle("CMS Work");
+	h2_DiJetInvMass_vs_MET_xsec->SetTitle("Simulation 13 TeV, L = 85 fb^{-1}");
 	h2_DiJetInvMass_vs_MET_xsec->GetYaxis()->SetTitle("M_{(jet,jet)} [GeV]");
 	h2_DiJetInvMass_vs_MET_xsec->GetZaxis()->SetTitle("#sigma_{lim} pb");
 	h2_DiJetInvMass_vs_MET_xsec->GetXaxis()->SetTitle("E_{T}^{miss} [GeV]");
@@ -1267,7 +1267,7 @@ void makeComparisonPlot() {
 
 	//TH1F definition
 	TH1F* lim_comparison_bkg = new TH1F ("lim_comparison","lim_comparison", 22, 0. , 550.);
-	lim_comparison_bkg->SetTitle("CMS Work");
+	lim_comparison_bkg->SetTitle("Simulation 13 TeV, L = 85 fb^{-1}");
 	lim_comparison_bkg->GetYaxis()->SetTitle("#sigma [pb]");
 	lim_comparison_bkg->GetXaxis()->SetTitle("m(#tilde{#chi}^{#pm}_{1}) = m(#tilde{#chi}^{0}_{2}) [GeV]");
 	lim_comparison_bkg->GetYaxis()->SetTitleOffset(1.40);

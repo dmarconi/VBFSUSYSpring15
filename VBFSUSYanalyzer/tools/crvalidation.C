@@ -99,7 +99,9 @@ void makeplot (string isoregion, string plotname) {
 
   //creating and Yaxis rescaling the bkg sum and sig plots
   crplot_allSum = (TH1F*) crplot_allDY->Clone();
-  crplot_allSum->SetTitle("Simulation 13 TeV");
+  crplot_allSum->SetTitle("Simulation 13 TeV, L = 85 fb^{-1}");
+  crplot_allSum->GetYaxis()->SetTitle("events");
+  crplot_allSum->GetYaxis()->SetTitleOffset(1.40);
   crplot_allSum->Add(crplot_allQCD);
   crplot_allSum->Add(crplot_allTT);
   crplot_allSum->Add(crplot_allVV);
@@ -129,6 +131,8 @@ void makeplot (string isoregion, string plotname) {
   //extra plot cosmetics
   if ( plotname == "h_dijetinvariantmass" ) {
     crplot_allSum->GetXaxis()->SetTitle("M_{(jet,jet)} [GeV]");
+    crplot_allSum->GetYaxis()->SetTitle("events");
+    crplot_allSum->GetYaxis()->SetTitleOffset(1.40);
   }
 
   //defining errorbar plot

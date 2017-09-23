@@ -35,9 +35,8 @@ void var_plot(string variable, string label, int rebin) {
 	h_dijetinvariantmass_sig_1->SetTitle("Simulation, 13 TeV");
 	h_dijetinvariantmass_sig_1->GetXaxis()->SetTitle((label).c_str());
 	h_dijetinvariantmass_sig_1->GetYaxis()->SetTitle("a.u.");
-	h_dijetinvariantmass_sig_1->SetFillColor(7);
-	h_dijetinvariantmass_sig_1->SetLineColor(7);
-	h_dijetinvariantmass_sig_1->SetFillStyle(3001);
+	h_dijetinvariantmass_sig_1->SetLineColor(kBlack);
+	h_dijetinvariantmass_sig_1->SetLineWidth(3);
 	h_dijetinvariantmass_sig_1->SetStats(kFALSE);
 	h_dijetinvariantmass_sig_1->Rebin(rebin);
 	temp_maximum = h_dijetinvariantmass_sig_1->GetMaximum();
@@ -49,9 +48,8 @@ void var_plot(string variable, string label, int rebin) {
 	h_dijetinvariantmass_sig_2->Scale(norm/h_dijetinvariantmass_sig_2->Integral());
 	h_dijetinvariantmass_sig_2->GetXaxis()->SetTitle((label).c_str());
 	h_dijetinvariantmass_sig_2->GetYaxis()->SetTitle("a.u.");
-	h_dijetinvariantmass_sig_2->SetFillColor(8);
-	h_dijetinvariantmass_sig_2->SetLineColor(8);
-	h_dijetinvariantmass_sig_2->SetFillStyle(3001);
+	h_dijetinvariantmass_sig_2->SetLineColor(kRed);
+	h_dijetinvariantmass_sig_2->SetLineWidth(3);
 	h_dijetinvariantmass_sig_2->SetStats(kFALSE);
 	h_dijetinvariantmass_sig_2->Rebin(rebin);
 	temp_maximum = h_dijetinvariantmass_sig_2->GetMaximum();
@@ -63,9 +61,8 @@ void var_plot(string variable, string label, int rebin) {
 	h_dijetinvariantmass_sig_3->Scale(norm/h_dijetinvariantmass_sig_3->Integral());
 	h_dijetinvariantmass_sig_3->GetXaxis()->SetTitle((label).c_str());
 	h_dijetinvariantmass_sig_3->GetYaxis()->SetTitle("a.u.");
-	h_dijetinvariantmass_sig_3->SetFillColor(9);
-	h_dijetinvariantmass_sig_3->SetLineColor(9);
-	h_dijetinvariantmass_sig_3->SetFillStyle(3001);
+	h_dijetinvariantmass_sig_3->SetLineColor(kBlue);
+	h_dijetinvariantmass_sig_3->SetLineWidth(3);
 	h_dijetinvariantmass_sig_3->SetStats(kFALSE);
 	h_dijetinvariantmass_sig_3->Rebin(rebin);
 	temp_maximum = h_dijetinvariantmass_sig_3->GetMaximum();
@@ -74,7 +71,9 @@ void var_plot(string variable, string label, int rebin) {
 	if ((temp_minimum < minimum) && (temp_minimum != 0.) && ((temp_minimum > 0.00001)) ) minimum = temp_minimum;
 
 	TH1F* h_dijetinvariantmass_qcd = ((TH1F*)(inputfile_qcd->Get(("demo/baselineObjectSelection/" + variable).c_str())));
-	h_dijetinvariantmass_qcd->SetLineColor(kRed);
+	h_dijetinvariantmass_qcd->SetLineColor(kCyan);
+	h_dijetinvariantmass_qcd->SetFillColor(kCyan);
+	h_dijetinvariantmass_qcd->SetFillStyle(3001);
 	h_dijetinvariantmass_qcd->SetLineWidth(3);
 	h_dijetinvariantmass_qcd->Scale(norm/h_dijetinvariantmass_qcd->Integral());
 	h_dijetinvariantmass_qcd->SetTitle("");
@@ -88,7 +87,9 @@ void var_plot(string variable, string label, int rebin) {
 	if ((temp_minimum < minimum) && (temp_minimum != 0.) && ((temp_minimum > 0.00001)) ) minimum = temp_minimum;
 
 	TH1F* h_dijetinvariantmass_vv = ((TH1F*)(inputfile_vv->Get(("demo/baselineObjectSelection/" + variable).c_str())));
-	h_dijetinvariantmass_vv->SetLineColor(kBlack);
+	h_dijetinvariantmass_vv->SetLineColor(kViolet+2);
+	h_dijetinvariantmass_vv->SetFillColor(kViolet+2);
+	h_dijetinvariantmass_vv->SetFillStyle(3001);
 	h_dijetinvariantmass_vv->SetLineWidth(3);
 	h_dijetinvariantmass_vv->Scale(norm/h_dijetinvariantmass_vv->Integral());
 	h_dijetinvariantmass_vv->SetTitle("");
@@ -103,7 +104,9 @@ void var_plot(string variable, string label, int rebin) {
 
 
 	TH1F* h_dijetinvariantmass_wjets = ((TH1F*)(inputfile_wjets->Get(("demo/baselineObjectSelection/" + variable).c_str())));
-	h_dijetinvariantmass_wjets->SetLineColor(kBlue);
+	h_dijetinvariantmass_wjets->SetLineColor(kGreen);
+	h_dijetinvariantmass_wjets->SetFillColor(kGreen);
+	h_dijetinvariantmass_wjets->SetFillStyle(3001);
 	h_dijetinvariantmass_wjets->SetLineWidth(3);
 	h_dijetinvariantmass_wjets->Scale(norm/h_dijetinvariantmass_wjets->Integral());
 	h_dijetinvariantmass_wjets->SetTitle("");
@@ -126,24 +129,27 @@ void var_plot(string variable, string label, int rebin) {
 	//defining legend
 	TLegend* leg = new TLegend(0.58,0.7,0.9,0.9);
 	leg->SetTextSize(0.02);
-	leg->AddEntry(h_dijetinvariantmass_sig_1,"#tilde{#chi}^{#pm}_{1}#tilde{#chi}^{0}_{2}jj, #tilde{#chi}^{#pm}_{1} = 300 GeV","f");
-	leg->AddEntry(h_dijetinvariantmass_sig_2,"#tilde{#chi}^{#pm}_{1}#tilde{#chi}^{0}_{2}jj, #tilde{#chi}^{#pm}_{1} = 200 GeV","f");
-	leg->AddEntry(h_dijetinvariantmass_sig_3,"#tilde{#chi}^{#pm}_{1}#tilde{#chi}^{0}_{2}jj, #tilde{#chi}^{#pm}_{1} = 100 GeV","f");
-	leg->AddEntry(h_dijetinvariantmass_qcd,"QCD","l");
-	leg->AddEntry(h_dijetinvariantmass_vv,"VVjj","l");
-	leg->AddEntry(h_dijetinvariantmass_wjets,"W+jets","l");
+	leg->AddEntry(h_dijetinvariantmass_qcd,"QCD","f");
+	leg->AddEntry(h_dijetinvariantmass_vv,"VVjj","f");
+	leg->AddEntry(h_dijetinvariantmass_wjets,"W+jets","f");
+	leg->AddEntry(h_dijetinvariantmass_sig_3,"#tilde{#chi}^{#pm}_{1}#tilde{#chi}^{0}_{2}jj, #tilde{#chi}^{#pm}_{1} = 100 GeV","l");
+	leg->AddEntry(h_dijetinvariantmass_sig_2,"#tilde{#chi}^{#pm}_{1}#tilde{#chi}^{0}_{2}jj, #tilde{#chi}^{#pm}_{1} = 200 GeV","l");
+	leg->AddEntry(h_dijetinvariantmass_sig_1,"#tilde{#chi}^{#pm}_{1}#tilde{#chi}^{0}_{2}jj, #tilde{#chi}^{#pm}_{1} = 300 GeV","l");
+
 
 	//plotting on canvas and writing to disk
 	TCanvas *my_canvas = new TCanvas("my_canvas","my_canvas",500,500);
 	my_canvas->cd();
 
 	gPad->SetLogy();
-	h_dijetinvariantmass_sig_1->Draw("HIST");
+
+
+	h_dijetinvariantmass_vv->Draw("HIST");
+	h_dijetinvariantmass_wjets->Draw("HIST same");
+	h_dijetinvariantmass_qcd->Draw("HIST same");
+	h_dijetinvariantmass_sig_1->Draw("HIST same");
 	h_dijetinvariantmass_sig_2->Draw("HIST same");
 	h_dijetinvariantmass_sig_3->Draw("HIST same");
-	h_dijetinvariantmass_qcd->Draw("HIST same");
-	h_dijetinvariantmass_vv->Draw("HIST same");
-	h_dijetinvariantmass_wjets->Draw("HIST same");
 	leg->Draw();
 
 	my_canvas->Print(("results/" + variable + "_prospects13tev.pdf").c_str());
